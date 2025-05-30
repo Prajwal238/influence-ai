@@ -4,13 +4,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Send, Bot, User, MessageSquare, Mail, Phone, FileText, X } from "lucide-react";
+import { Send, Bot, User, MessageSquare, Mail, Phone, FileText, X, Loader2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 export interface Message {
   id: string;
   type: 'user' | 'agent';
   content: string;
   timestamp: Date;
+  apiResponse?: any;
 }
 
 interface AgentChatProps {
@@ -24,7 +26,9 @@ const AgentChat = ({ agentName, agentType, onClose, className }: AgentChatProps)
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [isApiLoading, setIsApiLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { toast } = useToast();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -67,7 +71,7 @@ const AgentChat = ({ agentName, agentType, onClose, className }: AgentChatProps)
   const getInitialGreeting = (type: string) => {
     switch (type) {
       case 'campaign':
-        return "Hi! I'm your Campaign Agent. I'll help you create a new campaign step by step. What kind of campaign would you like to create?";
+        return "Hi! I'm your Campaign Agent. I'll help you create a new campaign step by step. Please describe your campaign idea including details like name, budget, target audience, platforms, dates, and any other requirements.";
       case 'discovery':
         return "Hello! I'm your Discovery Agent. I can help you find the perfect influencers for your campaign. What type of influencers are you looking for?";
       case 'outreach':
@@ -77,6 +81,64 @@ const AgentChat = ({ agentName, agentType, onClose, className }: AgentChatProps)
       default:
         return "Hello! How can I help you today?";
     }
+  };
+
+  const callCampaignAPI = async (prompt: string) => {
+    try {
+      const response = await fetch('http://localhost:5000/api/campaigns', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: "user_123", // This should come from actual user context
+          prompt: prompt
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`API call failed with status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('API call failed:', error);
+      throw error;
+    }
+  };
+
+  const formatCampaignResponse = (apiResponse: any) => {
+    if (!apiResponse) return "I received your campaign request and I'm processing it.";
+
+    // Format the API response into a readable message
+    let formattedResponse = "Great! I've processed your campaign request. Here's what I've set up:\n\n";
+    
+    if (apiResponse.name) {
+      formattedResponse += `📌 **Campaign Name:** ${apiResponse.name}\n`;
+    }
+    if (apiResponse.budget) {
+      formattedResponse += `💰 **Budget:** ${apiResponse.budget}\n`;
+    }
+    if (apiResponse.objective) {
+      formattedResponse += `🎯 **Objective:** ${apiResponse.objective}\n`;
+    }
+    if (apiResponse.targetAudience) {
+      formattedResponse += `👥 **Target Audience:** ${apiResponse.targetAudience}\n`;
+    }
+    if (apiResponse.platforms) {
+      formattedResponse += `📱 **Platforms:** ${Array.isArray(apiResponse.platforms) ? apiResponse.platforms.join(', ') : apiResponse.platforms}\n`;
+    }
+    if (apiResponse.startDate && apiResponse.endDate) {
+      formattedResponse += `📅 **Duration:** ${apiResponse.startDate} to ${apiResponse.endDate}\n`;
+    }
+    if (apiResponse.languages) {
+      formattedResponse += `🌐 **Languages:** ${Array.isArray(apiResponse.languages) ? apiResponse.languages.join(', ') : apiResponse.languages}\n`;
+    }
+
+    formattedResponse += "\nYour campaign has been created successfully! Would you like me to help you with the next steps?";
+    
+    return formattedResponse;
   };
 
   const handleSendMessage = async () => {
@@ -90,20 +152,63 @@ const AgentChat = ({ agentName, agentType, onClose, className }: AgentChatProps)
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const currentInput = inputValue;
     setInputValue("");
-    setIsTyping(true);
 
-    // Simulate agent response
-    setTimeout(() => {
-      const agentResponse: Message = {
-        id: (Date.now() + 1).toString(),
-        type: 'agent',
-        content: generateAgentResponse(inputValue, agentType),
-        timestamp: new Date()
-      };
-      setMessages(prev => [...prev, agentResponse]);
-      setIsTyping(false);
-    }, 1000 + Math.random() * 2000);
+    // For campaign agent, call the API
+    if (agentType === 'campaign') {
+      setIsApiLoading(true);
+      
+      try {
+        const apiResponse = await callCampaignAPI(currentInput);
+        
+        const agentResponse: Message = {
+          id: (Date.now() + 1).toString(),
+          type: 'agent',
+          content: formatCampaignResponse(apiResponse),
+          timestamp: new Date(),
+          apiResponse: apiResponse
+        };
+        
+        setMessages(prev => [...prev, agentResponse]);
+        
+        toast({
+          title: "Campaign Created",
+          description: "Your campaign has been successfully created!",
+        });
+        
+      } catch (error) {
+        const errorResponse: Message = {
+          id: (Date.now() + 1).toString(),
+          type: 'agent',
+          content: "I apologize, but I encountered an error while processing your campaign request. Please make sure the campaign service is running and try again. You can also try rephrasing your request with more specific details.",
+          timestamp: new Date()
+        };
+        
+        setMessages(prev => [...prev, errorResponse]);
+        
+        toast({
+          title: "API Error",
+          description: "Failed to create campaign. Please try again.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsApiLoading(false);
+      }
+    } else {
+      // For other agent types, use the existing simulation
+      setIsTyping(true);
+      setTimeout(() => {
+        const agentResponse: Message = {
+          id: (Date.now() + 1).toString(),
+          type: 'agent',
+          content: generateAgentResponse(currentInput, agentType),
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, agentResponse]);
+        setIsTyping(false);
+      }, 1000 + Math.random() * 2000);
+    }
   };
 
   const generateAgentResponse = (userInput: string, type: string) => {
@@ -346,7 +451,7 @@ const AgentChat = ({ agentName, agentType, onClose, className }: AgentChatProps)
                     <User className="h-4 w-4 mt-0.5 text-white" />
                   )}
                   <div className="flex-1">
-                    <p className="text-sm">{message.content}</p>
+                    <p className="text-sm whitespace-pre-line">{message.content}</p>
                     <p className={`text-xs mt-1 ${
                       message.type === 'user' ? 'text-blue-100' : 'text-gray-500'
                     }`}>
@@ -361,16 +466,23 @@ const AgentChat = ({ agentName, agentType, onClose, className }: AgentChatProps)
             </div>
           ))}
           
-          {isTyping && (
+          {(isTyping || isApiLoading) && (
             <div className="flex justify-start">
               <div className="bg-gray-100 rounded-lg p-3 max-w-[80%]">
                 <div className="flex items-center space-x-2">
                   <Bot className="h-4 w-4 text-blue-600" />
-                  <div className="flex space-x-1">
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                  </div>
+                  {isApiLoading ? (
+                    <div className="flex items-center space-x-2">
+                      <Loader2 className="h-4 w-4 animate-spin text-blue-600" />
+                      <span className="text-sm text-gray-600">Creating campaign...</span>
+                    </div>
+                  ) : (
+                    <div className="flex space-x-1">
+                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -387,9 +499,18 @@ const AgentChat = ({ agentName, agentType, onClose, className }: AgentChatProps)
               onKeyPress={handleKeyPress}
               placeholder="Type your message..."
               className="flex-1"
+              disabled={isApiLoading}
             />
-            <Button onClick={handleSendMessage} className="bg-blue-600 hover:bg-blue-700">
-              <Send className="h-4 w-4" />
+            <Button 
+              onClick={handleSendMessage} 
+              className="bg-blue-600 hover:bg-blue-700"
+              disabled={!inputValue.trim() || isApiLoading}
+            >
+              {isApiLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Send className="h-4 w-4" />
+              )}
             </Button>
           </div>
         </div>
