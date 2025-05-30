@@ -37,7 +37,13 @@ const AgentChat = ({ agentName, agentType, onClose, className }: AgentChatProps)
     // Load conversation history from localStorage
     const savedMessages = localStorage.getItem(`agent-chat-${agentType}`);
     if (savedMessages) {
-      setMessages(JSON.parse(savedMessages));
+      const parsedMessages = JSON.parse(savedMessages);
+      // Convert timestamp strings back to Date objects
+      const messagesWithDates = parsedMessages.map((msg: any) => ({
+        ...msg,
+        timestamp: new Date(msg.timestamp)
+      }));
+      setMessages(messagesWithDates);
     } else {
       // Initial greeting message
       const greeting = getInitialGreeting(agentType);
