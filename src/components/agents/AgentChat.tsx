@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -108,39 +107,6 @@ const AgentChat = ({ agentName, agentType, onClose, className }: AgentChatProps)
     }
   };
 
-  const formatCampaignResponse = (apiResponse: any) => {
-    if (!apiResponse) return "I received your campaign request and I'm processing it.";
-
-    // Format the API response into a readable message
-    let formattedResponse = "Great! I've processed your campaign request. Here's what I've set up:\n\n";
-    
-    if (apiResponse.name) {
-      formattedResponse += `📌 **Campaign Name:** ${apiResponse.name}\n`;
-    }
-    if (apiResponse.budget) {
-      formattedResponse += `💰 **Budget:** ${apiResponse.budget}\n`;
-    }
-    if (apiResponse.objective) {
-      formattedResponse += `🎯 **Objective:** ${apiResponse.objective}\n`;
-    }
-    if (apiResponse.targetAudience) {
-      formattedResponse += `👥 **Target Audience:** ${apiResponse.targetAudience}\n`;
-    }
-    if (apiResponse.platforms) {
-      formattedResponse += `📱 **Platforms:** ${Array.isArray(apiResponse.platforms) ? apiResponse.platforms.join(', ') : apiResponse.platforms}\n`;
-    }
-    if (apiResponse.startDate && apiResponse.endDate) {
-      formattedResponse += `📅 **Duration:** ${apiResponse.startDate} to ${apiResponse.endDate}\n`;
-    }
-    if (apiResponse.languages) {
-      formattedResponse += `🌐 **Languages:** ${Array.isArray(apiResponse.languages) ? apiResponse.languages.join(', ') : apiResponse.languages}\n`;
-    }
-
-    formattedResponse += "\nYour campaign has been created successfully! Would you like me to help you with the next steps?";
-    
-    return formattedResponse;
-  };
-
   const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
 
@@ -165,7 +131,7 @@ const AgentChat = ({ agentName, agentType, onClose, className }: AgentChatProps)
         const agentResponse: Message = {
           id: (Date.now() + 1).toString(),
           type: 'agent',
-          content: formatCampaignResponse(apiResponse),
+          content: apiResponse.message || "I received your campaign request and I'm processing it.",
           timestamp: new Date(),
           apiResponse: apiResponse
         };
@@ -173,8 +139,8 @@ const AgentChat = ({ agentName, agentType, onClose, className }: AgentChatProps)
         setMessages(prev => [...prev, agentResponse]);
         
         toast({
-          title: "Campaign Created",
-          description: "Your campaign has been successfully created!",
+          title: "Campaign Processed",
+          description: "Your campaign request has been processed successfully!",
         });
         
       } catch (error) {
@@ -189,7 +155,7 @@ const AgentChat = ({ agentName, agentType, onClose, className }: AgentChatProps)
         
         toast({
           title: "API Error",
-          description: "Failed to create campaign. Please try again.",
+          description: "Failed to process campaign request. Please try again.",
           variant: "destructive",
         });
       } finally {
@@ -474,7 +440,7 @@ const AgentChat = ({ agentName, agentType, onClose, className }: AgentChatProps)
                   {isApiLoading ? (
                     <div className="flex items-center space-x-2">
                       <Loader2 className="h-4 w-4 animate-spin text-blue-600" />
-                      <span className="text-sm text-gray-600">Creating campaign...</span>
+                      <span className="text-sm text-gray-600">Processing campaign...</span>
                     </div>
                   ) : (
                     <div className="flex space-x-1">
