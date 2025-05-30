@@ -1,9 +1,7 @@
-
 import { useState } from "react";
 import CampaignLayout from "@/components/layout/CampaignLayout";
 import ThreadsList from "@/components/negotiation/ThreadsList";
 import ChatWindow from "@/components/negotiation/ChatWindow";
-import AgentSidePanel from "@/components/negotiation/AgentSidePanel";
 import FloatingChatButton from "@/components/agents/FloatingChatButton";
 
 interface Message {
@@ -113,7 +111,6 @@ const mockThreads: Thread[] = [
 const Negotiation = () => {
   const [selectedThread, setSelectedThread] = useState<Thread | undefined>();
   const [threads, setThreads] = useState<Thread[]>(mockThreads);
-  const [isAgentCollapsed, setIsAgentCollapsed] = useState(false);
 
   const handleSelectThread = (thread: Thread) => {
     setSelectedThread(thread);
@@ -158,8 +155,8 @@ const Negotiation = () => {
           </div>
 
           <div className="grid grid-cols-12 gap-6 h-[calc(100vh-200px)]">
-            {/* Threads List - 3 columns */}
-            <div className="col-span-12 lg:col-span-3">
+            {/* Threads List - 4 columns */}
+            <div className="col-span-12 lg:col-span-4">
               <ThreadsList
                 threads={threads}
                 selectedThreadId={selectedThread?.creatorId}
@@ -167,19 +164,11 @@ const Negotiation = () => {
               />
             </div>
 
-            {/* Chat Window - 6 columns */}
-            <div className="col-span-12 lg:col-span-6">
+            {/* Chat Window - 8 columns */}
+            <div className="col-span-12 lg:col-span-8">
               <ChatWindow
                 selectedThread={selectedThread}
                 onSendMessage={handleSendMessage}
-              />
-            </div>
-
-            {/* Agent Side Panel - 3 columns */}
-            <div className="col-span-12 lg:col-span-3">
-              <AgentSidePanel
-                isCollapsed={isAgentCollapsed}
-                onToggleCollapse={() => setIsAgentCollapsed(!isAgentCollapsed)}
               />
             </div>
           </div>
