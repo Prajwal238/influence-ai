@@ -61,12 +61,12 @@ const ThreadsList = ({ threads, selectedThreadId, onSelectThread }: ThreadsListP
   );
 
   return (
-    <Card className="h-full bg-white shadow-[0_0_10px_rgba(0,0,0,0.05)] rounded-2xl">
-      <div className="p-4 border-b border-[#F2F2F7]">
-        <h2 className="text-xl font-semibold text-[#1D1D1F] font-['SF_Pro_Display']">
+    <Card className="h-full bg-white shadow-sm border-gray-200">
+      <div className="p-4 border-b border-gray-200">
+        <h2 className="text-xl font-semibold text-gray-900">
           Active Negotiations
         </h2>
-        <p className="text-sm text-[#6E6E73] font-['SF_Pro_Text'] mt-1">
+        <p className="text-sm text-gray-600 mt-1">
           {activeThreads.length} creators responded
         </p>
       </div>
@@ -76,9 +76,9 @@ const ThreadsList = ({ threads, selectedThreadId, onSelectThread }: ThreadsListP
           <div
             key={thread.creatorId}
             onClick={() => onSelectThread(thread)}
-            className={`p-3 rounded-xl cursor-pointer transition-all duration-200 hover:bg-[#F2F2F7] ${
+            className={`p-3 rounded-xl cursor-pointer transition-all duration-200 hover:bg-gray-50 ${
               selectedThreadId === thread.creatorId 
-                ? 'bg-[#E0F3FF] border border-[#0071E3]' 
+                ? 'bg-blue-50 border border-blue-200' 
                 : 'hover:shadow-sm'
             }`}
           >
@@ -92,20 +92,20 @@ const ThreadsList = ({ threads, selectedThreadId, onSelectThread }: ThreadsListP
               
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between">
-                  <h3 className="font-medium text-[#1D1D1F] font-['SF_Pro_Text'] truncate">
+                  <h3 className="font-medium text-gray-900 truncate">
                     {thread.name}
                   </h3>
-                  <Badge className="bg-[#E0F3FF] text-[#0071E3] rounded-full px-2 text-xs border-0 ml-2 flex items-center gap-1">
+                  <Badge className="bg-blue-100 text-blue-800 rounded-full px-2 text-xs border-0 ml-2 flex items-center gap-1">
                     {getPlatformIcon(thread.platform)}
                     {getPlatformLabel(thread.platform)}
                   </Badge>
                 </div>
                 
-                <p className="text-sm text-[#6E6E73] font-['SF_Pro_Text'] mt-1">
+                <p className="text-sm text-gray-600 mt-1">
                   {thread.handle}
                 </p>
                 
-                <p className="text-xs text-[#8E8E93] font-['SF_Pro_Text'] mt-2 truncate">
+                <p className="text-xs text-gray-500 mt-2 truncate">
                   {thread.messages[thread.messages.length - 1]?.content || 'No messages yet'}
                 </p>
               </div>
@@ -115,7 +115,7 @@ const ThreadsList = ({ threads, selectedThreadId, onSelectThread }: ThreadsListP
         
         {activeThreads.length === 0 && (
           <div className="text-center py-8">
-            <p className="text-[#6E6E73] font-['SF_Pro_Text']">
+            <p className="text-gray-600">
               No active negotiations yet
             </p>
           </div>

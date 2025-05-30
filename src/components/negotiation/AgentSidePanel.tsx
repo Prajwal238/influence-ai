@@ -39,7 +39,7 @@ const AgentSidePanel = ({ isCollapsed, onToggleCollapse }: AgentSidePanelProps) 
 
   if (isCollapsed) {
     return (
-      <Card className="h-fit bg-white shadow-[0_0_10px_rgba(0,0,0,0.05)] rounded-2xl">
+      <Card className="h-fit bg-white shadow-sm border-gray-200">
         <CardHeader className="p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
@@ -49,7 +49,7 @@ const AgentSidePanel = ({ isCollapsed, onToggleCollapse }: AgentSidePanelProps) 
                 </AvatarFallback>
               </Avatar>
               <div>
-                <h3 className="text-sm font-semibold text-[#1D1D1F] font-['SF_Pro_Display']">
+                <h3 className="text-sm font-semibold text-gray-900">
                   Agent
                 </h3>
               </div>
@@ -58,7 +58,7 @@ const AgentSidePanel = ({ isCollapsed, onToggleCollapse }: AgentSidePanelProps) 
               variant="ghost"
               size="sm"
               onClick={onToggleCollapse}
-              className="h-8 w-8 p-0 hover:bg-[#F2F2F7]"
+              className="h-8 w-8 p-0 hover:bg-gray-100"
             >
               <ChevronDown className="h-4 w-4" />
             </Button>
@@ -69,9 +69,9 @@ const AgentSidePanel = ({ isCollapsed, onToggleCollapse }: AgentSidePanelProps) 
   }
 
   return (
-    <Card className="h-full bg-white shadow-[0_0_10px_rgba(0,0,0,0.05)] rounded-2xl flex flex-col">
+    <Card className="h-full bg-white shadow-sm border-gray-200 flex flex-col">
       {/* Header */}
-      <CardHeader className="border-b border-[#F2F2F7] pb-4">
+      <CardHeader className="border-b border-gray-200 pb-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <Avatar className="h-10 w-10 ring-2 ring-white shadow-sm">
@@ -80,10 +80,10 @@ const AgentSidePanel = ({ isCollapsed, onToggleCollapse }: AgentSidePanelProps) 
               </AvatarFallback>
             </Avatar>
             <div>
-              <CardTitle className="text-lg font-semibold text-[#1D1D1F] font-['SF_Pro_Display']">
+              <CardTitle className="text-lg font-semibold text-gray-900">
                 Negotiation Agent
               </CardTitle>
-              <p className="text-sm text-[#6E6E73] font-['SF_Pro_Text']">
+              <p className="text-sm text-gray-600">
                 AI Assistant
               </p>
             </div>
@@ -92,7 +92,7 @@ const AgentSidePanel = ({ isCollapsed, onToggleCollapse }: AgentSidePanelProps) 
             variant="ghost"
             size="sm"
             onClick={onToggleCollapse}
-            className="h-8 w-8 p-0 hover:bg-[#F2F2F7]"
+            className="h-8 w-8 p-0 hover:bg-gray-100"
           >
             <ChevronUp className="h-4 w-4" />
           </Button>
@@ -102,31 +102,31 @@ const AgentSidePanel = ({ isCollapsed, onToggleCollapse }: AgentSidePanelProps) 
       {/* Chat History Tabs */}
       <CardContent className="flex-1 p-4 flex flex-col">
         <Tabs defaultValue="dms" className="flex-1 flex flex-col">
-          <TabsList className="grid w-full grid-cols-4 mb-4 bg-[#F2F2F7] rounded-lg p-1">
+          <TabsList className="grid w-full grid-cols-4 mb-4 bg-gray-100 rounded-lg p-1">
             <TabsTrigger 
               value="dms" 
-              className="text-xs data-[state=active]:bg-white data-[state=active]:text-[#1D1D1F] data-[state=active]:shadow-sm rounded-md"
+              className="text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm rounded-md"
             >
               <MessageSquare className="h-3 w-3 mr-1" />
               DMs
             </TabsTrigger>
             <TabsTrigger 
               value="emails" 
-              className="text-xs data-[state=active]:bg-white data-[state=active]:text-[#1D1D1F] data-[state=active]:shadow-sm rounded-md"
+              className="text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm rounded-md"
             >
               <Mail className="h-3 w-3 mr-1" />
               Email
             </TabsTrigger>
             <TabsTrigger 
               value="calls" 
-              className="text-xs data-[state=active]:bg-white data-[state=active]:text-[#1D1D1F] data-[state=active]:shadow-sm rounded-md"
+              className="text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm rounded-md"
             >
               <Phone className="h-3 w-3 mr-1" />
               Calls
             </TabsTrigger>
             <TabsTrigger 
               value="tasks" 
-              className="text-xs data-[state=active]:bg-white data-[state=active]:text-[#1D1D1F] data-[state=active]:shadow-sm rounded-md"
+              className="text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm rounded-md"
             >
               <FileText className="h-3 w-3 mr-1" />
               Tasks
@@ -136,25 +136,25 @@ const AgentSidePanel = ({ isCollapsed, onToggleCollapse }: AgentSidePanelProps) 
           <div className="flex-1 overflow-hidden">
             <TabsContent value="dms" className="h-full overflow-y-auto space-y-3">
               <div className="space-y-3">
-                <div className="bg-[#F2F2F7] rounded-lg p-3">
-                  <p className="text-sm font-['SF_Pro_Text'] text-[#1D1D1F]">
+                <div className="bg-gray-100 rounded-lg p-3">
+                  <p className="text-sm text-gray-900">
                     "Based on the negotiation patterns, I recommend starting with a higher rate and gradually adjusting based on their response."
                   </p>
-                  <p className="text-xs text-[#8E8E93] mt-2">2 minutes ago</p>
+                  <p className="text-xs text-gray-500 mt-2">2 minutes ago</p>
                 </div>
-                <div className="bg-[#E0F3FF] rounded-lg p-3">
-                  <p className="text-sm font-['SF_Pro_Text'] text-[#1D1D1F]">
+                <div className="bg-blue-50 rounded-lg p-3">
+                  <p className="text-sm text-gray-900">
                     "The creator seems interested but price-sensitive. Consider offering package deals or additional perks."
                   </p>
-                  <p className="text-xs text-[#8E8E93] mt-2">5 minutes ago</p>
+                  <p className="text-xs text-gray-500 mt-2">5 minutes ago</p>
                 </div>
               </div>
             </TabsContent>
 
             <TabsContent value="emails" className="h-full overflow-y-auto">
               <div className="text-center py-8">
-                <Mail className="h-8 w-8 text-[#6E6E73] mx-auto mb-2" />
-                <p className="text-sm text-[#6E6E73] font-['SF_Pro_Text']">
+                <Mail className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                <p className="text-sm text-gray-600">
                   No email conversations yet
                 </p>
               </div>
@@ -162,8 +162,8 @@ const AgentSidePanel = ({ isCollapsed, onToggleCollapse }: AgentSidePanelProps) 
 
             <TabsContent value="calls" className="h-full overflow-y-auto">
               <div className="text-center py-8">
-                <Phone className="h-8 w-8 text-[#6E6E73] mx-auto mb-2" />
-                <p className="text-sm text-[#6E6E73] font-['SF_Pro_Text']">
+                <Phone className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                <p className="text-sm text-gray-600">
                   No calls scheduled
                 </p>
               </div>
@@ -171,13 +171,13 @@ const AgentSidePanel = ({ isCollapsed, onToggleCollapse }: AgentSidePanelProps) 
 
             <TabsContent value="tasks" className="h-full overflow-y-auto">
               <div className="space-y-2">
-                <div className="p-3 bg-[#F2F2F7] rounded-lg">
-                  <p className="text-sm font-['SF_Pro_Text'] font-medium">Follow up with @creator_handle</p>
-                  <p className="text-xs text-[#6E6E73] mt-1">Due in 2 hours</p>
+                <div className="p-3 bg-gray-100 rounded-lg">
+                  <p className="text-sm font-medium text-gray-900">Follow up with @creator_handle</p>
+                  <p className="text-xs text-gray-600 mt-1">Due in 2 hours</p>
                 </div>
-                <div className="p-3 bg-[#F2F2F7] rounded-lg">
-                  <p className="text-sm font-['SF_Pro_Text'] font-medium">Send contract to 3 creators</p>
-                  <p className="text-xs text-[#6E6E73] mt-1">Due tomorrow</p>
+                <div className="p-3 bg-gray-100 rounded-lg">
+                  <p className="text-sm font-medium text-gray-900">Send contract to 3 creators</p>
+                  <p className="text-xs text-gray-600 mt-1">Due tomorrow</p>
                 </div>
               </div>
             </TabsContent>
@@ -186,7 +186,7 @@ const AgentSidePanel = ({ isCollapsed, onToggleCollapse }: AgentSidePanelProps) 
       </CardContent>
 
       {/* Footer Input */}
-      <div className="p-4 border-t border-[#F2F2F7] bg-[#FAFAFA] rounded-b-2xl">
+      <div className="p-4 border-t border-gray-200 bg-gray-50 rounded-b-2xl">
         <div className="space-y-3">
           <div className="flex flex-wrap gap-2">
             {contextChips.map((chip, index) => (
@@ -195,7 +195,7 @@ const AgentSidePanel = ({ isCollapsed, onToggleCollapse }: AgentSidePanelProps) 
                 variant="outline"
                 size="sm"
                 onClick={chip.action}
-                className="text-xs bg-white border-[#E0E0E0] text-[#0071E3] hover:bg-[#E0F3FF] rounded-full px-3 py-1 h-7"
+                className="text-xs bg-white border-gray-300 text-blue-600 hover:bg-blue-50 rounded-full px-3 py-1 h-7"
               >
                 {chip.label}
               </Button>
@@ -208,13 +208,13 @@ const AgentSidePanel = ({ isCollapsed, onToggleCollapse }: AgentSidePanelProps) 
               onChange={(e) => setAgentInput(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="Ask Negotiation Agent..."
-              className="flex-1 rounded-lg border-[#E0E0E0] focus:border-[#0071E3] focus:ring-[#0071E3] font-['SF_Pro_Text'] text-sm"
+              className="flex-1 rounded-lg border-gray-300 focus:border-blue-600 focus:ring-blue-600 text-sm"
             />
             <Button
               onClick={handleSendToAgent}
               disabled={!agentInput.trim()}
               size="sm"
-              className="bg-[#0071E3] hover:bg-[#005BB5] text-white rounded-lg px-3 font-['SF_Pro_Text'] disabled:opacity-50"
+              className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-3 disabled:opacity-50"
             >
               <Send className="h-3 w-3" />
             </Button>

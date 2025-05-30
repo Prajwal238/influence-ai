@@ -4,6 +4,7 @@ import CampaignLayout from "@/components/layout/CampaignLayout";
 import ThreadsList from "@/components/negotiation/ThreadsList";
 import ChatWindow from "@/components/negotiation/ChatWindow";
 import AgentSidePanel from "@/components/negotiation/AgentSidePanel";
+import FloatingChatButton from "@/components/agents/FloatingChatButton";
 
 interface Message {
   id: string;
@@ -145,13 +146,13 @@ const Negotiation = () => {
 
   return (
     <CampaignLayout>
-      <div className="min-h-screen bg-[#FAFAFA]">
+      <div className="min-h-screen bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="mb-6">
-            <h1 className="text-2xl font-semibold text-[#1D1D1F] font-['SF_Pro_Display']">
+            <h1 className="text-2xl font-semibold text-gray-900">
               Negotiation
             </h1>
-            <p className="text-[#6E6E73] font-['SF_Pro_Text'] mt-1">
+            <p className="text-gray-600 mt-1">
               Manage conversations and close deals with creators
             </p>
           </div>
@@ -184,6 +185,12 @@ const Negotiation = () => {
           </div>
         </div>
       </div>
+
+      {/* Floating Chat Button */}
+      <FloatingChatButton 
+        agentName="Negotiation Agent"
+        agentType="negotiation"
+      />
     </CampaignLayout>
   );
 };
