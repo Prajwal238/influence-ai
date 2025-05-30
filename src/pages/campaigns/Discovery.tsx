@@ -4,9 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import CampaignLayout from "@/components/layout/CampaignLayout";
 import AgentPanel from "@/components/agents/AgentPanel";
-import { Search, Filter, Plus, Users, Heart, Eye } from "lucide-react";
+import { Search, Filter, Plus, Users, Heart, Eye, Instagram, Globe, MessageSquare } from "lucide-react";
 
 const Discovery = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -20,7 +21,13 @@ const Discovery = () => {
       engagement: "3.2%",
       niche: "Fashion",
       image: "/api/placeholder/64/64",
-      isVerified: true
+      isVerified: true,
+      socialHandles: {
+        instagram: "@sarahjohnson",
+        twitter: "@sarah_j_fashion",
+        tiktok: "@sarahjohnsonofficial",
+        youtube: "Sarah Johnson Fashion"
+      }
     },
     {
       id: 2,
@@ -30,7 +37,12 @@ const Discovery = () => {
       engagement: "4.1%",
       niche: "Tech",
       image: "/api/placeholder/64/64",
-      isVerified: false
+      isVerified: false,
+      socialHandles: {
+        instagram: "@mikechen",
+        twitter: "@mikechen_tech",
+        linkedin: "mike-chen-tech"
+      }
     },
     {
       id: 3,
@@ -40,9 +52,26 @@ const Discovery = () => {
       engagement: "2.8%",
       niche: "Lifestyle",
       image: "/api/placeholder/64/64",
-      isVerified: true
+      isVerified: true,
+      socialHandles: {
+        instagram: "@emmarodriguez",
+        twitter: "@emma_lifestyle",
+        tiktok: "@emmarodriguezlife",
+        youtube: "Emma Rodriguez Lifestyle"
+      }
     },
   ];
+
+  const getSocialIcon = (platform: string) => {
+    switch (platform) {
+      case 'instagram': return <Instagram className="h-4 w-4" />;
+      case 'twitter': return <MessageSquare className="h-4 w-4" />;
+      case 'tiktok': return <Users className="h-4 w-4" />;
+      case 'youtube': return <Globe className="h-4 w-4" />;
+      case 'linkedin': return <Globe className="h-4 w-4" />;
+      default: return <Globe className="h-4 w-4" />;
+    }
+  };
 
   return (
     <CampaignLayout>
@@ -57,10 +86,6 @@ const Discovery = () => {
               Find and add influencers to your campaign
             </p>
           </div>
-          <Button className="bg-blue-600 hover:bg-blue-700">
-            <Plus className="h-4 w-4 mr-2" />
-            Add Manual
-          </Button>
         </div>
 
         {/* Search and Filters */}
@@ -128,10 +153,30 @@ const Discovery = () => {
                 </div>
 
                 <div className="flex space-x-2">
-                  <Button variant="outline" size="sm" className="flex-1">
-                    <Eye className="h-4 w-4 mr-1" />
-                    View
-                  </Button>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="outline" size="sm" className="flex-1">
+                        <Eye className="h-4 w-4 mr-1" />
+                        View
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-md">
+                      <DialogHeader>
+                        <DialogTitle>{influencer.name}'s Social Handles</DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-3">
+                        {Object.entries(influencer.socialHandles).map(([platform, handle]) => (
+                          <div key={platform} className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg">
+                            {getSocialIcon(platform)}
+                            <div>
+                              <p className="font-medium capitalize">{platform}</p>
+                              <p className="text-sm text-gray-600">{handle}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </DialogContent>
+                  </Dialog>
                   <Button size="sm" className="flex-1 bg-blue-600 hover:bg-blue-700">
                     <Plus className="h-4 w-4 mr-1" />
                     Add

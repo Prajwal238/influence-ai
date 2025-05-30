@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,12 +6,37 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import CampaignLayout from "@/components/layout/CampaignLayout";
 import AgentPanel from "@/components/agents/AgentPanel";
-import { Send, Play, Globe, MessageSquare, Clock, CheckCircle, XCircle, Instagram, Mail, Phone, Volume2 } from "lucide-react";
+import { Send, Play, Globe, MessageSquare, Clock, CheckCircle, XCircle, Instagram, Mail, Phone, Volume2, Users, Check } from "lucide-react";
 
 const Outreach = () => {
   const [message, setMessage] = useState("Hi {name},\n\nI hope this message finds you well! I'm reaching out on behalf of our brand regarding a potential collaboration...");
   const [selectedLanguage, setSelectedLanguage] = useState("english");
   const [selectedPlatform, setSelectedPlatform] = useState("instagram");
+  const [selectedInfluencers, setSelectedInfluencers] = useState<number[]>([]);
+
+  const availableInfluencers = [
+    {
+      id: 1,
+      name: "Sarah Johnson",
+      handle: "@sarahjohnson",
+      followers: "125K",
+      niche: "Fashion"
+    },
+    {
+      id: 2,
+      name: "Mike Chen",
+      handle: "@mikechen",
+      followers: "89K",
+      niche: "Tech"
+    },
+    {
+      id: 3,
+      name: "Emma Rodriguez",
+      handle: "@emmarodriguez",
+      followers: "200K",
+      niche: "Lifestyle"
+    },
+  ];
 
   const outreachLog = [
     {
@@ -43,6 +67,14 @@ const Outreach = () => {
       platform: "whatsapp"
     },
   ];
+
+  const toggleInfluencerSelection = (influencerId: number) => {
+    setSelectedInfluencers(prev => 
+      prev.includes(influencerId) 
+        ? prev.filter(id => id !== influencerId)
+        : [...prev, influencerId]
+    );
+  };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -82,11 +114,13 @@ const Outreach = () => {
 
   const handleSendAsText = () => {
     console.log("Sending message as text:", message);
+    console.log("Selected influencers:", selectedInfluencers);
     // Add text sending logic here
   };
 
   const handleSendAsVoice = () => {
     console.log("Sending message as voice:", message);
+    console.log("Selected influencers:", selectedInfluencers);
     // Add voice sending logic here
   };
 
@@ -95,6 +129,54 @@ const Outreach = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Message Composer */}
         <div className="lg:col-span-2 space-y-6">
+          {/* Influencer Selection */}
+          <Card className="bg-white shadow-sm border-gray-200">
+            <CardHeader>
+              <CardTitle className="text-xl font-semibold text-gray-900">
+                Select Influencers
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {availableInfluencers.map((influencer) => (
+                  <div 
+                    key={influencer.id}
+                    className={`flex items-center justify-between p-3 border rounded-lg cursor-pointer transition-colors ${
+                      selectedInfluencers.includes(influencer.id) 
+                        ? 'border-blue-500 bg-blue-50' 
+                        : 'border-gray-200 hover:bg-gray-50'
+                    }`}
+                    onClick={() => toggleInfluencerSelection(influencer.id)}
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                        <Users className="h-4 w-4 text-gray-400" />
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900 text-sm">{influencer.name}</h4>
+                        <p className="text-xs text-gray-600">{influencer.handle} • {influencer.followers} • {influencer.niche}</p>
+                      </div>
+                    </div>
+                    <div className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
+                      selectedInfluencers.includes(influencer.id) 
+                        ? 'border-blue-500 bg-blue-500' 
+                        : 'border-gray-300'
+                    }`}>
+                      {selectedInfluencers.includes(influencer.id) && (
+                        <Check className="h-3 w-3 text-white" />
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {selectedInfluencers.length > 0 && (
+                <p className="text-sm text-blue-600 mt-3">
+                  {selectedInfluencers.length} influencer{selectedInfluencers.length > 1 ? 's' : ''} selected
+                </p>
+              )}
+            </CardContent>
+          </Card>
+
           <Card className="bg-white shadow-sm border-gray-200">
             <CardHeader>
               <CardTitle className="text-xl font-semibold text-gray-900">
@@ -210,6 +292,7 @@ const Outreach = () => {
                   <Button 
                     className="bg-blue-600 hover:bg-blue-700 flex-1"
                     onClick={handleSendAsText}
+                    disabled={selectedInfluencers.length === 0}
                   >
                     <Send className="h-4 w-4 mr-2" />
                     Send as Text
@@ -217,13 +300,17 @@ const Outreach = () => {
                   <Button 
                     className="bg-purple-600 hover:bg-purple-700 flex-1"
                     onClick={handleSendAsVoice}
+                    disabled={selectedInfluencers.length === 0}
                   >
                     <Volume2 className="h-4 w-4 mr-2" />
                     Send as Voice
                   </Button>
                 </div>
                 <p className="text-xs text-gray-500 text-center">
-                  Choose how to send your message to selected influencers
+                  {selectedInfluencers.length === 0 
+                    ? "Select influencers to send messages" 
+                    : `Ready to send to ${selectedInfluencers.length} selected influencer${selectedInfluencers.length > 1 ? 's' : ''}`
+                  }
                 </p>
               </div>
             </CardContent>
