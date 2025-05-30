@@ -1,0 +1,223 @@
+
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import CampaignLayout from "@/components/layout/CampaignLayout";
+import { Send, Play, Globe, MessageSquare, Clock, CheckCircle, XCircle } from "lucide-react";
+
+const Outreach = () => {
+  const [message, setMessage] = useState("Hi {name},\n\nI hope this message finds you well! I'm reaching out on behalf of our brand regarding a potential collaboration...");
+  const [selectedLanguage, setSelectedLanguage] = useState("english");
+
+  const outreachLog = [
+    {
+      id: 1,
+      influencer: "Sarah Johnson",
+      handle: "@sarahjohnson",
+      status: "sent",
+      sentAt: "2 hours ago",
+      template: "Fashion Collaboration"
+    },
+    {
+      id: 2,
+      influencer: "Mike Chen", 
+      handle: "@mikechen",
+      status: "pending",
+      sentAt: "1 day ago",
+      template: "Tech Partnership"
+    },
+    {
+      id: 3,
+      influencer: "Emma Rodriguez",
+      handle: "@emmarodriguez", 
+      status: "replied",
+      sentAt: "3 hours ago",
+      template: "Lifestyle Brand"
+    },
+  ];
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case "sent": return <Clock className="h-4 w-4 text-yellow-500" />;
+      case "replied": return <CheckCircle className="h-4 w-4 text-green-500" />;
+      case "declined": return <XCircle className="h-4 w-4 text-red-500" />;
+      default: return <Clock className="h-4 w-4 text-gray-500" />;
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "sent": return "bg-yellow-100 text-yellow-800";
+      case "replied": return "bg-green-100 text-green-800";
+      case "declined": return "bg-red-100 text-red-800";
+      default: return "bg-gray-100 text-gray-800";
+    }
+  };
+
+  return (
+    <CampaignLayout>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Message Composer */}
+        <div className="lg:col-span-2 space-y-6">
+          <Card className="bg-white shadow-sm border-gray-200">
+            <CardHeader>
+              <CardTitle className="text-xl font-semibold text-gray-900">
+                Outreach Message
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Template Selector */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Message Template
+                </label>
+                <Select defaultValue="fashion">
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select template" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="fashion">Fashion Collaboration</SelectItem>
+                    <SelectItem value="tech">Tech Partnership</SelectItem>
+                    <SelectItem value="lifestyle">Lifestyle Brand</SelectItem>
+                    <SelectItem value="custom">Custom Message</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Language Toggle */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Language
+                </label>
+                <div className="flex space-x-2">
+                  <Button 
+                    variant={selectedLanguage === "english" ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setSelectedLanguage("english")}
+                  >
+                    <Globe className="h-4 w-4 mr-2" />
+                    English
+                  </Button>
+                  <Button 
+                    variant={selectedLanguage === "spanish" ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setSelectedLanguage("spanish")}
+                  >
+                    <Globe className="h-4 w-4 mr-2" />
+                    Spanish
+                  </Button>
+                </div>
+              </div>
+
+              {/* Message Editor */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Message Content
+                </label>
+                <Textarea 
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  className="min-h-32"
+                  placeholder="Compose your outreach message..."
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Use variables like {"{name}"}, {"{followers}"}, and {"{niche}"} for personalization
+                </p>
+              </div>
+
+              {/* Voice Preview */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="flex items-center space-x-2 mb-2">
+                  <Play className="h-4 w-4 text-blue-600" />
+                  <span className="text-sm font-medium text-blue-900">AI Voice Preview</span>
+                </div>
+                <p className="text-sm text-blue-800">
+                  This message will be personalized for each influencer using AI tone matching
+                </p>
+              </div>
+
+              {/* Send Controls */}
+              <div className="flex space-x-3">
+                <Button className="bg-blue-600 hover:bg-blue-700">
+                  <Send className="h-4 w-4 mr-2" />
+                  Send to Selected
+                </Button>
+                <Button variant="outline">
+                  Schedule Later
+                </Button>
+                <Button variant="outline">
+                  Preview
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Outreach Log */}
+        <div>
+          <Card className="bg-white shadow-sm border-gray-200">
+            <CardHeader>
+              <CardTitle className="text-lg font-semibold text-gray-900">
+                Outreach Log
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {outreachLog.map((entry) => (
+                  <div key={entry.id} className="border border-gray-100 rounded-lg p-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <div>
+                        <h4 className="font-medium text-gray-900 text-sm">{entry.influencer}</h4>
+                        <p className="text-xs text-gray-600">{entry.handle}</p>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        {getStatusIcon(entry.status)}
+                        <Badge className={getStatusColor(entry.status)}>
+                          {entry.status}
+                        </Badge>
+                      </div>
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      <p>{entry.template}</p>
+                      <p>Sent {entry.sentAt}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Quick Stats */}
+          <Card className="bg-white shadow-sm border-gray-200 mt-6">
+            <CardHeader>
+              <CardTitle className="text-lg font-semibold text-gray-900">
+                Quick Stats
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-600">Messages Sent</span>
+                  <span className="font-medium">24</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-600">Reply Rate</span>
+                  <span className="font-medium">67%</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-600">Positive Responses</span>
+                  <span className="font-medium">14</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </CampaignLayout>
+  );
+};
+
+export default Outreach;
