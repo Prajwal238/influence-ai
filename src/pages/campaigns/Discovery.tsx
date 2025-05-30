@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import CampaignLayout from "@/components/layout/CampaignLayout";
+import AgentPanel from "@/components/agents/AgentPanel";
 import { Search, Filter, Plus, Users, Heart, Eye } from "lucide-react";
 
 const Discovery = () => {
@@ -159,6 +160,9 @@ const Discovery = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Agent Panel */}
+      <AgentPanel agentName="Discovery Agent" agentType="discovery" />
     </CampaignLayout>
   );
 };

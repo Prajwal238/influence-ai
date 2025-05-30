@@ -13,7 +13,7 @@ import CampaignPayments from "./pages/campaigns/Payments";
 import CampaignReporting from "./pages/campaigns/Reporting";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
-import NewCampaignModal from "./components/modals/NewCampaignModal";
+import CampaignAgentModal from "./components/modals/CampaignAgentModal";
 
 const queryClient = new QueryClient();
 
@@ -26,7 +26,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/dashboard/new-campaign/*" element={<Dashboard />} />
+          <Route path="/dashboard/campaign-agent" element={<Dashboard />} />
           <Route path="/campaigns/:id/discovery" element={<CampaignDiscovery />} />
           <Route path="/campaigns/:id/outreach" element={<CampaignOutreach />} />
           <Route path="/campaigns/:id/negotiation" element={<CampaignNegotiation />} />
@@ -36,7 +36,7 @@ const App = () => (
           <Route path="/admin" element={<Admin />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
-        <NewCampaignModal />
+        <CampaignAgentModal />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

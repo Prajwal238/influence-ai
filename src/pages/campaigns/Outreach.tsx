@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import CampaignLayout from "@/components/layout/CampaignLayout";
+import AgentPanel from "@/components/agents/AgentPanel";
 import { Send, Play, Globe, MessageSquare, Clock, CheckCircle, XCircle } from "lucide-react";
 
 const Outreach = () => {
@@ -216,6 +217,9 @@ const Outreach = () => {
           </Card>
         </div>
       </div>
+
+      {/* Agent Panel */}
+      <AgentPanel agentName="Outreach Agent" agentType="outreach" />
     </CampaignLayout>
   );
 };

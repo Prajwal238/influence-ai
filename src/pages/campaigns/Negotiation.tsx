@@ -1,5 +1,6 @@
 
 import CampaignLayout from "@/components/layout/CampaignLayout";
+import AgentPanel from "@/components/agents/AgentPanel";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -180,6 +181,9 @@ const Negotiation = () => {
           </Card>
         </div>
       </div>
+
+      {/* Agent Panel */}
+      <AgentPanel agentName="Negotiation Agent" agentType="negotiation" />
     </CampaignLayout>
   );
 };

@@ -62,7 +62,7 @@ const Dashboard = () => {
                 Manage your influencer campaigns with AI-powered automation
               </p>
             </div>
-            <Link to="/dashboard/new-campaign/step-1">
+            <Link to="/dashboard/campaign-agent">
               <Button className="bg-blue-600 hover:bg-blue-700 rounded-2xl shadow-sm">
                 <Plus className="h-4 w-4 mr-2" />
                 New Campaign
