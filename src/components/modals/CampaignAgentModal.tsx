@@ -1,6 +1,6 @@
 
 import { useNavigate, useLocation } from "react-router-dom";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import AgentChat from "@/components/agents/AgentChat";
 
 const CampaignAgentModal = () => {
@@ -15,7 +15,8 @@ const CampaignAgentModal = () => {
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-4xl h-[80vh] p-0 rounded-lg">
+      <DialogContent className="max-w-4xl h-[80vh] p-0 rounded-lg [&>button]:hidden">
+        <DialogTitle className="sr-only">Campaign Agent Chat</DialogTitle>
         <AgentChat 
           agentName="Campaign Agent"
           agentType="campaign"

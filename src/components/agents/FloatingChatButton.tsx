@@ -1,9 +1,9 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import AgentChat from "./AgentChat";
-import { BrainCircuit, X } from "lucide-react";
+import { BrainCircuit } from "lucide-react";
 
 interface FloatingChatButtonProps {
   agentName: string;
@@ -27,7 +27,8 @@ const FloatingChatButton = ({ agentName, agentType }: FloatingChatButtonProps) =
 
       {/* Chat Dialog */}
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="max-w-2xl h-[700px] p-0 rounded-lg animate-scale-in">
+        <DialogContent className="max-w-2xl h-[700px] p-0 rounded-lg animate-scale-in [&>button]:hidden">
+          <DialogTitle className="sr-only">{agentName} Chat</DialogTitle>
           <AgentChat 
             agentName={agentName}
             agentType={agentType}
