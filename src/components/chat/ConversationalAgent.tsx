@@ -19,7 +19,7 @@ export interface ActionButton {
   id: string;
   label: string;
   variant?: 'default' | 'outline' | 'secondary';
-  onClick: () => void;
+  onClick?: () => void; // Made optional since we use onActionClick handler
 }
 
 export interface MessageCard {
