@@ -7,11 +7,12 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import CampaignLayout from "@/components/layout/CampaignLayout";
 import AgentPanel from "@/components/agents/AgentPanel";
-import { Send, Play, Globe, MessageSquare, Clock, CheckCircle, XCircle } from "lucide-react";
+import { Send, Play, Globe, MessageSquare, Clock, CheckCircle, XCircle, Instagram, Mail, Phone } from "lucide-react";
 
 const Outreach = () => {
   const [message, setMessage] = useState("Hi {name},\n\nI hope this message finds you well! I'm reaching out on behalf of our brand regarding a potential collaboration...");
   const [selectedLanguage, setSelectedLanguage] = useState("english");
+  const [selectedPlatform, setSelectedPlatform] = useState("instagram");
 
   const outreachLog = [
     {
@@ -20,7 +21,8 @@ const Outreach = () => {
       handle: "@sarahjohnson",
       status: "sent",
       sentAt: "2 hours ago",
-      template: "Fashion Collaboration"
+      template: "Fashion Collaboration",
+      platform: "instagram"
     },
     {
       id: 2,
@@ -28,7 +30,8 @@ const Outreach = () => {
       handle: "@mikechen",
       status: "pending",
       sentAt: "1 day ago",
-      template: "Tech Partnership"
+      template: "Tech Partnership",
+      platform: "email"
     },
     {
       id: 3,
@@ -36,7 +39,8 @@ const Outreach = () => {
       handle: "@emmarodriguez", 
       status: "replied",
       sentAt: "3 hours ago",
-      template: "Lifestyle Brand"
+      template: "Lifestyle Brand",
+      platform: "whatsapp"
     },
   ];
 
@@ -58,6 +62,24 @@ const Outreach = () => {
     }
   };
 
+  const getPlatformIcon = (platform: string) => {
+    switch (platform) {
+      case "instagram": return <Instagram className="h-3 w-3" />;
+      case "email": return <Mail className="h-3 w-3" />;
+      case "whatsapp": return <Phone className="h-3 w-3" />;
+      default: return <MessageSquare className="h-3 w-3" />;
+    }
+  };
+
+  const getPlatformColor = (platform: string) => {
+    switch (platform) {
+      case "instagram": return "bg-gradient-to-r from-purple-500 to-pink-500 text-white";
+      case "email": return "bg-blue-500 text-white";
+      case "whatsapp": return "bg-green-500 text-white";
+      default: return "bg-gray-500 text-white";
+    }
+  };
+
   return (
     <CampaignLayout>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -70,6 +92,38 @@ const Outreach = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              {/* Platform Selector */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Platform
+                </label>
+                <Select value={selectedPlatform} onValueChange={setSelectedPlatform}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select platform" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="instagram">
+                      <div className="flex items-center space-x-2">
+                        <Instagram className="h-4 w-4" />
+                        <span>Instagram</span>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="email">
+                      <div className="flex items-center space-x-2">
+                        <Mail className="h-4 w-4" />
+                        <span>Email</span>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="whatsapp">
+                      <div className="flex items-center space-x-2">
+                        <Phone className="h-4 w-4" />
+                        <span>WhatsApp</span>
+                      </div>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
               {/* Template Selector */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -181,9 +235,15 @@ const Outreach = () => {
                         </Badge>
                       </div>
                     </div>
-                    <div className="text-xs text-gray-500">
-                      <p>{entry.template}</p>
-                      <p>Sent {entry.sentAt}</p>
+                    <div className="flex items-center justify-between">
+                      <div className="text-xs text-gray-500">
+                        <p>{entry.template}</p>
+                        <p>Sent {entry.sentAt}</p>
+                      </div>
+                      <div className={`inline-flex items-center space-x-1 px-2 py-1 rounded-full text-xs font-medium ${getPlatformColor(entry.platform)}`}>
+                        {getPlatformIcon(entry.platform)}
+                        <span className="capitalize">{entry.platform}</span>
+                      </div>
                     </div>
                   </div>
                 ))}

@@ -303,16 +303,23 @@ const AgentChat = ({ agentName, agentType, onClose, className }: AgentChatProps)
   return (
     <Card className={`h-full flex flex-col ${className}`}>
       <CardHeader className="border-b border-gray-100 pb-4">
-        <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-            <Bot className="h-5 w-5 text-blue-600" />
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+              <Bot className="h-5 w-5 text-blue-600" />
+            </div>
+            <div>
+              <CardTitle className="text-lg font-semibold text-gray-900">
+                {agentName}
+              </CardTitle>
+              <p className="text-sm text-gray-600">AI Assistant</p>
+            </div>
           </div>
-          <div>
-            <CardTitle className="text-lg font-semibold text-gray-900">
-              {agentName}
-            </CardTitle>
-            <p className="text-sm text-gray-600">AI Assistant</p>
-          </div>
+          {onClose && (
+            <Button variant="ghost" size="sm" onClick={onClose}>
+              <X className="h-4 w-4" />
+            </Button>
+          )}
         </div>
       </CardHeader>
       
