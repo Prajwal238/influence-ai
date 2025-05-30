@@ -1,44 +1,122 @@
 
 import { Link, useParams, useLocation } from "react-router-dom";
-import { Search, MessageSquare, Handshake, FileText, CreditCard, BarChart3 } from "lucide-react";
+import { Search, MessageSquare, Handshake, FileText, CreditCard, BarChart3, CheckCircle } from "lucide-react";
 
-const PipelineBar = () => {
+type StageKey = 
+  | 'discovery' 
+  | 'outreach' 
+  | 'negotiation' 
+  | 'contracts' 
+  | 'payments' 
+  | 'reporting';
+
+interface PipelineBarProps {
+  stages?: { key: StageKey; label: string }[];
+  currentStage?: StageKey;
+  stageStatus?: Record<StageKey, 'pending' | 'active' | 'complete'>;
+}
+
+const PipelineBar = ({ stages, currentStage, stageStatus }: PipelineBarProps) => {
   const { id } = useParams();
   const location = useLocation();
 
-  const stages = [
-    { name: "Discovery", path: `/campaigns/${id}/discovery`, icon: Search },
-    { name: "Outreach", path: `/campaigns/${id}/outreach`, icon: MessageSquare },
-    { name: "Negotiation", path: `/campaigns/${id}/negotiation`, icon: Handshake },
-    { name: "Contracts", path: `/campaigns/${id}/contracts`, icon: FileText },
-    { name: "Payments", path: `/campaigns/${id}/payments`, icon: CreditCard },
-    { name: "Reporting", path: `/campaigns/${id}/reporting`, icon: BarChart3 },
+  // Default stages if not provided via props
+  const defaultStages = [
+    { key: "discovery" as StageKey, name: "Discovery", path: `/campaigns/${id}/discovery`, icon: Search },
+    { key: "outreach" as StageKey, name: "Outreach", path: `/campaigns/${id}/outreach`, icon: MessageSquare },
+    { key: "negotiation" as StageKey, name: "Negotiation", path: `/campaigns/${id}/negotiation`, icon: Handshake },
+    { key: "contracts" as StageKey, name: "Contracts", path: `/campaigns/${id}/contracts`, icon: FileText },
+    { key: "payments" as StageKey, name: "Payments", path: `/campaigns/${id}/payments`, icon: CreditCard },
+    { key: "reporting" as StageKey, name: "Reporting", path: `/campaigns/${id}/reporting`, icon: BarChart3 },
   ];
 
+  // Determine current stage from URL if not provided via props
+  const getCurrentStageFromUrl = (): StageKey => {
+    if (location.pathname.includes('/discovery')) return 'discovery';
+    if (location.pathname.includes('/outreach')) return 'outreach';
+    if (location.pathname.includes('/negotiation')) return 'negotiation';
+    if (location.pathname.includes('/contracts')) return 'contracts';
+    if (location.pathname.includes('/payments')) return 'payments';
+    if (location.pathname.includes('/reporting')) return 'reporting';
+    return 'discovery';
+  };
+
+  const activeStage = currentStage || getCurrentStageFromUrl();
+
+  // Get stage status
+  const getStageStatus = (stageKey: StageKey): 'pending' | 'active' | 'complete' => {
+    if (stageStatus && stageStatus[stageKey]) {
+      return stageStatus[stageKey];
+    }
+    
+    // Fallback to URL-based logic for backward compatibility
+    const isActive = location.pathname.includes(`/${stageKey}`);
+    if (isActive) return 'active';
+    
+    // Mock completion status for demo
+    const stageIndex = defaultStages.findIndex(s => s.key === stageKey);
+    const activeIndex = defaultStages.findIndex(s => s.key === activeStage);
+    return stageIndex < activeIndex ? 'complete' : 'pending';
+  };
+
+  const getStageStyles = (stageKey: StageKey) => {
+    const status = getStageStatus(stageKey);
+    
+    switch (status) {
+      case 'complete':
+        return {
+          container: "bg-green-100 text-green-500",
+          icon: "text-green-500",
+          label: "text-green-500"
+        };
+      case 'active':
+        return {
+          container: "bg-blue-600 text-white",
+          icon: "text-white",
+          label: "text-white"
+        };
+      default:
+        return {
+          container: "text-gray-400 hover:bg-gray-200",
+          icon: "text-gray-400",
+          label: "text-gray-400"
+        };
+    }
+  };
+
   return (
-    <div className="bg-gray-50 border-b border-gray-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center space-x-8 py-4">
-          {stages.map((stage, index) => {
+    <div className="bg-white border-b border-gray-200 shadow-sm">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="flex items-center justify-between space-x-4 py-4">
+          {defaultStages.map((stage, index) => {
             const Icon = stage.icon;
-            const isActive = location.pathname.includes(stage.path);
-            const isCompleted = index < 2; // Mock completion status
+            const styles = getStageStyles(stage.key);
+            const status = getStageStatus(stage.key);
+            const isComplete = status === 'complete';
 
             return (
-              <Link
-                key={stage.name}
-                to={stage.path}
-                className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-all ${
-                  isActive
-                    ? "bg-blue-600 text-white"
-                    : isCompleted
-                    ? "bg-green-100 text-green-800 hover:bg-green-200"
-                    : "text-gray-600 hover:bg-gray-200"
-                }`}
-              >
-                <Icon className="h-4 w-4" />
-                <span className="text-sm font-medium">{stage.name}</span>
-              </Link>
+              <div key={stage.key} className="flex items-center space-x-4 flex-1">
+                <Link
+                  to={stage.path}
+                  className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-all ${styles.container}`}
+                >
+                  <Icon className={`h-4 w-4 ${styles.icon}`} />
+                  <span className={`text-sm font-medium ${styles.label}`}>
+                    {stage.name}
+                  </span>
+                  {isComplete && (
+                    <CheckCircle className="h-4 w-4 text-green-500" />
+                  )}
+                </Link>
+                
+                {/* Connector line */}
+                {index < defaultStages.length - 1 && (
+                  <div className={`flex-1 h-0.5 ${
+                    isComplete ? 'bg-green-500' : 
+                    status === 'active' ? 'bg-[#0071E3]' : 'bg-gray-200'
+                  }`} />
+                )}
+              </div>
             );
           })}
         </div>
