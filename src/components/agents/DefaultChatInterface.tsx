@@ -3,6 +3,7 @@ import { useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Send, Bot, User, X, Loader2 } from "lucide-react";
 import { Message, AgentChatProps } from './types';
 
@@ -63,65 +64,67 @@ const DefaultChatInterface = ({
       
       <CardContent className="flex-1 flex flex-col p-0">
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          {messages.map((message) => (
-            <div
-              key={message.id}
-              className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
-            >
+        <ScrollArea className="flex-1 p-4">
+          <div className="space-y-4">
+            {messages.map((message) => (
               <div
-                className={`max-w-[80%] rounded-lg p-3 ${
-                  message.type === 'user'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-900'
-                }`}
+                key={message.id}
+                className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
               >
-                <div className="flex items-start space-x-2">
-                  {message.type === 'agent' && (
-                    <Bot className="h-4 w-4 mt-0.5 text-blue-600" />
-                  )}
-                  {message.type === 'user' && (
-                    <User className="h-4 w-4 mt-0.5 text-white" />
-                  )}
-                  <div className="flex-1">
-                    <p className="text-sm whitespace-pre-line">{message.content}</p>
-                    <p className={`text-xs mt-1 ${
-                      message.type === 'user' ? 'text-blue-100' : 'text-gray-500'
-                    }`}>
-                      {message.timestamp.toLocaleTimeString([], { 
-                        hour: '2-digit', 
-                        minute: '2-digit' 
-                      })}
-                    </p>
+                <div
+                  className={`max-w-[80%] rounded-lg p-3 ${
+                    message.type === 'user'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-100 text-gray-900'
+                  }`}
+                >
+                  <div className="flex items-start space-x-2">
+                    {message.type === 'agent' && (
+                      <Bot className="h-4 w-4 mt-0.5 text-blue-600" />
+                    )}
+                    {message.type === 'user' && (
+                      <User className="h-4 w-4 mt-0.5 text-white" />
+                    )}
+                    <div className="flex-1">
+                      <p className="text-sm whitespace-pre-line">{message.content}</p>
+                      <p className={`text-xs mt-1 ${
+                        message.type === 'user' ? 'text-blue-100' : 'text-gray-500'
+                      }`}>
+                        {message.timestamp.toLocaleTimeString([], { 
+                          hour: '2-digit', 
+                          minute: '2-digit' 
+                        })}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
-          
-          {(isTyping || isApiLoading) && (
-            <div className="flex justify-start">
-              <div className="bg-gray-100 rounded-lg p-3 max-w-[80%]">
-                <div className="flex items-center space-x-2">
-                  <Bot className="h-4 w-4 text-blue-600" />
-                  {isApiLoading ? (
-                    <div className="flex items-center space-x-2">
-                      <Loader2 className="h-4 w-4 animate-spin text-blue-600" />
-                      <span className="text-sm text-gray-600">Processing campaign...</span>
-                    </div>
-                  ) : (
-                    <div className="flex space-x-1">
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                    </div>
-                  )}
+            ))}
+            
+            {(isTyping || isApiLoading) && (
+              <div className="flex justify-start">
+                <div className="bg-gray-100 rounded-lg p-3 max-w-[80%]">
+                  <div className="flex items-center space-x-2">
+                    <Bot className="h-4 w-4 text-blue-600" />
+                    {isApiLoading ? (
+                      <div className="flex items-center space-x-2">
+                        <Loader2 className="h-4 w-4 animate-spin text-blue-600" />
+                        <span className="text-sm text-gray-600">Processing campaign...</span>
+                      </div>
+                    ) : (
+                      <div className="flex space-x-1">
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
-          <div ref={messagesEndRef} />
-        </div>
+            )}
+            <div ref={messagesEndRef} />
+          </div>
+        </ScrollArea>
 
         {/* Input */}
         <div className="border-t border-gray-100 p-4">

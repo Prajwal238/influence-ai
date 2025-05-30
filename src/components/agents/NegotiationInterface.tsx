@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Send, Bot, X, MessageSquare, Mail, Phone, FileText } from "lucide-react";
 import { AgentChatProps } from './types';
 
@@ -87,52 +88,60 @@ const NegotiationInterface = ({
           </TabsList>
 
           <div className="flex-1 overflow-hidden">
-            <TabsContent value="dms" className="h-full overflow-y-auto space-y-3">
-              <div className="space-y-3">
-                <div className="bg-gray-100 rounded-lg p-3">
-                  <p className="text-sm text-gray-900">
-                    "Based on the negotiation patterns, I recommend starting with a higher rate and gradually adjusting based on their response."
+            <TabsContent value="dms" className="h-full">
+              <ScrollArea className="h-full">
+                <div className="space-y-3">
+                  <div className="bg-gray-100 rounded-lg p-3">
+                    <p className="text-sm text-gray-900">
+                      "Based on the negotiation patterns, I recommend starting with a higher rate and gradually adjusting based on their response."
+                    </p>
+                    <p className="text-xs text-gray-500 mt-2">2 minutes ago</p>
+                  </div>
+                  <div className="bg-blue-50 rounded-lg p-3">
+                    <p className="text-sm text-gray-900">
+                      "The creator seems interested but price-sensitive. Consider offering package deals or additional perks."
+                    </p>
+                    <p className="text-xs text-gray-500 mt-2">5 minutes ago</p>
+                  </div>
+                </div>
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="emails" className="h-full">
+              <ScrollArea className="h-full">
+                <div className="text-center py-8">
+                  <Mail className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                  <p className="text-sm text-gray-600">
+                    No email conversations yet
                   </p>
-                  <p className="text-xs text-gray-500 mt-2">2 minutes ago</p>
                 </div>
-                <div className="bg-blue-50 rounded-lg p-3">
-                  <p className="text-sm text-gray-900">
-                    "The creator seems interested but price-sensitive. Consider offering package deals or additional perks."
+              </ScrollArea>
+            </TabsContent>
+
+            <TabsContent value="calls" className="h-full">
+              <ScrollArea className="h-full">
+                <div className="text-center py-8">
+                  <Phone className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                  <p className="text-sm text-gray-600">
+                    No calls scheduled
                   </p>
-                  <p className="text-xs text-gray-500 mt-2">5 minutes ago</p>
                 </div>
-              </div>
+              </ScrollArea>
             </TabsContent>
 
-            <TabsContent value="emails" className="h-full overflow-y-auto">
-              <div className="text-center py-8">
-                <Mail className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                <p className="text-sm text-gray-600">
-                  No email conversations yet
-                </p>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="calls" className="h-full overflow-y-auto">
-              <div className="text-center py-8">
-                <Phone className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                <p className="text-sm text-gray-600">
-                  No calls scheduled
-                </p>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="tasks" className="h-full overflow-y-auto">
-              <div className="space-y-2">
-                <div className="p-3 bg-gray-100 rounded-lg">
-                  <p className="text-sm font-medium text-gray-900">Follow up with @creator_handle</p>
-                  <p className="text-xs text-gray-600 mt-1">Due in 2 hours</p>
+            <TabsContent value="tasks" className="h-full">
+              <ScrollArea className="h-full">
+                <div className="space-y-2">
+                  <div className="p-3 bg-gray-100 rounded-lg">
+                    <p className="text-sm font-medium text-gray-900">Follow up with @creator_handle</p>
+                    <p className="text-xs text-gray-600 mt-1">Due in 2 hours</p>
+                  </div>
+                  <div className="p-3 bg-gray-100 rounded-lg">
+                    <p className="text-sm font-medium text-gray-900">Send contract to 3 creators</p>
+                    <p className="text-xs text-gray-600 mt-1">Due tomorrow</p>
+                  </div>
                 </div>
-                <div className="p-3 bg-gray-100 rounded-lg">
-                  <p className="text-sm font-medium text-gray-900">Send contract to 3 creators</p>
-                  <p className="text-xs text-gray-600 mt-1">Due tomorrow</p>
-                </div>
-              </div>
+              </ScrollArea>
             </TabsContent>
           </div>
         </Tabs>
