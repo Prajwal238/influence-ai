@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import CampaignLayout from "@/components/layout/CampaignLayout";
 import AgentPanel from "@/components/agents/AgentPanel";
-import { Send, Play, Globe, MessageSquare, Clock, CheckCircle, XCircle, Instagram, Mail, Phone } from "lucide-react";
+import { Send, Play, Globe, MessageSquare, Clock, CheckCircle, XCircle, Instagram, Mail, Phone, Volume2 } from "lucide-react";
 
 const Outreach = () => {
   const [message, setMessage] = useState("Hi {name},\n\nI hope this message finds you well! I'm reaching out on behalf of our brand regarding a potential collaboration...");
@@ -78,6 +78,16 @@ const Outreach = () => {
       case "whatsapp": return "bg-green-500 text-white";
       default: return "bg-gray-500 text-white";
     }
+  };
+
+  const handleSendAsText = () => {
+    console.log("Sending message as text:", message);
+    // Add text sending logic here
+  };
+
+  const handleSendAsVoice = () => {
+    console.log("Sending message as voice:", message);
+    // Add voice sending logic here
   };
 
   return (
@@ -194,18 +204,27 @@ const Outreach = () => {
                 </p>
               </div>
 
-              {/* Send Controls */}
-              <div className="flex space-x-3">
-                <Button className="bg-blue-600 hover:bg-blue-700">
-                  <Send className="h-4 w-4 mr-2" />
-                  Send to Selected
-                </Button>
-                <Button variant="outline">
-                  Schedule Later
-                </Button>
-                <Button variant="outline">
-                  Preview
-                </Button>
+              {/* Send Options */}
+              <div className="space-y-3">
+                <div className="flex space-x-3">
+                  <Button 
+                    className="bg-blue-600 hover:bg-blue-700 flex-1"
+                    onClick={handleSendAsText}
+                  >
+                    <Send className="h-4 w-4 mr-2" />
+                    Send as Text
+                  </Button>
+                  <Button 
+                    className="bg-purple-600 hover:bg-purple-700 flex-1"
+                    onClick={handleSendAsVoice}
+                  >
+                    <Volume2 className="h-4 w-4 mr-2" />
+                    Send as Voice
+                  </Button>
+                </div>
+                <p className="text-xs text-gray-500 text-center">
+                  Choose how to send your message to selected influencers
+                </p>
               </div>
             </CardContent>
           </Card>
