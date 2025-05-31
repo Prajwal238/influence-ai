@@ -22,15 +22,23 @@ const CampaignCard = ({ campaign }: CampaignCardProps) => {
     }
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
+  const formatTimeAgo = (dateString: string) => {
+    const lastModified = new Date(dateString);
     const now = new Date();
-    const diffTime = Math.abs(now.getTime() - date.getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
-    if (diffDays === 1) return "1 day ago";
-    if (diffDays < 7) return `${diffDays} days ago`;
-    return date.toLocaleDateString();
+    const diffTime = Math.abs(now.getTime() - lastModified.getTime());
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
+    const diffMinutes = Math.floor(diffTime / (1000 * 60));
+
+    if (diffDays > 0) {
+      return diffDays === 1 ? "1 day ago" : `${diffDays} days ago`;
+    } else if (diffHours > 0) {
+      return diffHours === 1 ? "1 hour ago" : `${diffHours} hours ago`;
+    } else if (diffMinutes > 0) {
+      return diffMinutes === 1 ? "1 minute ago" : `${diffMinutes} minutes ago`;
+    } else {
+      return "Just now";
+    }
   };
 
   // For now, using hardcoded values as requested
@@ -49,7 +57,7 @@ const CampaignCard = ({ campaign }: CampaignCardProps) => {
         <div className="flex items-center space-x-4 text-sm text-gray-600">
           <span>{progress}% Complete</span>
           <span>•</span>
-          <span>Updated {formatDate(campaign.lastModifiedAt)}</span>
+          <span>Updated {formatTimeAgo(campaign.lastModifiedAt)}</span>
           <span>•</span>
           <span>Budget: ${campaign.totalBudget.toLocaleString()}</span>
         </div>
