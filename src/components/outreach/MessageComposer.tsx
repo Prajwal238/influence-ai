@@ -58,7 +58,25 @@ const MessageComposer = ({
     setIsGenerating(true);
     // Simulate AI generation
     setTimeout(() => {
-      onMessageChange(`Hi {name},
+      if (sendAsVoice) {
+        // Generate voice-optimized content
+        setVoiceMessage(`Hi {name}!
+
+I hope you're doing amazing! I'm reaching out about an exciting collaboration opportunity with our Summer Fashion 2024 campaign.
+
+We've been following your incredible content in the ${selectedPlatform === 'instagram' ? 'fashion' : 'lifestyle'} space, and we absolutely love your authentic style and the way you connect with your audience.
+
+Our campaign is all about sustainable summer fashion, and we believe your voice and values align perfectly with what we're trying to achieve.
+
+Would you be interested in chatting about a potential partnership? We'd love to share more details about the collaboration and of course, discuss compensation that reflects your amazing work.
+
+Looking forward to hearing from you soon!
+
+Best regards,
+The Campaign Team`);
+      } else {
+        // Generate text-optimized content
+        onMessageChange(`Hi {name},
 
 I hope this message finds you well! I'm reaching out on behalf of our Summer Fashion 2024 campaign. We've been following your amazing content in the ${selectedPlatform === 'instagram' ? 'fashion' : 'lifestyle'} space and would love to collaborate with you.
 
@@ -70,6 +88,7 @@ Looking forward to hearing from you!
 
 Best regards,
 Campaign Team`);
+      }
       setIsGenerating(false);
     }, 2000);
   };
@@ -84,6 +103,17 @@ Campaign Team`);
 
   const handleSend = async () => {
     if (selectedInfluencersCount === 0) return;
+    
+    // Validate content based on message type
+    const contentToValidate = sendAsVoice ? voiceMessage : message;
+    if (!contentToValidate.trim()) {
+      toast({
+        title: "Missing Content",
+        description: `Please add ${sendAsVoice ? 'voice' : 'text'} message content before sending.`,
+        variant: "destructive"
+      });
+      return;
+    }
     
     setIsSending(true);
     
@@ -101,7 +131,7 @@ Campaign Team`);
               setIsSending(false);
               toast({
                 title: "Outreach Complete!",
-                description: `Successfully sent ${selectedInfluencersCount} personalized messages.`,
+                description: `Successfully sent ${selectedInfluencersCount} personalized ${sendAsVoice ? 'voice' : 'text'} messages.`,
               });
             }, 1000);
             return 100;
@@ -115,7 +145,7 @@ Campaign Team`);
         setIsSending(false);
         toast({
           title: "Message Sent!",
-          description: "Your outreach message has been sent successfully.",
+          description: `Your ${sendAsVoice ? 'voice' : 'text'} outreach message has been sent successfully.`,
         });
       }, 1000);
     }
@@ -128,7 +158,7 @@ Campaign Team`);
     }
   };
 
-  const isFormValid = message.trim() && selectedInfluencersCount > 0;
+  const isFormValid = (sendAsVoice ? voiceMessage.trim() : message.trim()) && selectedInfluencersCount > 0;
 
   return (
     <div className="space-y-6">
@@ -171,6 +201,9 @@ Campaign Team`);
               onVoiceMessageChange={setVoiceMessage}
               voiceLanguage={voiceLanguage}
               onVoiceLanguageChange={setVoiceLanguage}
+              selectedPlatform={selectedPlatform}
+              onGenerateWithAI={handleGenerateWithAI}
+              isGenerating={isGenerating}
             />
           )}
 
@@ -187,7 +220,7 @@ Campaign Team`);
                 <span className="text-sm font-medium text-purple-900">AI Bulk Personalization</span>
               </div>
               <p className="text-sm text-purple-800">
-                Each message will be automatically personalized for individual influencers based on their profile, niche, and engagement style.
+                Each {sendAsVoice ? 'voice' : 'text'} message will be automatically personalized for individual influencers based on their profile, niche, and engagement style.
               </p>
             </div>
           )}
