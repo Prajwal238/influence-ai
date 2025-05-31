@@ -58,29 +58,31 @@ export const useInfluencerData = () => {
         before: prev.find(inf => inf.id === influencerId)?.campaignName,
         after: updated.find(inf => inf.id === influencerId)?.campaignName
       });
+
+      // If adding to campaign, also add to campaign influencers list
+      // We do this inside the same state update to ensure we have the latest data
+      if (campaignName) {
+        const influencerToAdd = prev.find(inf => inf.id === influencerId);
+        console.log('Found influencer to add to campaign list:', influencerToAdd?.name);
+        
+        if (influencerToAdd) {
+          setCampaignInfluencers(prevCampaign => {
+            // Check if already exists to avoid duplicates
+            const exists = prevCampaign.some(inf => inf.id === influencerId);
+            if (exists) {
+              console.log('Influencer already exists in campaign list');
+              return prevCampaign;
+            }
+            
+            const newCampaignInfluencer = { ...influencerToAdd, campaignName };
+            console.log('Adding to campaign influencers list:', newCampaignInfluencer.name);
+            return [...prevCampaign, newCampaignInfluencer];
+          });
+        }
+      }
+
       return updated;
     });
-
-    // If adding to campaign, also add to campaign influencers list
-    if (campaignName) {
-      const influencerToAdd = allInfluencers.find(inf => inf.id === influencerId);
-      console.log('Found influencer to add to campaign list:', influencerToAdd?.name);
-      
-      if (influencerToAdd) {
-        setCampaignInfluencers(prev => {
-          // Check if already exists to avoid duplicates
-          const exists = prev.some(inf => inf.id === influencerId);
-          if (exists) {
-            console.log('Influencer already exists in campaign list');
-            return prev;
-          }
-          
-          const newCampaignInfluencer = { ...influencerToAdd, campaignName };
-          console.log('Adding to campaign influencers list:', newCampaignInfluencer.name);
-          return [...prev, newCampaignInfluencer];
-        });
-      }
-    }
   };
 
   console.log('Hook state:', {
