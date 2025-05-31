@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Message, AgentChatProps } from './types';
@@ -111,11 +110,6 @@ const AgentChat = ({ agentName, agentType, onClose, className }: AgentChatProps)
         };
         
         setMessages(prev => [...prev, agentResponse]);
-        
-        toast({
-          title: "Campaign Processed",
-          description: "Your campaign request has been processed successfully!",
-        });
         
       } catch (error) {
         const errorResponse: Message = {
