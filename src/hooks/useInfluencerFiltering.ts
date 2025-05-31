@@ -53,7 +53,26 @@ export const useInfluencerFiltering = ({
   activeFilters
 }: UseInfluencerFilteringProps) => {
   const filteredInfluencers = useMemo(() => {
+    console.log('Filtering influencers:', {
+      totalInfluencers: influencers.length,
+      showCampaignInfluencers,
+      searchQuery,
+      activeFilters
+    });
+
     return influencers.filter((influencer) => {
+      // Campaign toggle filter - this was the main issue
+      if (showCampaignInfluencers) {
+        // When toggle is ON, show only campaign influencers (those with campaignName)
+        if (!influencer.campaignName) {
+          console.log('Filtering out non-campaign influencer:', influencer.name);
+          return false;
+        }
+      } else {
+        // When toggle is OFF, show all influencers (both campaign and non-campaign)
+        // No filtering needed here as we want to show everything
+      }
+
       // Search filter
       if (searchQuery) {
         const query = searchQuery.toLowerCase();
@@ -63,11 +82,6 @@ export const useInfluencerFiltering = ({
           influencer.platforms.some(platform => platform.handle.toLowerCase().includes(query));
         
         if (!matchesSearch) return false;
-      }
-
-      // Campaign toggle filter
-      if (showCampaignInfluencers && !influencer.campaignName) {
-        return false;
       }
 
       // Active filters
@@ -95,6 +109,12 @@ export const useInfluencerFiltering = ({
       return true;
     });
   }, [influencers, searchQuery, showCampaignInfluencers, activeFilters]);
+
+  console.log('Filtered results:', {
+    originalCount: influencers.length,
+    filteredCount: filteredInfluencers.length,
+    showCampaignInfluencers
+  });
 
   return filteredInfluencers;
 };
