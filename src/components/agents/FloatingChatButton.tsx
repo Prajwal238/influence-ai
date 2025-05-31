@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import AgentChat from "./AgentChat";
+import ChatOrchestrator from "./ChatOrchestrator";
 import { BrainCircuit } from "lucide-react";
 
 interface FloatingChatButtonProps {
@@ -29,7 +29,7 @@ const FloatingChatButton = ({ agentName, agentType }: FloatingChatButtonProps) =
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="max-w-2xl h-[700px] p-0 rounded-lg animate-scale-in [&>button]:hidden">
           <DialogTitle className="sr-only">{agentName} Chat</DialogTitle>
-          <AgentChat 
+          <ChatOrchestrator 
             agentName={agentName}
             agentType={agentType}
             onClose={() => setIsOpen(false)}
