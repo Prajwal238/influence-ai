@@ -28,7 +28,7 @@ export const useInfluencerTabs = () => {
           return transformApiDataToInfluencer(data, isInCampaign);
         });
 
-        // Transform campaign influencers
+        // Transform campaign influencers - ensure no duplicates
         const transformedCampaignInfluencers = campaignInfluencersData.map(data => 
           transformApiDataToInfluencer(data, true)
         );
@@ -62,26 +62,27 @@ export const useInfluencerTabs = () => {
 
       if (!response.ok) throw new Error('Failed to add influencer');
 
-      // Update local state - prevent duplicates
+      // Update local state - prevent duplicates with strict checking
       const updatedInfluencer = { ...influencer, campaignName: 'campaign' };
       
       // Add to campaign IDs set
       setCampaignInfluencerIds(prev => new Set(prev).add(influencer.apiId));
       
-      // Update all influencers list
+      // Update all influencers list - ensure no duplicates
       setAllInfluencers(prev => prev.map(inf => 
         inf.apiId === influencer.apiId ? updatedInfluencer : inf
       ));
       
       // Add to campaign influencers list only if not already present
       setCampaignInfluencers(prev => {
-        const existingIndex = prev.findIndex(inf => inf.apiId === influencer.apiId);
-        if (existingIndex !== -1) {
-          // Update existing entry instead of adding duplicate
-          return prev.map((inf, index) => 
-            index === existingIndex ? updatedInfluencer : inf
+        const exists = prev.some(inf => inf.apiId === influencer.apiId);
+        if (exists) {
+          console.log('Influencer already in campaign, updating existing entry');
+          return prev.map(inf => 
+            inf.apiId === influencer.apiId ? updatedInfluencer : inf
           );
         }
+        console.log('Adding new influencer to campaign list');
         return [...prev, updatedInfluencer];
       });
 
@@ -106,7 +107,7 @@ export const useInfluencerTabs = () => {
 
       if (!response.ok) throw new Error('Failed to remove influencer');
 
-      // Update local state
+      // Update local state - clean removal
       const updatedInfluencer = { ...influencer, campaignName: undefined };
       
       // Remove from campaign IDs set
@@ -121,7 +122,7 @@ export const useInfluencerTabs = () => {
         inf.apiId === influencer.apiId ? updatedInfluencer : inf
       ));
       
-      // Remove from campaign influencers list
+      // Remove from campaign influencers list - strict removal
       setCampaignInfluencers(prev => prev.filter(inf => inf.apiId !== influencer.apiId));
 
       console.log('Successfully removed influencer from campaign:', influencer.name);

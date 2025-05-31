@@ -46,28 +46,34 @@ export const useInfluencerFiltering = ({
     console.log('Using base influencers:', baseInfluencers.length);
 
     return baseInfluencers.filter((influencer) => {
-      // Search filter - make search more precise
+      // Search filter - make search much more precise
       if (searchQuery) {
         const query = searchQuery.toLowerCase().trim();
         
-        // Only match if the search term appears at the beginning of words or as complete words
-        const matchesName = influencer.name.toLowerCase().includes(query);
+        // More precise name matching - check if query matches from word boundaries
+        const nameWords = influencer.name.toLowerCase().split(/\s+/);
+        const matchesName = nameWords.some(word => word.startsWith(query)) || 
+                           influencer.name.toLowerCase() === query;
         
+        // Precise niche matching - only match at word boundaries
         const matchesNiches = influencer.niches.some(niche => {
           const nicheWords = niche.toLowerCase().split(/\s+/);
-          return nicheWords.some(word => word.startsWith(query)) || niche.toLowerCase().includes(query);
+          return nicheWords.some(word => word.startsWith(query)) || 
+                 niche.toLowerCase() === query;
         });
         
+        // Precise platform handle matching
         const matchesPlatforms = influencer.platforms.some(platform => {
           const handle = platform.handle.toLowerCase();
-          // For handles, check if it starts with query or contains it as a word
-          return handle.startsWith(query) || handle.includes(query);
+          // Only match if handle starts with query or exact match
+          return handle.startsWith(query) || handle === query;
         });
         
-        console.log(`Checking influencer "${influencer.name}" against query "${query}":`, {
+        console.log(`Precise search check for "${influencer.name}" against query "${query}":`, {
           matchesName,
           matchesNiches,
           matchesPlatforms,
+          nameWords,
           niches: influencer.niches,
           handles: influencer.platforms.map(p => p.handle)
         });
@@ -105,7 +111,8 @@ export const useInfluencerFiltering = ({
   console.log('Filtered results:', {
     baseCount: showCampaignInfluencers ? campaignInfluencers.length : influencers.length,
     filteredCount: filteredInfluencers.length,
-    showCampaignInfluencers
+    showCampaignInfluencers,
+    searchQuery: searchQuery || 'none'
   });
 
   return filteredInfluencers;
