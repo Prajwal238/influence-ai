@@ -1,18 +1,12 @@
 
-import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Users } from "lucide-react";
 import BulkMessagingProgress from "./BulkMessagingProgress";
-import TemplateSelector from "./TemplateSelector";
-import MessageTypeToggle from "./MessageTypeToggle";
-import TextMessageEditor from "./TextMessageEditor";
-import VoiceMessageEditor from "./VoiceMessageEditor";
-import LanguageSelector from "./LanguageSelector";
 import SendButton from "./SendButton";
 import AIPersonalizationInfo from "./AIPersonalizationInfo";
+import MessageForm from "./MessageForm";
 import { useBulkMessaging } from "@/hooks/useBulkMessaging";
-import { useToast } from "@/hooks/use-toast";
 
 interface MessageComposerProps {
   message: string;
@@ -37,18 +31,15 @@ const MessageComposer = ({
   onSendAsText,
   onSendAsVoice
 }: MessageComposerProps) => {
-  const [selectedTemplate, setSelectedTemplate] = useState("first-reach");
-  const [voiceMessage, setVoiceMessage] = useState("");
-  const [voiceLanguage, setVoiceLanguage] = useState("english");
-  const [sendAsVoice, setSendAsVoice] = useState(false);
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [selectedTargetLanguages, setSelectedTargetLanguages] = useState<string[]>(["english"]);
-  
-  const { toast } = useToast();
+  const messageForm = MessageForm({
+    message,
+    onMessageChange,
+    selectedPlatform
+  });
   
   const bulkMessaging = useBulkMessaging({
     selectedInfluencersCount,
-    sendAsVoice,
+    sendAsVoice: messageForm.sendAsVoice,
     onSendAsText,
     onSendAsVoice
   });
@@ -60,68 +51,12 @@ const MessageComposer = ({
     whatsapp: { sent: 0, total: 1 }
   };
 
-  const handleGenerateWithAI = async () => {
-    setIsGenerating(true);
-    
-    try {
-      toast({
-        title: "Generating Message",
-        description: "AI is creating your personalized message...",
-      });
-
-      const response = await fetch('http://localhost:5000/api/user_123/campaigns/summer_fashion_2024/ai_message', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      
-      if (data.type === 'message' && data.message) {
-        if (sendAsVoice) {
-          setVoiceMessage(data.message);
-        } else {
-          onMessageChange(data.message);
-        }
-        
-        toast({
-          title: "Message Generated",
-          description: "AI has successfully created your message!",
-        });
-      } else {
-        throw new Error('Invalid response format');
-      }
-    } catch (error) {
-      console.error('Error generating AI message:', error);
-      toast({
-        title: "Generation Failed",
-        description: "Failed to generate AI message. Please try again.",
-        variant: "destructive"
-      });
-    } finally {
-      setIsGenerating(false);
-    }
-  };
-
-  const handleLanguageToggle = (language: string) => {
-    setSelectedTargetLanguages(prev => 
-      prev.includes(language) 
-        ? prev.filter(l => l !== language)
-        : [...prev, language]
-    );
-  };
-
   const handleSend = async () => {
-    const contentToValidate = sendAsVoice ? voiceMessage : message;
+    const contentToValidate = messageForm.getContentForValidation();
     await bulkMessaging.handleSend(contentToValidate);
   };
 
-  const isFormValid = (sendAsVoice ? voiceMessage.trim() : message.trim()) && selectedInfluencersCount > 0;
+  const isFormValid = messageForm.getContentForValidation() && selectedInfluencersCount > 0;
 
   return (
     <div className="space-y-6">
@@ -138,46 +73,11 @@ const MessageComposer = ({
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
-          <TemplateSelector 
-            selectedTemplate={selectedTemplate}
-            onTemplateChange={setSelectedTemplate}
-          />
-
-          <MessageTypeToggle 
-            sendAsVoice={sendAsVoice}
-            onToggle={setSendAsVoice}
-          />
-
-          {!sendAsVoice && (
-            <TextMessageEditor
-              message={message}
-              onMessageChange={onMessageChange}
-              selectedPlatform={selectedPlatform}
-              onGenerateWithAI={handleGenerateWithAI}
-              isGenerating={isGenerating}
-            />
-          )}
-
-          {sendAsVoice && (
-            <VoiceMessageEditor
-              voiceMessage={voiceMessage}
-              onVoiceMessageChange={setVoiceMessage}
-              voiceLanguage={voiceLanguage}
-              onVoiceLanguageChange={setVoiceLanguage}
-              selectedPlatform={selectedPlatform}
-              onGenerateWithAI={handleGenerateWithAI}
-              isGenerating={isGenerating}
-            />
-          )}
-
-          <LanguageSelector
-            selectedLanguages={selectedTargetLanguages}
-            onLanguageToggle={handleLanguageToggle}
-          />
+          {messageForm.renderForm()}
 
           <AIPersonalizationInfo
             selectedInfluencersCount={selectedInfluencersCount}
-            sendAsVoice={sendAsVoice}
+            sendAsVoice={messageForm.sendAsVoice}
           />
         </CardContent>
       </Card>
