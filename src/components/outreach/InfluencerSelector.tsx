@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { AlertCircle, Users, Check } from "lucide-react";
+import { Users, Check } from "lucide-react";
 
 interface Influencer {
   id: number;
@@ -24,20 +24,6 @@ const InfluencerSelector = ({
   selectedInfluencers, 
   onToggleInfluencer 
 }: InfluencerSelectorProps) => {
-  // Group influencers by platform (mock data - in real app this would come from API)
-  const groupedInfluencers = {
-    instagram: availableInfluencers.filter((_, index) => index % 3 === 0),
-    email: availableInfluencers.filter((_, index) => index % 3 === 1),
-    whatsapp: availableInfluencers.filter((_, index) => index % 3 === 2)
-  };
-
-  // Check platform compatibility for bulk sending
-  const selectedInfluencerDetails = availableInfluencers.filter(inf => selectedInfluencers.includes(inf.id));
-  const platforms = Object.keys(groupedInfluencers).filter(platform => 
-    groupedInfluencers[platform as keyof typeof groupedInfluencers].some(inf => selectedInfluencers.includes(inf.id))
-  );
-  const hasPlatformMismatch = platforms.length > 1;
-
   const handleSelectAll = () => {
     const allIds = availableInfluencers.map(inf => inf.id);
     const allSelected = allIds.every(id => selectedInfluencers.includes(id));
@@ -76,41 +62,16 @@ const InfluencerSelector = ({
       {selectedInfluencers.length > 0 && (
         <Card className="border-l-4 border-l-blue-500 bg-blue-50/50">
           <CardContent className="pt-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="p-2 bg-blue-100 rounded-full">
-                  <Users className="h-4 w-4 text-blue-600" />
-                </div>
-                <div>
-                  <p className="font-medium text-gray-900">
-                    {selectedInfluencers.length} influencer{selectedInfluencers.length !== 1 ? 's' : ''} selected
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    Ready for outreach across {platforms.length} platform{platforms.length !== 1 ? 's' : ''}
-                  </p>
-                </div>
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-blue-100 rounded-full">
+                <Users className="h-4 w-4 text-blue-600" />
               </div>
-              {hasPlatformMismatch && (
-                <div className="flex items-center space-x-2 text-amber-600">
-                  <AlertCircle className="h-4 w-4" />
-                  <span className="text-sm font-medium">Platform mismatch detected</span>
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Platform Mismatch Warning */}
-      {hasPlatformMismatch && (
-        <Card className="border-amber-200 bg-amber-50">
-          <CardContent className="pt-4">
-            <div className="flex items-start space-x-3">
-              <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5" />
               <div>
-                <h4 className="font-medium text-amber-900">Platform Compatibility Warning</h4>
-                <p className="text-sm text-amber-800 mt-1">
-                  Selected influencers are on different platforms. Bulk messaging is disabled for mixed platform selections.
+                <p className="font-medium text-gray-900">
+                  {selectedInfluencers.length} influencer{selectedInfluencers.length !== 1 ? 's' : ''} selected
+                </p>
+                <p className="text-sm text-gray-600">
+                  Ready for outreach campaign
                 </p>
               </div>
             </div>
