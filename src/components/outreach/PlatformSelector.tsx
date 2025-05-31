@@ -42,6 +42,20 @@ const PlatformSelector = ({ platforms, selectedPlatform, onPlatformChange, disab
           border: "border-green-200",
           hover: "hover:bg-green-600"
         };
+      case "youtube": 
+        return {
+          bg: "bg-red-600",
+          text: "text-white",
+          border: "border-red-200",
+          hover: "hover:bg-red-700"
+        };
+      case "facebook": 
+        return {
+          bg: "bg-blue-600",
+          text: "text-white",
+          border: "border-blue-200",
+          hover: "hover:bg-blue-700"
+        };
       default: 
         return {
           bg: "bg-gray-500",
