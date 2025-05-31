@@ -19,20 +19,45 @@ const PlatformSelector = ({ platforms, selectedPlatform, onPlatformChange, disab
     }
   };
 
-  const getPlatformColor = (platform: string) => {
+  const getPlatformColors = (platform: string) => {
     switch (platform.toLowerCase()) {
-      case "instagram": return "text-purple-600";
-      case "email": return "text-blue-600";
-      case "whatsapp": return "text-green-600";
-      default: return "text-gray-600";
+      case "instagram": 
+        return {
+          bg: "bg-gradient-to-r from-purple-500 to-pink-500",
+          text: "text-white",
+          border: "border-purple-200",
+          hover: "hover:from-purple-600 hover:to-pink-600"
+        };
+      case "email": 
+        return {
+          bg: "bg-blue-500",
+          text: "text-white",
+          border: "border-blue-200",
+          hover: "hover:bg-blue-600"
+        };
+      case "whatsapp": 
+        return {
+          bg: "bg-green-500",
+          text: "text-white",
+          border: "border-green-200",
+          hover: "hover:bg-green-600"
+        };
+      default: 
+        return {
+          bg: "bg-gray-500",
+          text: "text-white",
+          border: "border-gray-200",
+          hover: "hover:bg-gray-600"
+        };
     }
   };
 
   if (platforms.length <= 1) {
-    // If only one platform, show it as a badge
+    // If only one platform, show it as a styled badge
     const platform = platforms[0] || 'instagram';
+    const colors = getPlatformColors(platform);
     return (
-      <div className={`inline-flex items-center space-x-1 px-2 py-1 rounded-full text-xs font-medium bg-gray-100 ${getPlatformColor(platform)}`}>
+      <div className={`inline-flex items-center space-x-1 px-3 py-1.5 rounded-full text-xs font-medium ${colors.bg} ${colors.text} shadow-sm`}>
         {getPlatformIcon(platform)}
         <span className="capitalize">{platform}</span>
       </div>
@@ -41,21 +66,26 @@ const PlatformSelector = ({ platforms, selectedPlatform, onPlatformChange, disab
 
   return (
     <Select value={selectedPlatform} onValueChange={onPlatformChange} disabled={disabled}>
-      <SelectTrigger className="w-[120px] h-8">
-        <div className="flex items-center space-x-1">
-          {getPlatformIcon(selectedPlatform)}
-          <SelectValue placeholder="Platform" />
-        </div>
+      <SelectTrigger className="w-[120px] h-8 border-gray-200">
+        <SelectValue>
+          <div className="flex items-center space-x-1">
+            {getPlatformIcon(selectedPlatform)}
+            <span className="capitalize">{selectedPlatform}</span>
+          </div>
+        </SelectValue>
       </SelectTrigger>
-      <SelectContent>
-        {platforms.map((platform) => (
-          <SelectItem key={platform} value={platform}>
-            <div className="flex items-center space-x-2">
-              {getPlatformIcon(platform)}
-              <span className="capitalize">{platform}</span>
-            </div>
-          </SelectItem>
-        ))}
+      <SelectContent className="bg-white border border-gray-200 shadow-lg z-50">
+        {platforms.map((platform) => {
+          const colors = getPlatformColors(platform);
+          return (
+            <SelectItem key={platform} value={platform} className="hover:bg-gray-50">
+              <div className={`flex items-center space-x-2 px-2 py-1 rounded-md ${colors.bg} ${colors.text}`}>
+                {getPlatformIcon(platform)}
+                <span className="capitalize">{platform}</span>
+              </div>
+            </SelectItem>
+          );
+        })}
       </SelectContent>
     </Select>
   );
