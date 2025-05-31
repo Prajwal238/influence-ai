@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Eye, Star, MapPin, Heart, ExternalLink, Verified } from "lucide-react";
+import { Eye, Star, MapPin, Heart, ExternalLink, Verified, Instagram, Youtube, Twitter, Linkedin, Users, Globe } from "lucide-react";
 import PlatformPill from "./PlatformPill";
 
 interface Platform {
@@ -38,12 +38,12 @@ interface InfluencerCardProps {
 const InfluencerCard = ({ influencer }: InfluencerCardProps) => {
   const getPlatformIcon = (platform: string) => {
     switch (platform) {
-      case 'instagram': return require('lucide-react').Instagram;
-      case 'youtube': return require('lucide-react').Youtube;
-      case 'twitter': return require('lucide-react').Twitter;
-      case 'linkedin': return require('lucide-react').Linkedin;
-      case 'tiktok': return require('lucide-react').Users;
-      default: return require('lucide-react').Globe;
+      case 'instagram': return Instagram;
+      case 'youtube': return Youtube;
+      case 'twitter': return Twitter;
+      case 'linkedin': return Linkedin;
+      case 'tiktok': return Users;
+      default: return Globe;
     }
   };
 
