@@ -40,13 +40,16 @@ interface InfluencerCardProps {
 const InfluencerCard = ({ influencer, onInfluencerUpdate }: InfluencerCardProps) => {
   const [currentInfluencer, setCurrentInfluencer] = useState(influencer);
 
-  const handleInfluencerUpdate = (updatedInfluencer: Influencer) => {
-    console.log('Updating influencer state:', updatedInfluencer.name);
+  const handleInfluencerUpdate = (influencerId: number, campaignName?: string) => {
+    console.log('Updating influencer in card:', influencerId, campaignName);
+    
+    // Update local state
+    const updatedInfluencer = { ...currentInfluencer, campaignName };
     setCurrentInfluencer(updatedInfluencer);
     
     // Also notify the parent component
     if (onInfluencerUpdate) {
-      onInfluencerUpdate(updatedInfluencer.id, updatedInfluencer.campaignName);
+      onInfluencerUpdate(influencerId, campaignName);
     }
   };
 

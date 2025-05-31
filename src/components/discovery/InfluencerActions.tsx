@@ -31,7 +31,7 @@ interface Influencer {
 
 interface InfluencerActionsProps {
   influencer: Influencer;
-  onInfluencerUpdate?: (updatedInfluencer: Influencer) => void;
+  onInfluencerUpdate?: (influencerId: number, campaignName?: string) => void;
 }
 
 const InfluencerActions = ({ influencer, onInfluencerUpdate }: InfluencerActionsProps) => {
@@ -47,10 +47,9 @@ const InfluencerActions = ({ influencer, onInfluencerUpdate }: InfluencerActions
     const success = await addInfluencerToCampaign(influencer.name);
     if (success) {
       console.log('Successfully added influencer to campaign');
-      // Update the local influencer state instead of reloading the page
-      const updatedInfluencer = { ...influencer, campaignName: 'campaign' };
+      // Update the parent component with the correct signature
       if (onInfluencerUpdate) {
-        onInfluencerUpdate(updatedInfluencer);
+        onInfluencerUpdate(influencer.id, 'campaign');
       }
     } else {
       console.log('Failed to add influencer to campaign');
