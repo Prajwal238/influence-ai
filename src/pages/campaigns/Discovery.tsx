@@ -133,6 +133,7 @@ const Discovery = () => {
                 isInCampaign={isInCampaign}
                 onAddToCampaign={handleAddToCampaign}
                 onRemoveFromCampaign={handleRemoveFromCampaign}
+                showCampaignInfluencers={showCampaignInfluencers}
               />
             ) : (
               <NoResults />

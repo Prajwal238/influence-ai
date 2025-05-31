@@ -13,13 +13,15 @@ interface InfluencerCardProps {
   isInCampaign: boolean;
   onAddToCampaign: (influencer: Influencer) => Promise<boolean>;
   onRemoveFromCampaign: (influencer: Influencer) => Promise<boolean>;
+  showCampaignInfluencers?: boolean; // New prop to indicate tab context
 }
 
 const InfluencerCard = ({ 
   influencer, 
   isInCampaign, 
   onAddToCampaign, 
-  onRemoveFromCampaign 
+  onRemoveFromCampaign,
+  showCampaignInfluencers = false
 }: InfluencerCardProps) => {
   return (
     <Card className="group bg-white shadow-sm border-gray-200 hover:shadow-xl hover:border-gray-300 hover:scale-[1.02] transition-all duration-300 cursor-pointer overflow-hidden relative">
@@ -63,6 +65,7 @@ const InfluencerCard = ({
           isInCampaign={isInCampaign}
           onAddToCampaign={onAddToCampaign}
           onRemoveFromCampaign={onRemoveFromCampaign}
+          showCampaignInfluencers={showCampaignInfluencers}
         />
       </CardContent>
     </Card>

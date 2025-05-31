@@ -11,13 +11,15 @@ interface InfluencerActionsProps {
   isInCampaign: boolean;
   onAddToCampaign: (influencer: Influencer) => Promise<boolean>;
   onRemoveFromCampaign: (influencer: Influencer) => Promise<boolean>;
+  showCampaignInfluencers?: boolean; // New prop to indicate tab context
 }
 
 const InfluencerActions = ({ 
   influencer, 
   isInCampaign, 
   onAddToCampaign, 
-  onRemoveFromCampaign 
+  onRemoveFromCampaign,
+  showCampaignInfluencers = false
 }: InfluencerActionsProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -35,6 +37,53 @@ const InfluencerActions = ({
     }
   };
 
+  const renderCampaignButton = () => {
+    if (showCampaignInfluencers) {
+      // In "My Campaign's Influencers" tab - show remove button
+      return (
+        <Button 
+          size="sm" 
+          variant="destructive"
+          className="flex-1 h-9"
+          onClick={handleCampaignAction}
+          disabled={isLoading}
+        >
+          <X className="h-4 w-4 mr-2" />
+          {isLoading ? 'Removing...' : 'Remove from Campaign'}
+        </Button>
+      );
+    } else {
+      // In "All Influencers" tab
+      if (isInCampaign) {
+        // Show disabled "Added to Campaign" state
+        return (
+          <Button 
+            size="sm" 
+            variant="outline"
+            className="flex-1 h-9 bg-green-50 border-green-200 text-green-700 cursor-not-allowed"
+            disabled={true}
+          >
+            <Check className="h-4 w-4 mr-2" />
+            Added to Campaign
+          </Button>
+        );
+      } else {
+        // Show "Add to Campaign" button
+        return (
+          <Button 
+            size="sm" 
+            className="flex-1 h-9 bg-blue-600 hover:bg-blue-700"
+            onClick={handleCampaignAction}
+            disabled={isLoading}
+          >
+            <Heart className="h-4 w-4 mr-2" />
+            {isLoading ? 'Adding...' : 'Add to Campaign'}
+          </Button>
+        );
+      }
+    }
+  };
+
   return (
     <div className="px-6 pb-6 pt-2 border-t border-gray-100">
       <div className="flex space-x-3">
@@ -48,28 +97,7 @@ const InfluencerActions = ({
           <InfluencerDialog influencer={influencer} />
         </Dialog>
         
-        <Button 
-          size="sm" 
-          className={`flex-1 h-9 ${
-            isInCampaign 
-              ? 'bg-green-600 hover:bg-green-700' 
-              : 'bg-blue-600 hover:bg-blue-700'
-          }`}
-          onClick={handleCampaignAction}
-          disabled={isLoading}
-        >
-          {isInCampaign ? (
-            <>
-              <X className="h-4 w-4 mr-2" />
-              {isLoading ? 'Removing...' : 'Remove from Campaign'}
-            </>
-          ) : (
-            <>
-              <Heart className="h-4 w-4 mr-2" />
-              {isLoading ? 'Adding...' : 'Add to Campaign'}
-            </>
-          )}
-        </Button>
+        {renderCampaignButton()}
       </div>
     </div>
   );
