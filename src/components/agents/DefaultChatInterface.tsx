@@ -48,7 +48,7 @@ const DefaultChatInterface = ({
   }, [messages]);
 
   return (
-    <Card className={`h-full flex flex-col ${className}`}>
+    <Card className={`h-full flex flex-col relative overflow-hidden ${className}`}>
       <CardHeader className="border-b border-gray-100 pb-4 flex-shrink-0">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
@@ -62,7 +62,7 @@ const DefaultChatInterface = ({
               <p className="text-sm text-gray-600">AI Assistant</p>
             </div>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 relative">
             <SessionsPanel
               agentType={agentType}
               currentSessionId={currentSessionId}
