@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { ApiInfluencer } from '@/types/influencer';
 
 export const useInfluencerAPI = () => {
@@ -34,7 +34,7 @@ export const useInfluencerAPI = () => {
     }
   };
 
-  const fetchInfluencers = async (campaignId?: string) => {
+  const fetchInfluencers = useCallback(async (campaignId?: string) => {
     try {
       setLoading(true);
       setError(null);
@@ -61,7 +61,7 @@ export const useInfluencerAPI = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []); // Empty dependency array since the function doesn't depend on any external values
 
   return {
     fetchInfluencers,
