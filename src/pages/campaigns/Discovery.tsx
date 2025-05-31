@@ -70,17 +70,15 @@ const Discovery = () => {
           <div className="pr-4">
             {/* Results */}
             {filteredInfluencers.length > 0 ? (
-              <div className="space-y-6">
-                <DiscoveryResults influencers={filteredInfluencers} />
-                
-                {/* AI Suggestions */}
-                <AIRecommendations />
-              </div>
+              <DiscoveryResults influencers={filteredInfluencers} />
             ) : (
               <NoResults />
             )}
           </div>
         </ScrollArea>
+
+        {/* AI Recommendations - Outside of scrollable area */}
+        <AIRecommendations />
       </div>
 
       {/* Agent Panel */}
