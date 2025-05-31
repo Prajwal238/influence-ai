@@ -89,8 +89,10 @@ export const useInfluencerTabs = () => {
     if (!campaignId) return false;
 
     try {
-      const response = await fetch(`http://localhost:5000/api/user_123/campaigns/${campaignId}/influencers/${influencer.apiId}`, {
-        method: 'DELETE'
+      const response = await fetch(`http://localhost:5000/api/user_123/campaigns/${campaignId}/influencers`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ removeInfluencerId: influencer.apiId })
       });
 
       if (!response.ok) throw new Error('Failed to remove influencer');
