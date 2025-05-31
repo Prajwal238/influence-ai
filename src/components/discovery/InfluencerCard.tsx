@@ -7,30 +7,7 @@ import InfluencerStats from "./InfluencerStats";
 import InfluencerNiches from "./InfluencerNiches";
 import InfluencerActions from "./InfluencerActions";
 import CampaignBadge from "./CampaignBadge";
-
-interface Platform {
-  name: string;
-  handle: string;
-  followers: string;
-  engagement: string;
-  verified: boolean;
-  topBrand: string | null;
-}
-
-interface Influencer {
-  id: number;
-  name: string;
-  bio: string;
-  location: string;
-  image: string;
-  totalFollowers: string;
-  avgEngagement: string;
-  languages: string[];
-  rating: number;
-  niches: string[];
-  platforms: Platform[];
-  campaignName?: string;
-}
+import { Influencer } from "@/types/influencer";
 
 interface InfluencerCardProps {
   influencer: Influencer;
