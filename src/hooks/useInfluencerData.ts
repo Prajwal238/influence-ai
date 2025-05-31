@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Influencer } from '@/types/influencer';
@@ -65,31 +64,31 @@ export const useInfluencerData = () => {
 
     // If adding to campaign, also add to campaign influencers list
     if (campaignName) {
-      setAllInfluencers(prev => {
-        const influencerToAdd = prev.find(inf => inf.id === influencerId);
-        console.log('Found influencer to add to campaign list:', influencerToAdd?.name);
-        
-        if (influencerToAdd) {
-          setCampaignInfluencers(prevCampaign => {
-            // Check if already exists to avoid duplicates
-            const exists = prevCampaign.some(inf => inf.id === influencerId);
-            if (exists) {
-              console.log('Influencer already exists in campaign list');
-              return prevCampaign;
-            }
-            
-            const newCampaignInfluencer = { ...influencerToAdd, campaignName };
-            console.log('Adding to campaign influencers list:', newCampaignInfluencer.name);
-            return [...prevCampaign, newCampaignInfluencer];
-          });
+      setCampaignInfluencers(prevCampaign => {
+        // Check if already exists to avoid duplicates
+        const exists = prevCampaign.some(inf => inf.id === influencerId);
+        if (exists) {
+          console.log('Influencer already exists in campaign list');
+          return prevCampaign;
         }
         
-        // Return updated influencers with campaign status
-        return prev.map(inf => 
-          inf.id === influencerId 
-            ? { ...inf, campaignName }
-            : inf
-        );
+        // Find the influencer from allInfluencers (we need to get it from the current state)
+        setAllInfluencers(currentAll => {
+          const influencerToAdd = currentAll.find(inf => inf.id === influencerId);
+          console.log('Found influencer to add to campaign list:', influencerToAdd?.name);
+          
+          if (influencerToAdd) {
+            const newCampaignInfluencer = { ...influencerToAdd, campaignName };
+            console.log('Adding to campaign influencers list:', newCampaignInfluencer.name);
+            
+            // Use a callback to update campaign influencers with the found influencer
+            setCampaignInfluencers(currentCampaign => [...currentCampaign, newCampaignInfluencer]);
+          }
+          
+          return currentAll; // Return unchanged allInfluencers
+        });
+        
+        return prevCampaign; // This will be updated by the inner setCampaignInfluencers call
       });
     }
   };
