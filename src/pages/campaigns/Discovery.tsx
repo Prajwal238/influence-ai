@@ -16,7 +16,7 @@ const Discovery = () => {
   const [showCampaignInfluencers, setShowCampaignInfluencers] = useState(false);
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
 
-  const { influencers, campaignInfluencers, loading, error } = useInfluencerData();
+  const { influencers, campaignInfluencers, loading, error, updateInfluencerCampaignStatus } = useInfluencerData();
 
   const filteredInfluencers = useInfluencerFiltering({
     influencers,
@@ -84,7 +84,10 @@ const Discovery = () => {
           <div className="pr-4 pb-4">
             {/* Results */}
             {filteredInfluencers.length > 0 ? (
-              <DiscoveryResults influencers={filteredInfluencers} />
+              <DiscoveryResults 
+                influencers={filteredInfluencers} 
+                onInfluencerUpdate={updateInfluencerCampaignStatus}
+              />
             ) : (
               <NoResults />
             )}

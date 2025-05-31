@@ -34,14 +34,20 @@ interface Influencer {
 
 interface InfluencerCardProps {
   influencer: Influencer;
+  onInfluencerUpdate?: (influencerId: number, campaignName?: string) => void;
 }
 
-const InfluencerCard = ({ influencer }: InfluencerCardProps) => {
+const InfluencerCard = ({ influencer, onInfluencerUpdate }: InfluencerCardProps) => {
   const [currentInfluencer, setCurrentInfluencer] = useState(influencer);
 
   const handleInfluencerUpdate = (updatedInfluencer: Influencer) => {
     console.log('Updating influencer state:', updatedInfluencer.name);
     setCurrentInfluencer(updatedInfluencer);
+    
+    // Also notify the parent component
+    if (onInfluencerUpdate) {
+      onInfluencerUpdate(updatedInfluencer.id, updatedInfluencer.campaignName);
+    }
   };
 
   return (

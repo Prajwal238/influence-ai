@@ -92,7 +92,7 @@ const transformApiDataToInfluencer = (apiData: ApiInfluencer, isCampaignInfluenc
 
   // Mark as campaign influencer if fetched from campaign endpoint
   if (isCampaignInfluencer) {
-    influencer.campaignName = 'campaign'; // Mark this as a campaign influencer
+    influencer.campaignName = 'campaign';
   }
 
   return influencer;
@@ -148,8 +148,13 @@ export const useInfluencerData = () => {
           return transformApiDataToInfluencer(data, isInCampaign);
         });
 
-        // Transform campaign influencers
+        // Transform campaign influencers - these are the definitive campaign influencers
         const transformedCampaignInfluencers = campaignInfluencersData.map(data => transformApiDataToInfluencer(data, true));
+
+        console.log('Setting influencer state:', {
+          allInfluencers: transformedAllInfluencers.length,
+          campaignInfluencers: transformedCampaignInfluencers.length
+        });
 
         setAllInfluencers(transformedAllInfluencers);
         setCampaignInfluencers(transformedCampaignInfluencers);
@@ -166,6 +171,31 @@ export const useInfluencerData = () => {
     fetchInfluencers();
   }, [campaignId]);
 
+  // Function to update an influencer's campaign status
+  const updateInfluencerCampaignStatus = (influencerId: number, campaignName?: string) => {
+    console.log('Updating influencer campaign status:', influencerId, campaignName);
+    
+    setAllInfluencers(prev => prev.map(inf => 
+      inf.id === influencerId 
+        ? { ...inf, campaignName }
+        : inf
+    ));
+
+    // If adding to campaign, also add to campaign influencers list
+    if (campaignName) {
+      const influencerToAdd = allInfluencers.find(inf => inf.id === influencerId);
+      if (influencerToAdd) {
+        setCampaignInfluencers(prev => {
+          // Check if already exists to avoid duplicates
+          const exists = prev.some(inf => inf.id === influencerId);
+          if (exists) return prev;
+          
+          return [...prev, { ...influencerToAdd, campaignName }];
+        });
+      }
+    }
+  };
+
   console.log('Hook state:', {
     allInfluencers: allInfluencers.length,
     campaignInfluencers: campaignInfluencers.length,
@@ -177,6 +207,7 @@ export const useInfluencerData = () => {
     influencers: allInfluencers, 
     campaignInfluencers,
     loading, 
-    error 
+    error,
+    updateInfluencerCampaignStatus
   };
 };
