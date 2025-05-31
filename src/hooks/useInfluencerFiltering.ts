@@ -46,14 +46,33 @@ export const useInfluencerFiltering = ({
     console.log('Using base influencers:', baseInfluencers.length);
 
     return baseInfluencers.filter((influencer) => {
-      // Search filter
+      // Search filter - make search more precise
       if (searchQuery) {
-        const query = searchQuery.toLowerCase();
-        const matchesSearch = 
-          influencer.name.toLowerCase().includes(query) ||
-          influencer.niches.some(niche => niche.toLowerCase().includes(query)) ||
-          influencer.platforms.some(platform => platform.handle.toLowerCase().includes(query));
+        const query = searchQuery.toLowerCase().trim();
         
+        // Only match if the search term appears at the beginning of words or as complete words
+        const matchesName = influencer.name.toLowerCase().includes(query);
+        
+        const matchesNiches = influencer.niches.some(niche => {
+          const nicheWords = niche.toLowerCase().split(/\s+/);
+          return nicheWords.some(word => word.startsWith(query)) || niche.toLowerCase().includes(query);
+        });
+        
+        const matchesPlatforms = influencer.platforms.some(platform => {
+          const handle = platform.handle.toLowerCase();
+          // For handles, check if it starts with query or contains it as a word
+          return handle.startsWith(query) || handle.includes(query);
+        });
+        
+        console.log(`Checking influencer "${influencer.name}" against query "${query}":`, {
+          matchesName,
+          matchesNiches,
+          matchesPlatforms,
+          niches: influencer.niches,
+          handles: influencer.platforms.map(p => p.handle)
+        });
+        
+        const matchesSearch = matchesName || matchesNiches || matchesPlatforms;
         if (!matchesSearch) return false;
       }
 

@@ -62,7 +62,7 @@ export const useInfluencerTabs = () => {
 
       if (!response.ok) throw new Error('Failed to add influencer');
 
-      // Update local state
+      // Update local state - prevent duplicates
       const updatedInfluencer = { ...influencer, campaignName: 'campaign' };
       
       // Add to campaign IDs set
@@ -73,8 +73,17 @@ export const useInfluencerTabs = () => {
         inf.apiId === influencer.apiId ? updatedInfluencer : inf
       ));
       
-      // Add to campaign influencers list
-      setCampaignInfluencers(prev => [...prev, updatedInfluencer]);
+      // Add to campaign influencers list only if not already present
+      setCampaignInfluencers(prev => {
+        const existingIndex = prev.findIndex(inf => inf.apiId === influencer.apiId);
+        if (existingIndex !== -1) {
+          // Update existing entry instead of adding duplicate
+          return prev.map((inf, index) => 
+            index === existingIndex ? updatedInfluencer : inf
+          );
+        }
+        return [...prev, updatedInfluencer];
+      });
 
       console.log('Successfully added influencer to campaign:', influencer.name);
       return true;
