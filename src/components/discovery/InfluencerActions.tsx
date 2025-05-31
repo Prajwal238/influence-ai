@@ -1,36 +1,37 @@
 
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import { Eye, Heart, Check } from "lucide-react";
+import { Eye, Heart, Check, X } from "lucide-react";
 import InfluencerDialog from "./InfluencerDialog";
-import { useCampaignInfluencers } from "@/hooks/useCampaignInfluencers";
 import { Influencer } from "@/types/influencer";
+import { useState } from "react";
 
 interface InfluencerActionsProps {
   influencer: Influencer;
-  onInfluencerUpdate?: (influencerId: number, campaignName?: string) => void;
+  isInCampaign: boolean;
+  onAddToCampaign: (influencer: Influencer) => Promise<boolean>;
+  onRemoveFromCampaign: (influencer: Influencer) => Promise<boolean>;
 }
 
-const InfluencerActions = ({ influencer, onInfluencerUpdate }: InfluencerActionsProps) => {
-  const { addInfluencerToCampaign, loading } = useCampaignInfluencers();
-  
-  const isAddedToCampaign = Boolean(influencer.campaignName);
+const InfluencerActions = ({ 
+  influencer, 
+  isInCampaign, 
+  onAddToCampaign, 
+  onRemoveFromCampaign 
+}: InfluencerActionsProps) => {
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleAddToCampaign = async () => {
-    if (isAddedToCampaign) return;
+  const handleCampaignAction = async () => {
+    setIsLoading(true);
     
-    console.log('Adding influencer to campaign:', influencer.name, 'ID:', influencer.id, 'API ID:', influencer.apiId);
-    
-    // Use the original API _id directly
-    const success = await addInfluencerToCampaign(influencer.apiId);
-    if (success) {
-      console.log('Successfully added influencer to campaign');
-      // Update the parent component with the correct signature
-      if (onInfluencerUpdate) {
-        onInfluencerUpdate(influencer.id, 'campaign');
+    try {
+      if (isInCampaign) {
+        await onRemoveFromCampaign(influencer);
+      } else {
+        await onAddToCampaign(influencer);
       }
-    } else {
-      console.log('Failed to add influencer to campaign');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -50,22 +51,22 @@ const InfluencerActions = ({ influencer, onInfluencerUpdate }: InfluencerActions
         <Button 
           size="sm" 
           className={`flex-1 h-9 ${
-            isAddedToCampaign 
-              ? 'bg-green-600 hover:bg-green-700 cursor-default' 
+            isInCampaign 
+              ? 'bg-green-600 hover:bg-green-700' 
               : 'bg-blue-600 hover:bg-blue-700'
           }`}
-          onClick={handleAddToCampaign}
-          disabled={loading || isAddedToCampaign}
+          onClick={handleCampaignAction}
+          disabled={isLoading}
         >
-          {isAddedToCampaign ? (
+          {isInCampaign ? (
             <>
-              <Check className="h-4 w-4 mr-2" />
-              Added to Campaign
+              <X className="h-4 w-4 mr-2" />
+              {isLoading ? 'Removing...' : 'Remove from Campaign'}
             </>
           ) : (
             <>
               <Heart className="h-4 w-4 mr-2" />
-              {loading ? 'Adding...' : 'Add to Campaign'}
+              {isLoading ? 'Adding...' : 'Add to Campaign'}
             </>
           )}
         </Button>

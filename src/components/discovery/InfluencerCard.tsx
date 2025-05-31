@@ -1,5 +1,4 @@
 
-import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import PlatformPill from "./PlatformPill";
 import InfluencerHeader from "./InfluencerHeader";
@@ -11,45 +10,37 @@ import { Influencer } from "@/types/influencer";
 
 interface InfluencerCardProps {
   influencer: Influencer;
-  onInfluencerUpdate?: (influencerId: number, campaignName?: string) => void;
+  isInCampaign: boolean;
+  onAddToCampaign: (influencer: Influencer) => Promise<boolean>;
+  onRemoveFromCampaign: (influencer: Influencer) => Promise<boolean>;
 }
 
-const InfluencerCard = ({ influencer, onInfluencerUpdate }: InfluencerCardProps) => {
-  const [currentInfluencer, setCurrentInfluencer] = useState(influencer);
-
-  const handleInfluencerUpdate = (influencerId: number, campaignName?: string) => {
-    console.log('Updating influencer in card:', influencerId, campaignName);
-    
-    // Update local state
-    const updatedInfluencer = { ...currentInfluencer, campaignName };
-    setCurrentInfluencer(updatedInfluencer);
-    
-    // Also notify the parent component
-    if (onInfluencerUpdate) {
-      onInfluencerUpdate(influencerId, campaignName);
-    }
-  };
-
+const InfluencerCard = ({ 
+  influencer, 
+  isInCampaign, 
+  onAddToCampaign, 
+  onRemoveFromCampaign 
+}: InfluencerCardProps) => {
   return (
     <Card className="group bg-white shadow-sm border-gray-200 hover:shadow-xl hover:border-gray-300 hover:scale-[1.02] transition-all duration-300 cursor-pointer overflow-hidden relative">
       <CardContent className="p-0">
-        {/* Campaign Badge - only show if influencer is in a campaign */}
-        {currentInfluencer.campaignName && (
-          <CampaignBadge campaignName={currentInfluencer.campaignName} />
+        {/* Campaign Badge - only show if influencer is in campaign */}
+        {isInCampaign && (
+          <CampaignBadge campaignName="campaign" />
         )}
 
         {/* Influencer Identity */}
-        <InfluencerHeader influencer={currentInfluencer} />
+        <InfluencerHeader influencer={influencer} />
 
         {/* Platform Overview */}
         <div className="px-6 pb-4">
           <div className="space-y-3">
-            {currentInfluencer.platforms.slice(0, 3).map((platform) => (
+            {influencer.platforms.slice(0, 3).map((platform) => (
               <PlatformPill key={platform.name} platform={platform} />
             ))}
-            {currentInfluencer.platforms.length > 3 && (
+            {influencer.platforms.length > 3 && (
               <div className="flex items-center justify-center p-2 text-xs text-gray-500 bg-gray-50 rounded-lg">
-                +{currentInfluencer.platforms.length - 3} more platforms
+                +{influencer.platforms.length - 3} more platforms
               </div>
             )}
           </div>
@@ -57,19 +48,21 @@ const InfluencerCard = ({ influencer, onInfluencerUpdate }: InfluencerCardProps)
 
         {/* Aggregated Stats */}
         <InfluencerStats 
-          totalFollowers={currentInfluencer.totalFollowers}
-          avgEngagement={currentInfluencer.avgEngagement}
-          rating={currentInfluencer.rating}
-          languages={currentInfluencer.languages}
+          totalFollowers={influencer.totalFollowers}
+          avgEngagement={influencer.avgEngagement}
+          rating={influencer.rating}
+          languages={influencer.languages}
         />
 
         {/* Niche Tags */}
-        <InfluencerNiches niches={currentInfluencer.niches} />
+        <InfluencerNiches niches={influencer.niches} />
 
         {/* Actions */}
         <InfluencerActions 
-          influencer={currentInfluencer} 
-          onInfluencerUpdate={handleInfluencerUpdate}
+          influencer={influencer}
+          isInCampaign={isInCampaign}
+          onAddToCampaign={onAddToCampaign}
+          onRemoveFromCampaign={onRemoveFromCampaign}
         />
       </CardContent>
     </Card>

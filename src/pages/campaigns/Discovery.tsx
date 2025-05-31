@@ -9,22 +9,66 @@ import NoResults from "@/components/discovery/NoResults";
 import AIRecommendations from "@/components/discovery/AIRecommendations";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useInfluencerFiltering } from "@/hooks/useInfluencerFiltering";
-import { useInfluencerData } from "@/hooks/useInfluencerData";
+import { useInfluencerTabs } from "@/hooks/useInfluencerTabs";
+import { useToast } from "@/hooks/use-toast";
 
 const Discovery = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showCampaignInfluencers, setShowCampaignInfluencers] = useState(false);
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
+  const { toast } = useToast();
 
-  const { influencers, campaignInfluencers, loading, error, updateInfluencerCampaignStatus } = useInfluencerData();
+  const { 
+    allInfluencers, 
+    campaignInfluencers, 
+    loading, 
+    error, 
+    addToCampaign, 
+    removeFromCampaign, 
+    isInCampaign 
+  } = useInfluencerTabs();
 
   const filteredInfluencers = useInfluencerFiltering({
-    influencers,
+    influencers: allInfluencers,
     campaignInfluencers,
     searchQuery,
     showCampaignInfluencers,
     activeFilters
   });
+
+  const handleAddToCampaign = async (influencer: any) => {
+    const success = await addToCampaign(influencer);
+    if (success) {
+      toast({
+        title: "Success",
+        description: `${influencer.name} added to campaign`,
+      });
+    } else {
+      toast({
+        title: "Error",
+        description: "Failed to add influencer to campaign",
+        variant: "destructive",
+      });
+    }
+    return success;
+  };
+
+  const handleRemoveFromCampaign = async (influencer: any) => {
+    const success = await removeFromCampaign(influencer);
+    if (success) {
+      toast({
+        title: "Success",
+        description: `${influencer.name} removed from campaign`,
+      });
+    } else {
+      toast({
+        title: "Error",
+        description: "Failed to remove influencer from campaign",
+        variant: "destructive",
+      });
+    }
+    return success;
+  };
 
   const handleFilterAdd = (filter: string) => {
     setActiveFilters(prev => [...prev, filter]);
@@ -85,8 +129,10 @@ const Discovery = () => {
             {/* Results */}
             {filteredInfluencers.length > 0 ? (
               <DiscoveryResults 
-                influencers={filteredInfluencers} 
-                onInfluencerUpdate={updateInfluencerCampaignStatus}
+                influencers={filteredInfluencers}
+                isInCampaign={isInCampaign}
+                onAddToCampaign={handleAddToCampaign}
+                onRemoveFromCampaign={handleRemoveFromCampaign}
               />
             ) : (
               <NoResults />
