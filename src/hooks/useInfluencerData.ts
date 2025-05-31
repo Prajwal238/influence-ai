@@ -158,24 +158,37 @@ export const useInfluencerData = () => {
 
   // Combine all influencers with campaign influencers, avoiding duplicates
   const combinedInfluencers = useMemo(() => {
-    const combined = [...allInfluencers];
+    // Create a Map to track unique influencers by ID
+    const influencerMap = new Map<number, Influencer>();
     
-    // Add campaign influencers that aren't already in the all influencers list
+    // First, add all influencers to the map
+    allInfluencers.forEach(influencer => {
+      influencerMap.set(influencer.id, influencer);
+    });
+    
+    // Then, add campaign influencers, updating existing ones or adding new ones
     campaignInfluencers.forEach(campaignInfluencer => {
-      const existingIndex = combined.findIndex(inf => inf.id === campaignInfluencer.id);
-      if (existingIndex >= 0) {
+      const existingInfluencer = influencerMap.get(campaignInfluencer.id);
+      if (existingInfluencer) {
         // Update existing influencer to mark it as campaign influencer
-        combined[existingIndex] = { ...combined[existingIndex], campaignName: 'campaign' };
+        influencerMap.set(campaignInfluencer.id, { 
+          ...existingInfluencer, 
+          campaignName: 'campaign' 
+        });
       } else {
         // Add new campaign influencer
-        combined.push(campaignInfluencer);
+        influencerMap.set(campaignInfluencer.id, campaignInfluencer);
       }
     });
+
+    // Convert map back to array
+    const combined = Array.from(influencerMap.values());
 
     console.log('Combined influencers result:', {
       allInfluencers: allInfluencers.length,
       campaignInfluencers: campaignInfluencers.length,
-      combined: combined.length
+      combined: combined.length,
+      uniqueIds: new Set(combined.map(inf => inf.id)).size
     });
 
     return combined;
