@@ -1,16 +1,15 @@
 
 import { useState } from 'react';
-import { OutreachInfluencer, OutreachEntry, NegotiationThread, NegotiationMessage } from '@/types/outreach';
-import { mockInfluencers, createInitialOutreachLog, createInitialThreads } from '@/data/outreachMockData';
+import { OutreachEntry, NegotiationThread, NegotiationMessage } from '@/types/outreach';
+import { createInitialOutreachLog, createInitialThreads } from '@/data/outreachMockData';
 
 export const useOutreachData = () => {
-  // Initialize data with proper synchronization
+  // Initialize data with mock data for now (will be replaced by API later)
   const initialOutreachLog = createInitialOutreachLog();
-  const [influencers] = useState<OutreachInfluencer[]>(mockInfluencers);
   const [outreachLog, setOutreachLog] = useState<OutreachEntry[]>(initialOutreachLog);
   const [threads, setThreads] = useState<NegotiationThread[]>(() => createInitialThreads(initialOutreachLog));
 
-  // Function to add new outreach entry and update negotiations if needed
+  // Function to add new outreach entry
   const addOutreachEntry = (entry: Omit<OutreachEntry, 'id'>) => {
     const newEntry = { ...entry, id: Date.now() };
     setOutreachLog(prev => [newEntry, ...prev]);
@@ -20,28 +19,25 @@ export const useOutreachData = () => {
       setThreads(prev => {
         const existingThread = prev.find(thread => thread.influencerId === entry.influencerId);
         if (!existingThread) {
-          const influencer = influencers.find(inf => inf.id === entry.influencerId);
-          if (influencer) {
-            const newThread: NegotiationThread = {
-              creatorId: entry.influencerId.toString(),
-              name: influencer.name,
-              handle: influencer.handle,
-              platform: entry.platform as 'instagram' | 'email' | 'voice',
-              avatar: "/api/placeholder/40/40",
-              influencerId: entry.influencerId,
-              status: entry.status,
-              messages: [
-                {
-                  id: `${entry.influencerId}_initial`,
-                  from: "agent",
-                  content: `Hi ${influencer.name}! Thank you for your interest in collaborating with us.`,
-                  timestamp: new Date().toISOString(),
-                  platform: entry.platform as 'instagram' | 'email' | 'voice'
-                }
-              ]
-            };
-            return [...prev, newThread];
-          }
+          const newThread: NegotiationThread = {
+            creatorId: entry.influencerId.toString(),
+            name: entry.influencer,
+            handle: entry.handle,
+            platform: entry.platform as 'instagram' | 'email' | 'voice',
+            avatar: "/api/placeholder/40/40",
+            influencerId: entry.influencerId,
+            status: entry.status,
+            messages: [
+              {
+                id: `${entry.influencerId}_initial`,
+                from: "agent",
+                content: `Hi ${entry.influencer}! Thank you for your interest in collaborating with us.`,
+                timestamp: new Date().toISOString(),
+                platform: entry.platform as 'instagram' | 'email' | 'voice'
+              }
+            ]
+          };
+          return [...prev, newThread];
         }
         return prev;
       });
@@ -89,7 +85,6 @@ export const useOutreachData = () => {
   };
 
   return {
-    influencers,
     outreachLog,
     threads,
     addOutreachEntry,
@@ -99,4 +94,4 @@ export const useOutreachData = () => {
 };
 
 // Re-export types for compatibility with existing components
-export type { OutreachInfluencer, OutreachEntry, NegotiationMessage, NegotiationThread } from '@/types/outreach';
+export type { OutreachEntry, NegotiationMessage, NegotiationThread } from '@/types/outreach';
