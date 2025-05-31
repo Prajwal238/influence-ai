@@ -47,6 +47,14 @@ export const useInfluencerData = () => {
   const updateInfluencerCampaignStatus = (influencerId: number, campaignName?: string) => {
     console.log('updateInfluencerCampaignStatus called with:', { influencerId, campaignName });
     
+    // First, find the influencer from the current state
+    const influencerToUpdate = allInfluencers.find(inf => inf.id === influencerId);
+    
+    if (!influencerToUpdate) {
+      console.error('Influencer not found in allInfluencers:', influencerId);
+      return;
+    }
+
     // Update allInfluencers state
     setAllInfluencers(prev => {
       const updated = prev.map(inf => 
@@ -54,11 +62,7 @@ export const useInfluencerData = () => {
           ? { ...inf, campaignName }
           : inf
       );
-      console.log('Updated allInfluencers:', {
-        before: prev.find(inf => inf.id === influencerId)?.campaignName,
-        after: updated.find(inf => inf.id === influencerId)?.campaignName
-      });
-
+      console.log('Updated allInfluencers for influencer:', influencerId);
       return updated;
     });
 
@@ -72,23 +76,11 @@ export const useInfluencerData = () => {
           return prevCampaign;
         }
         
-        // Find the influencer from allInfluencers (we need to get it from the current state)
-        setAllInfluencers(currentAll => {
-          const influencerToAdd = currentAll.find(inf => inf.id === influencerId);
-          console.log('Found influencer to add to campaign list:', influencerToAdd?.name);
-          
-          if (influencerToAdd) {
-            const newCampaignInfluencer = { ...influencerToAdd, campaignName };
-            console.log('Adding to campaign influencers list:', newCampaignInfluencer.name);
-            
-            // Use a callback to update campaign influencers with the found influencer
-            setCampaignInfluencers(currentCampaign => [...currentCampaign, newCampaignInfluencer]);
-          }
-          
-          return currentAll; // Return unchanged allInfluencers
-        });
+        // Create the updated influencer with campaign status
+        const newCampaignInfluencer = { ...influencerToUpdate, campaignName };
+        console.log('Adding to campaign influencers list:', newCampaignInfluencer.name);
         
-        return prevCampaign; // This will be updated by the inner setCampaignInfluencers call
+        return [...prevCampaign, newCampaignInfluencer];
       });
     }
   };
