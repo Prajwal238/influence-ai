@@ -3,11 +3,21 @@ import { useState } from "react";
 import CampaignLayout from "@/components/layout/CampaignLayout";
 import AgentPanel from "@/components/agents/AgentPanel";
 import InfluencerCard from "@/components/discovery/InfluencerCard";
-import InfluencerFilters from "@/components/discovery/InfluencerFilters";
+import DiscoveryFilters from "@/components/discovery/DiscoveryFilters";
 import AIRecommendations from "@/components/discovery/AIRecommendations";
 
 const Discovery = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [showCampaignInfluencers, setShowCampaignInfluencers] = useState(false);
+  const [campaignStatus, setCampaignStatus] = useState("all");
+  const [selectedCampaign, setSelectedCampaign] = useState("all");
+
+  // Sample campaigns data
+  const campaigns = [
+    { id: "1", name: "Spring Wellness Push" },
+    { id: "2", name: "Summer Fashion Campaign" },
+    { id: "3", name: "Tech Review Series" }
+  ];
 
   const influencers = [
     {
@@ -21,6 +31,7 @@ const Discovery = () => {
       languages: ["English", "Spanish"],
       rating: 4.8,
       niches: ["Fashion", "Lifestyle", "Wellness"],
+      campaignName: "Spring Wellness Push", // Added to campaign
       platforms: [
         {
           name: "instagram",
@@ -67,6 +78,7 @@ const Discovery = () => {
       languages: ["English", "Mandarin"],
       rating: 4.6,
       niches: ["Tech", "Gaming", "Reviews"],
+      campaignName: "Tech Review Series", // Added to campaign
       platforms: [
         {
           name: "youtube",
@@ -105,6 +117,7 @@ const Discovery = () => {
       languages: ["English", "Portuguese"],
       rating: 4.9,
       niches: ["Lifestyle", "Wellness", "Travel"],
+      // No campaignName - not added to any campaign
       platforms: [
         {
           name: "instagram",
@@ -142,6 +155,43 @@ const Discovery = () => {
     },
   ];
 
+  // Filter influencers based on current filter settings
+  const filteredInfluencers = influencers.filter((influencer) => {
+    // Search filter
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      const matchesSearch = 
+        influencer.name.toLowerCase().includes(query) ||
+        influencer.niches.some(niche => niche.toLowerCase().includes(query)) ||
+        influencer.platforms.some(platform => platform.handle.toLowerCase().includes(query));
+      
+      if (!matchesSearch) return false;
+    }
+
+    // Campaign toggle filter
+    if (showCampaignInfluencers && !influencer.campaignName) {
+      return false;
+    }
+
+    // Campaign status filter
+    if (campaignStatus === "added" && !influencer.campaignName) {
+      return false;
+    }
+    if (campaignStatus === "not-added" && influencer.campaignName) {
+      return false;
+    }
+
+    // Specific campaign filter
+    if (selectedCampaign !== "all") {
+      const campaign = campaigns.find(c => c.id === selectedCampaign);
+      if (campaign && influencer.campaignName !== campaign.name) {
+        return false;
+      }
+    }
+
+    return true;
+  });
+
   return (
     <CampaignLayout>
       <div className="space-y-6">
@@ -157,18 +207,32 @@ const Discovery = () => {
           </div>
         </div>
 
-        {/* Search and Filters */}
-        <InfluencerFilters 
+        {/* Search, Filters, and Toggle */}
+        <DiscoveryFilters 
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
+          showCampaignInfluencers={showCampaignInfluencers}
+          onToggleChange={setShowCampaignInfluencers}
+          campaignStatus={campaignStatus}
+          onCampaignStatusChange={setCampaignStatus}
+          selectedCampaign={selectedCampaign}
+          onCampaignChange={setSelectedCampaign}
+          campaigns={campaigns}
         />
 
         {/* Results */}
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-          {influencers.map((influencer) => (
+          {filteredInfluencers.map((influencer) => (
             <InfluencerCard key={influencer.id} influencer={influencer} />
           ))}
         </div>
+
+        {/* No results message */}
+        {filteredInfluencers.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-gray-500">No influencers found matching your criteria.</p>
+          </div>
+        )}
 
         {/* AI Suggestions */}
         <AIRecommendations />
