@@ -13,3 +13,12 @@ export interface AgentChatProps {
   onClose?: () => void;
   className?: string;
 }
+
+export interface ChatSession {
+  sessionId: string;
+  userId: string;
+  createdAt: Date;
+  lastMessageAt: Date;
+  messages: Message[];
+  title?: string;
+}

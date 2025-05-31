@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Send, Bot, User, X, Loader2 } from "lucide-react";
 import { Message, AgentChatProps } from './types';
+import SessionsPanel from './SessionsPanel';
 
 interface DefaultChatInterfaceProps extends AgentChatProps {
   messages: Message[];
@@ -15,10 +16,14 @@ interface DefaultChatInterfaceProps extends AgentChatProps {
   handleKeyPress: (e: React.KeyboardEvent) => void;
   isTyping: boolean;
   isApiLoading: boolean;
+  currentSessionId: string;
+  onSessionChange: (sessionId: string) => void;
+  onNewSession: () => void;
 }
 
 const DefaultChatInterface = ({
   agentName,
+  agentType,
   onClose,
   className,
   messages,
@@ -27,7 +32,10 @@ const DefaultChatInterface = ({
   handleSendMessage,
   handleKeyPress,
   isTyping,
-  isApiLoading
+  isApiLoading,
+  currentSessionId,
+  onSessionChange,
+  onNewSession
 }: DefaultChatInterfaceProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -54,11 +62,19 @@ const DefaultChatInterface = ({
               <p className="text-sm text-gray-600">AI Assistant</p>
             </div>
           </div>
-          {onClose && (
-            <Button variant="ghost" size="sm" onClick={onClose}>
-              <X className="h-4 w-4" />
-            </Button>
-          )}
+          <div className="flex items-center space-x-2">
+            <SessionsPanel
+              agentType={agentType}
+              currentSessionId={currentSessionId}
+              onSessionChange={onSessionChange}
+              onNewSession={onNewSession}
+            />
+            {onClose && (
+              <Button variant="ghost" size="sm" onClick={onClose}>
+                <X className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
         </div>
       </CardHeader>
       

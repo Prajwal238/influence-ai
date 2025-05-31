@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Message, AgentChatProps } from './types';
 import { getInitialGreeting, callCampaignAPI, generateAgentResponse } from './utils';
+import { getCurrentSessionId, startNewSession } from './sessionUtils';
 import NegotiationInterface from './NegotiationInterface';
 import DefaultChatInterface from './DefaultChatInterface';
 
@@ -11,9 +12,14 @@ const AgentChat = ({ agentName, agentType, onClose, className }: AgentChatProps)
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [isApiLoading, setIsApiLoading] = useState(false);
+  const [currentSessionId, setCurrentSessionId] = useState<string>("");
   const { toast } = useToast();
 
   useEffect(() => {
+    // Initialize session
+    const sessionId = getCurrentSessionId(agentType);
+    setCurrentSessionId(sessionId);
+    
     // Load conversation history from localStorage
     const savedMessages = localStorage.getItem(`agent-chat-${agentType}`);
     if (savedMessages) {
@@ -43,6 +49,38 @@ const AgentChat = ({ agentName, agentType, onClose, className }: AgentChatProps)
     }
   }, [messages, agentType]);
 
+  const handleNewSession = () => {
+    const newSessionId = startNewSession(agentType);
+    setCurrentSessionId(newSessionId);
+    
+    // Reset messages with initial greeting
+    const greeting = getInitialGreeting(agentType);
+    const newMessages = [{
+      id: '1',
+      type: 'agent' as const,
+      content: greeting,
+      timestamp: new Date()
+    }];
+    setMessages(newMessages);
+    
+    toast({
+      title: "New Chat Started",
+      description: "Starting a fresh conversation with a new session.",
+    });
+  };
+
+  const handleSessionChange = (sessionId: string) => {
+    // TODO: Load messages for the selected session
+    // This will be implemented when the user provides the API for getting past sessions
+    setCurrentSessionId(sessionId);
+    localStorage.setItem(`current-session-${agentType}`, sessionId);
+    
+    toast({
+      title: "Session Loaded",
+      description: "Previous conversation loaded successfully.",
+    });
+  };
+
   const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
 
@@ -62,7 +100,7 @@ const AgentChat = ({ agentName, agentType, onClose, className }: AgentChatProps)
       setIsApiLoading(true);
       
       try {
-        const apiResponse = await callCampaignAPI(currentInput);
+        const apiResponse = await callCampaignAPI(currentInput, currentSessionId);
         
         const agentResponse: Message = {
           id: (Date.now() + 1).toString(),
@@ -150,6 +188,9 @@ const AgentChat = ({ agentName, agentType, onClose, className }: AgentChatProps)
       handleKeyPress={handleKeyPress}
       isTyping={isTyping}
       isApiLoading={isApiLoading}
+      currentSessionId={currentSessionId}
+      onSessionChange={handleSessionChange}
+      onNewSession={handleNewSession}
     />
   );
 };

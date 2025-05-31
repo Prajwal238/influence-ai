@@ -16,7 +16,7 @@ export const getInitialGreeting = (type: string) => {
   }
 };
 
-export const callCampaignAPI = async (prompt: string) => {
+export const callCampaignAPI = async (prompt: string, sessionId: string) => {
   try {
     const response = await fetch('http://localhost:5000/api/campaigns', {
       method: 'POST',
@@ -25,7 +25,8 @@ export const callCampaignAPI = async (prompt: string) => {
       },
       body: JSON.stringify({
         userId: "user_123", // This should come from actual user context
-        prompt: prompt
+        prompt: prompt,
+        sessionId: sessionId
       })
     });
 
