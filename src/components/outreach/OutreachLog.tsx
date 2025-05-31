@@ -9,6 +9,22 @@ interface OutreachLogProps {
 }
 
 const OutreachLog = ({ outreachLog }: OutreachLogProps) => {
+  // Group entries by influencer ID and get the latest entry for each
+  const getLatestEntriesPerInfluencer = (entries: OutreachEntry[]): OutreachEntry[] => {
+    const influencerMap = new Map<number, OutreachEntry>();
+    
+    entries.forEach(entry => {
+      const existing = influencerMap.get(entry.influencerId);
+      if (!existing || entry.id > existing.id) {
+        influencerMap.set(entry.influencerId, entry);
+      }
+    });
+    
+    return Array.from(influencerMap.values()).sort((a, b) => b.id - a.id);
+  };
+
+  const latestEntries = getLatestEntriesPerInfluencer(outreachLog);
+
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "sent": return <Clock className="h-4 w-4 text-yellow-500" />;
@@ -54,7 +70,7 @@ const OutreachLog = ({ outreachLog }: OutreachLogProps) => {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {outreachLog.map((entry) => (
+          {latestEntries.map((entry) => (
             <div key={entry.id} className="border border-gray-100 rounded-lg p-3">
               <div className="flex items-center justify-between mb-2">
                 <div>
