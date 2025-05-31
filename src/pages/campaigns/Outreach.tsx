@@ -74,9 +74,9 @@ const Outreach = () => {
 
   return (
     <CampaignLayout>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Message Composer */}
-        <div className="lg:col-span-2 space-y-6">
+      <div className="max-w-4xl mx-auto space-y-8">
+        {/* Main Content */}
+        <div className="space-y-8">
           <InfluencerSelector
             availableInfluencers={influencers}
             selectedInfluencers={selectedInfluencers}
@@ -96,10 +96,10 @@ const Outreach = () => {
           />
         </div>
 
-        {/* Sidebar */}
-        <div className="space-y-6">
-          <OutreachLog outreachLog={outreachLog} />
+        {/* Sidebar Content - Mobile Hidden, Desktop Sidebar */}
+        <div className="hidden lg:block lg:fixed lg:right-8 lg:top-32 lg:w-80 lg:max-h-[calc(100vh-8rem)] lg:overflow-y-auto space-y-6">
           <OutreachStats />
+          <OutreachLog outreachLog={outreachLog} />
         </div>
       </div>
 
