@@ -5,9 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import CampaignLayout from "@/components/layout/CampaignLayout";
 import AgentPanel from "@/components/agents/AgentPanel";
-import { Search, Filter, Plus, Users, Heart, Eye, Instagram, Globe, MessageSquare } from "lucide-react";
+import { Search, Filter, Plus, Users, Heart, Eye, Instagram, Globe, MessageSquare, Verified, ExternalLink } from "lucide-react";
 
 const Discovery = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -22,11 +23,13 @@ const Discovery = () => {
       niche: "Fashion",
       image: "/api/placeholder/64/64",
       isVerified: true,
+      bio: "Fashion enthusiast & lifestyle creator",
+      location: "New York, NY",
       socialHandles: {
-        instagram: "@sarahjohnson",
-        twitter: "@sarah_j_fashion",
-        tiktok: "@sarahjohnsonofficial",
-        youtube: "Sarah Johnson Fashion"
+        instagram: { handle: "@sarahjohnson", followers: "125K", verified: true },
+        twitter: { handle: "@sarah_j_fashion", followers: "45K", verified: false },
+        tiktok: { handle: "@sarahjohnsonofficial", followers: "300K", verified: true },
+        youtube: { handle: "Sarah Johnson Fashion", followers: "89K", verified: false }
       }
     },
     {
@@ -38,10 +41,12 @@ const Discovery = () => {
       niche: "Tech",
       image: "/api/placeholder/64/64",
       isVerified: false,
+      bio: "Tech reviewer & software engineer",
+      location: "San Francisco, CA",
       socialHandles: {
-        instagram: "@mikechen",
-        twitter: "@mikechen_tech",
-        linkedin: "mike-chen-tech"
+        instagram: { handle: "@mikechen", followers: "89K", verified: false },
+        twitter: { handle: "@mikechen_tech", followers: "156K", verified: true },
+        linkedin: { handle: "mike-chen-tech", followers: "78K", verified: false }
       }
     },
     {
@@ -53,23 +58,36 @@ const Discovery = () => {
       niche: "Lifestyle",
       image: "/api/placeholder/64/64",
       isVerified: true,
+      bio: "Lifestyle blogger & wellness coach",
+      location: "Los Angeles, CA",
       socialHandles: {
-        instagram: "@emmarodriguez",
-        twitter: "@emma_lifestyle",
-        tiktok: "@emmarodriguezlife",
-        youtube: "Emma Rodriguez Lifestyle"
+        instagram: { handle: "@emmarodriguez", followers: "200K", verified: true },
+        twitter: { handle: "@emma_lifestyle", followers: "95K", verified: false },
+        tiktok: { handle: "@emmarodriguezlife", followers: "450K", verified: true },
+        youtube: { handle: "Emma Rodriguez Lifestyle", followers: "167K", verified: true }
       }
     },
   ];
 
   const getSocialIcon = (platform: string) => {
     switch (platform) {
-      case 'instagram': return <Instagram className="h-4 w-4" />;
-      case 'twitter': return <MessageSquare className="h-4 w-4" />;
-      case 'tiktok': return <Users className="h-4 w-4" />;
-      case 'youtube': return <Globe className="h-4 w-4" />;
-      case 'linkedin': return <Globe className="h-4 w-4" />;
-      default: return <Globe className="h-4 w-4" />;
+      case 'instagram': return <Instagram className="h-3.5 w-3.5" />;
+      case 'twitter': return <MessageSquare className="h-3.5 w-3.5" />;
+      case 'tiktok': return <Users className="h-3.5 w-3.5" />;
+      case 'youtube': return <Globe className="h-3.5 w-3.5" />;
+      case 'linkedin': return <Globe className="h-3.5 w-3.5" />;
+      default: return <Globe className="h-3.5 w-3.5" />;
+    }
+  };
+
+  const getPlatformColor = (platform: string) => {
+    switch (platform) {
+      case 'instagram': return 'bg-gradient-to-r from-purple-500 to-pink-500';
+      case 'twitter': return 'bg-blue-500';
+      case 'tiktok': return 'bg-black';
+      case 'youtube': return 'bg-red-500';
+      case 'linkedin': return 'bg-blue-700';
+      default: return 'bg-gray-500';
     }
   };
 
@@ -118,69 +136,151 @@ const Discovery = () => {
         {/* Results */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {influencers.map((influencer) => (
-            <Card key={influencer.id} className="bg-white shadow-sm border-gray-200 hover:shadow-md transition-shadow">
-              <CardContent className="p-6">
-                <div className="flex items-center space-x-3 mb-4">
-                  <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
-                    <Users className="h-6 w-6 text-gray-400" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-2">
-                      <h3 className="font-medium text-gray-900">{influencer.name}</h3>
+            <Card key={influencer.id} className="group bg-white shadow-sm border-gray-200 hover:shadow-lg hover:border-gray-300 transition-all duration-200 overflow-hidden">
+              <CardContent className="p-0">
+                {/* Header with Avatar and Basic Info */}
+                <div className="p-5 pb-4">
+                  <div className="flex items-start space-x-3">
+                    <div className="relative">
+                      <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
+                        <Users className="h-6 w-6 text-gray-400" />
+                      </div>
                       {influencer.isVerified && (
-                        <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
-                          <div className="w-2 h-2 bg-white rounded-full"></div>
+                        <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
+                          <Verified className="h-3 w-3 text-white fill-current" />
                         </div>
                       )}
                     </div>
-                    <p className="text-sm text-gray-600">{influencer.handle}</p>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center space-x-2">
+                        <h3 className="font-semibold text-gray-900 text-sm truncate">{influencer.name}</h3>
+                      </div>
+                      <p className="text-xs text-gray-500 mb-1">{influencer.handle}</p>
+                      <p className="text-xs text-gray-600 line-clamp-2">{influencer.bio}</p>
+                    </div>
                   </div>
                 </div>
 
-                <div className="space-y-2 mb-4">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Followers</span>
-                    <span className="font-medium">{influencer.followers}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Engagement</span>
-                    <span className="font-medium">{influencer.engagement}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Niche</span>
-                    <Badge variant="secondary">{influencer.niche}</Badge>
-                  </div>
-                </div>
-
-                <div className="flex space-x-2">
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button variant="outline" size="sm" className="flex-1">
-                        <Eye className="h-4 w-4 mr-1" />
-                        View
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-md">
-                      <DialogHeader>
-                        <DialogTitle>{influencer.name}'s Social Handles</DialogTitle>
-                      </DialogHeader>
-                      <div className="space-y-3">
-                        {Object.entries(influencer.socialHandles).map(([platform, handle]) => (
-                          <div key={platform} className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg">
+                {/* Social Platforms Row */}
+                <div className="px-5 pb-4">
+                  <div className="flex items-center space-x-2">
+                    {Object.entries(influencer.socialHandles).slice(0, 4).map(([platform, data]) => (
+                      <HoverCard key={platform}>
+                        <HoverCardTrigger asChild>
+                          <div className={`relative flex items-center justify-center w-8 h-8 rounded-lg ${getPlatformColor(platform)} cursor-pointer hover:scale-105 transition-transform duration-150`}>
                             {getSocialIcon(platform)}
-                            <div>
-                              <p className="font-medium capitalize">{platform}</p>
-                              <p className="text-sm text-gray-600">{handle}</p>
+                            {data.verified && (
+                              <div className="absolute -top-1 -right-1 w-3 h-3 bg-white rounded-full flex items-center justify-center">
+                                <Verified className="h-2 w-2 text-blue-500 fill-current" />
+                              </div>
+                            )}
+                          </div>
+                        </HoverCardTrigger>
+                        <HoverCardContent className="w-64 p-3" side="top">
+                          <div className="flex items-center space-x-3">
+                            <div className={`flex items-center justify-center w-10 h-10 rounded-lg ${getPlatformColor(platform)}`}>
+                              {getSocialIcon(platform)}
+                            </div>
+                            <div className="flex-1">
+                              <div className="flex items-center space-x-1">
+                                <p className="font-medium text-sm capitalize">{platform}</p>
+                                {data.verified && (
+                                  <Verified className="h-3 w-3 text-blue-500 fill-current" />
+                                )}
+                              </div>
+                              <p className="text-xs text-gray-600">{data.handle}</p>
+                              <p className="text-xs text-gray-500">{data.followers} followers</p>
                             </div>
                           </div>
-                        ))}
+                        </HoverCardContent>
+                      </HoverCard>
+                    ))}
+                    {Object.keys(influencer.socialHandles).length > 4 && (
+                      <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gray-100 text-gray-500 text-xs font-medium">
+                        +{Object.keys(influencer.socialHandles).length - 4}
                       </div>
-                    </DialogContent>
-                  </Dialog>
-                  <Button size="sm" className="flex-1 bg-blue-600 hover:bg-blue-700">
-                    <Plus className="h-4 w-4 mr-1" />
-                    Add
-                  </Button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Stats */}
+                <div className="px-5 pb-4 border-t border-gray-50 pt-4">
+                  <div className="grid grid-cols-3 gap-3 text-center">
+                    <div>
+                      <p className="text-sm font-semibold text-gray-900">{influencer.followers}</p>
+                      <p className="text-xs text-gray-500">Followers</p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-gray-900">{influencer.engagement}</p>
+                      <p className="text-xs text-gray-500">Engagement</p>
+                    </div>
+                    <div>
+                      <Badge variant="secondary" className="text-xs px-2 py-1">{influencer.niche}</Badge>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div className="px-5 pb-5">
+                  <div className="flex space-x-2">
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant="outline" size="sm" className="flex-1 h-8 text-xs">
+                          <Eye className="h-3 w-3 mr-1" />
+                          View Profile
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-lg">
+                        <DialogHeader>
+                          <DialogTitle className="flex items-center space-x-3">
+                            <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                              <Users className="h-5 w-5 text-gray-400" />
+                            </div>
+                            <div>
+                              <div className="flex items-center space-x-2">
+                                <span>{influencer.name}</span>
+                                {influencer.isVerified && (
+                                  <Verified className="h-4 w-4 text-blue-500 fill-current" />
+                                )}
+                              </div>
+                              <p className="text-sm text-gray-500 font-normal">{influencer.location}</p>
+                            </div>
+                          </DialogTitle>
+                        </DialogHeader>
+                        <div className="space-y-4">
+                          <p className="text-sm text-gray-600">{influencer.bio}</p>
+                          <div className="space-y-3">
+                            <h4 className="font-medium text-sm">Social Platforms</h4>
+                            {Object.entries(influencer.socialHandles).map(([platform, data]) => (
+                              <div key={platform} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
+                                <div className="flex items-center space-x-3">
+                                  <div className={`flex items-center justify-center w-8 h-8 rounded-lg ${getPlatformColor(platform)}`}>
+                                    {getSocialIcon(platform)}
+                                  </div>
+                                  <div>
+                                    <div className="flex items-center space-x-2">
+                                      <p className="font-medium capitalize text-sm">{platform}</p>
+                                      {data.verified && (
+                                        <Verified className="h-3 w-3 text-blue-500 fill-current" />
+                                      )}
+                                    </div>
+                                    <p className="text-xs text-gray-600">{data.handle} • {data.followers}</p>
+                                  </div>
+                                </div>
+                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                                  <ExternalLink className="h-3 w-3" />
+                                </Button>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                    <Button size="sm" className="flex-1 h-8 text-xs bg-blue-600 hover:bg-blue-700">
+                      <Plus className="h-3 w-3 mr-1" />
+                      Add to Campaign
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
