@@ -1,5 +1,5 @@
 
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Campaign } from '@/types/campaign';
 
 const fetchCampaigns = async (): Promise<Campaign[]> => {
@@ -22,4 +22,12 @@ export const useCampaigns = () => {
     queryKey: ['campaigns'],
     queryFn: fetchCampaigns,
   });
+};
+
+export const useRefreshCampaigns = () => {
+  const queryClient = useQueryClient();
+  
+  return () => {
+    queryClient.invalidateQueries({ queryKey: ['campaigns'] });
+  };
 };
