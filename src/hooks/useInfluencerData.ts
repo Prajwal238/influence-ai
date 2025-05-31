@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -102,14 +103,16 @@ export const useInfluencerData = () => {
   const [campaignInfluencers, setCampaignInfluencers] = useState<Influencer[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { campaignId } = useParams();
+  const { id: campaignId } = useParams();
 
   useEffect(() => {
     const fetchInfluencers = async () => {
       try {
         setLoading(true);
+        console.log('Current campaign ID from params:', campaignId);
         
         // Always fetch all influencers
+        console.log('Fetching all influencers...');
         const allInfluencersResponse = await fetch('http://localhost:5000/api/user_123/influencers');
         if (!allInfluencersResponse.ok) {
           throw new Error('Failed to fetch all influencers');
@@ -117,11 +120,14 @@ export const useInfluencerData = () => {
         const allInfluencersData: ApiInfluencer[] = await allInfluencersResponse.json();
         const transformedAllInfluencers = allInfluencersData.map(data => transformApiDataToInfluencer(data, false));
         setAllInfluencers(transformedAllInfluencers);
+        console.log('All influencers fetched:', transformedAllInfluencers.length);
 
         // If we're in a campaign context, also fetch campaign-specific influencers
         if (campaignId) {
-          console.log('Fetching campaign influencers for campaign:', campaignId);
-          const campaignResponse = await fetch(`http://localhost:5000/api/user_123/campaigns/${campaignId}/influencers`);
+          const campaignUrl = `http://localhost:5000/api/user_123/campaigns/${campaignId}/influencers`;
+          console.log('Fetching campaign influencers from:', campaignUrl);
+          
+          const campaignResponse = await fetch(campaignUrl);
           
           if (campaignResponse.ok) {
             const campaignData: ApiInfluencer[] = await campaignResponse.json();
@@ -129,10 +135,12 @@ export const useInfluencerData = () => {
             setCampaignInfluencers(transformedCampaignInfluencers);
             console.log('Campaign influencers fetched:', transformedCampaignInfluencers.length);
           } else {
+            console.log('Campaign influencers API response status:', campaignResponse.status);
             console.log('No campaign influencers found or error fetching them');
             setCampaignInfluencers([]);
           }
         } else {
+          console.log('No campaign ID found, skipping campaign influencers fetch');
           setCampaignInfluencers([]);
         }
         
@@ -162,6 +170,12 @@ export const useInfluencerData = () => {
         // Add new campaign influencer
         combined.push(campaignInfluencer);
       }
+    });
+
+    console.log('Combined influencers result:', {
+      allInfluencers: allInfluencers.length,
+      campaignInfluencers: campaignInfluencers.length,
+      combined: combined.length
     });
 
     return combined;
