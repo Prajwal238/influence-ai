@@ -27,6 +27,7 @@ interface Influencer {
 
 interface UseInfluencerFilteringProps {
   influencers: Influencer[];
+  campaignInfluencers: Influencer[];
   searchQuery: string;
   showCampaignInfluencers: boolean;
   activeFilters: string[];
@@ -48,6 +49,7 @@ const parseEngagementRate = (engagementString: string): number => {
 
 export const useInfluencerFiltering = ({
   influencers,
+  campaignInfluencers,
   searchQuery,
   showCampaignInfluencers,
   activeFilters
@@ -55,24 +57,18 @@ export const useInfluencerFiltering = ({
   const filteredInfluencers = useMemo(() => {
     console.log('Filtering influencers:', {
       totalInfluencers: influencers.length,
+      campaignInfluencers: campaignInfluencers.length,
       showCampaignInfluencers,
       searchQuery,
       activeFilters
     });
 
-    return influencers.filter((influencer) => {
-      // Campaign toggle filter - this was the main issue
-      if (showCampaignInfluencers) {
-        // When toggle is ON, show only campaign influencers (those with campaignName)
-        if (!influencer.campaignName) {
-          console.log('Filtering out non-campaign influencer:', influencer.name);
-          return false;
-        }
-      } else {
-        // When toggle is OFF, show all influencers (both campaign and non-campaign)
-        // No filtering needed here as we want to show everything
-      }
+    // Choose the base set of influencers
+    const baseInfluencers = showCampaignInfluencers ? campaignInfluencers : influencers;
+    
+    console.log('Using base influencers:', baseInfluencers.length);
 
+    return baseInfluencers.filter((influencer) => {
       // Search filter
       if (searchQuery) {
         const query = searchQuery.toLowerCase();
@@ -108,10 +104,10 @@ export const useInfluencerFiltering = ({
 
       return true;
     });
-  }, [influencers, searchQuery, showCampaignInfluencers, activeFilters]);
+  }, [influencers, campaignInfluencers, searchQuery, showCampaignInfluencers, activeFilters]);
 
   console.log('Filtered results:', {
-    originalCount: influencers.length,
+    baseCount: showCampaignInfluencers ? campaignInfluencers.length : influencers.length,
     filteredCount: filteredInfluencers.length,
     showCampaignInfluencers
   });

@@ -16,10 +16,11 @@ const Discovery = () => {
   const [showCampaignInfluencers, setShowCampaignInfluencers] = useState(false);
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
 
-  const { influencers, loading, error } = useInfluencerData();
+  const { influencers, campaignInfluencers, loading, error } = useInfluencerData();
 
   const filteredInfluencers = useInfluencerFiltering({
     influencers,
+    campaignInfluencers,
     searchQuery,
     showCampaignInfluencers,
     activeFilters

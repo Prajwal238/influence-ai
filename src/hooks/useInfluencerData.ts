@@ -59,7 +59,7 @@ const formatNumber = (num: number): string => {
   return num.toString();
 };
 
-const transformApiDataToInfluencer = (apiData: ApiInfluencer): Influencer => {
+const transformApiDataToInfluencer = (apiData: ApiInfluencer, isCampaignInfluencer: boolean = false): Influencer => {
   // Calculate total followers
   const totalFollowers = apiData.platforms.reduce((sum, platform) => sum + platform.followers, 0);
   
@@ -76,7 +76,7 @@ const transformApiDataToInfluencer = (apiData: ApiInfluencer): Influencer => {
     topBrand: platform.pastCollaborations.length > 0 ? platform.pastCollaborations[0] : null
   }));
 
-  return {
+  const influencer: Influencer = {
     id: parseInt(apiData._id.slice(-6), 16), // Convert last 6 chars of _id to number
     name: apiData.name,
     bio: apiData.bio,
@@ -89,10 +89,18 @@ const transformApiDataToInfluencer = (apiData: ApiInfluencer): Influencer => {
     niches: apiData.categories,
     platforms: platforms
   };
+
+  // Mark as campaign influencer if fetched from campaign endpoint
+  if (isCampaignInfluencer) {
+    influencer.campaignName = 'campaign'; // Mark this as a campaign influencer
+  }
+
+  return influencer;
 };
 
 export const useInfluencerData = () => {
-  const [influencers, setInfluencers] = useState<Influencer[]>([]);
+  const [allInfluencers, setAllInfluencers] = useState<Influencer[]>([]);
+  const [campaignInfluencers, setCampaignInfluencers] = useState<Influencer[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { campaignId } = useParams();
@@ -102,28 +110,33 @@ export const useInfluencerData = () => {
       try {
         setLoading(true);
         
-        // Determine which endpoint to use based on whether we're in a campaign context
-        const endpoint = campaignId 
-          ? `http://localhost:5000/api/user_123/campaigns/${campaignId}/influencers`
-          : 'http://localhost:5000/api/user_123/influencers';
-        
-        const response = await fetch(endpoint);
-        
-        if (!response.ok) {
-          throw new Error('Failed to fetch influencers');
+        // Always fetch all influencers
+        const allInfluencersResponse = await fetch('http://localhost:5000/api/user_123/influencers');
+        if (!allInfluencersResponse.ok) {
+          throw new Error('Failed to fetch all influencers');
         }
+        const allInfluencersData: ApiInfluencer[] = await allInfluencersResponse.json();
+        const transformedAllInfluencers = allInfluencersData.map(data => transformApiDataToInfluencer(data, false));
+        setAllInfluencers(transformedAllInfluencers);
 
-        const apiData: ApiInfluencer[] = await response.json();
-        const transformedData = apiData.map(transformApiDataToInfluencer);
-        
-        // If we're fetching campaign influencers, mark them as campaign influencers
+        // If we're in a campaign context, also fetch campaign-specific influencers
         if (campaignId) {
-          transformedData.forEach(influencer => {
-            influencer.campaignName = campaignId;
-          });
+          console.log('Fetching campaign influencers for campaign:', campaignId);
+          const campaignResponse = await fetch(`http://localhost:5000/api/user_123/campaigns/${campaignId}/influencers`);
+          
+          if (campaignResponse.ok) {
+            const campaignData: ApiInfluencer[] = await campaignResponse.json();
+            const transformedCampaignInfluencers = campaignData.map(data => transformApiDataToInfluencer(data, true));
+            setCampaignInfluencers(transformedCampaignInfluencers);
+            console.log('Campaign influencers fetched:', transformedCampaignInfluencers.length);
+          } else {
+            console.log('No campaign influencers found or error fetching them');
+            setCampaignInfluencers([]);
+          }
+        } else {
+          setCampaignInfluencers([]);
         }
         
-        setInfluencers(transformedData);
         setError(null);
       } catch (err) {
         console.error('Error fetching influencers:', err);
@@ -136,5 +149,29 @@ export const useInfluencerData = () => {
     fetchInfluencers();
   }, [campaignId]);
 
-  return { influencers, loading, error };
+  // Combine all influencers with campaign influencers, avoiding duplicates
+  const combinedInfluencers = useMemo(() => {
+    const combined = [...allInfluencers];
+    
+    // Add campaign influencers that aren't already in the all influencers list
+    campaignInfluencers.forEach(campaignInfluencer => {
+      const existingIndex = combined.findIndex(inf => inf.id === campaignInfluencer.id);
+      if (existingIndex >= 0) {
+        // Update existing influencer to mark it as campaign influencer
+        combined[existingIndex] = { ...combined[existingIndex], campaignName: 'campaign' };
+      } else {
+        // Add new campaign influencer
+        combined.push(campaignInfluencer);
+      }
+    });
+
+    return combined;
+  }, [allInfluencers, campaignInfluencers]);
+
+  return { 
+    influencers: combinedInfluencers, 
+    campaignInfluencers,
+    loading, 
+    error 
+  };
 };
