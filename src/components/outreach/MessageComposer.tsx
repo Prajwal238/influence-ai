@@ -12,7 +12,7 @@ import LanguageSelector from "./LanguageSelector";
 import SendButton from "./SendButton";
 import AIPersonalizationInfo from "./AIPersonalizationInfo";
 import { useBulkMessaging } from "@/hooks/useBulkMessaging";
-import { generateTextMessage, generateVoiceMessage } from "@/utils/messageGenerator";
+import { useToast } from "@/hooks/use-toast";
 
 interface MessageComposerProps {
   message: string;
@@ -44,6 +44,8 @@ const MessageComposer = ({
   const [isGenerating, setIsGenerating] = useState(false);
   const [selectedTargetLanguages, setSelectedTargetLanguages] = useState<string[]>(["english"]);
   
+  const { toast } = useToast();
+  
   const bulkMessaging = useBulkMessaging({
     selectedInfluencersCount,
     sendAsVoice,
@@ -60,15 +62,50 @@ const MessageComposer = ({
 
   const handleGenerateWithAI = async () => {
     setIsGenerating(true);
-    // Simulate AI generation
-    setTimeout(() => {
-      if (sendAsVoice) {
-        setVoiceMessage(generateVoiceMessage(selectedPlatform));
-      } else {
-        onMessageChange(generateTextMessage(selectedPlatform));
+    
+    try {
+      toast({
+        title: "Generating Message",
+        description: "AI is creating your personalized message...",
+      });
+
+      const response = await fetch('http://localhost:5000/api/user_123/campaigns/summer_fashion_2024/ai_message', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
+
+      const data = await response.json();
+      
+      if (data.type === 'message' && data.message) {
+        if (sendAsVoice) {
+          setVoiceMessage(data.message);
+        } else {
+          onMessageChange(data.message);
+        }
+        
+        toast({
+          title: "Message Generated",
+          description: "AI has successfully created your message!",
+        });
+      } else {
+        throw new Error('Invalid response format');
+      }
+    } catch (error) {
+      console.error('Error generating AI message:', error);
+      toast({
+        title: "Generation Failed",
+        description: "Failed to generate AI message. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
       setIsGenerating(false);
-    }, 2000);
+    }
   };
 
   const handleLanguageToggle = (language: string) => {
