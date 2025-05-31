@@ -1,6 +1,6 @@
+
 import { useState } from "react";
 import CampaignLayout from "@/components/layout/CampaignLayout";
-import AgentPanel from "@/components/agents/AgentPanel";
 import DiscoveryFilters from "@/components/discovery/DiscoveryFilters";
 import DiscoveryHeader from "@/components/discovery/DiscoveryHeader";
 import DiscoveryResults from "@/components/discovery/DiscoveryResults";
@@ -86,7 +86,6 @@ const Discovery = () => {
             <p className="text-gray-500">Loading influencers...</p>
           </div>
         </div>
-        <AgentPanel agentName="Discovery Agent" agentType="discovery" />
       </CampaignLayout>
     );
   }
@@ -100,7 +99,6 @@ const Discovery = () => {
             <p className="text-red-500">Error loading influencers: {error}</p>
           </div>
         </div>
-        <AgentPanel agentName="Discovery Agent" agentType="discovery" />
       </CampaignLayout>
     );
   }
@@ -155,9 +153,6 @@ const Discovery = () => {
           />
         </div>
       </div>
-
-      {/* Agent Panel */}
-      <AgentPanel agentName="Discovery Agent" agentType="discovery" />
     </CampaignLayout>
   );
 };
