@@ -8,17 +8,47 @@ import DiscoveryResults from "@/components/discovery/DiscoveryResults";
 import NoResults from "@/components/discovery/NoResults";
 import AIRecommendations from "@/components/discovery/AIRecommendations";
 import { useInfluencerFiltering } from "@/hooks/useInfluencerFiltering";
-import { influencersData } from "@/data/influencersData";
+import { useInfluencerData } from "@/hooks/useInfluencerData";
 
 const Discovery = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showCampaignInfluencers, setShowCampaignInfluencers] = useState(false);
 
+  const { influencers, loading, error } = useInfluencerData();
+
   const filteredInfluencers = useInfluencerFiltering({
-    influencers: influencersData,
+    influencers,
     searchQuery,
     showCampaignInfluencers
   });
+
+  if (loading) {
+    return (
+      <CampaignLayout>
+        <div className="space-y-6">
+          <DiscoveryHeader />
+          <div className="flex items-center justify-center py-12">
+            <p className="text-gray-500">Loading influencers...</p>
+          </div>
+        </div>
+        <AgentPanel agentName="Discovery Agent" agentType="discovery" />
+      </CampaignLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <CampaignLayout>
+        <div className="space-y-6">
+          <DiscoveryHeader />
+          <div className="flex items-center justify-center py-12">
+            <p className="text-red-500">Error loading influencers: {error}</p>
+          </div>
+        </div>
+        <AgentPanel agentName="Discovery Agent" agentType="discovery" />
+      </CampaignLayout>
+    );
+  }
 
   return (
     <CampaignLayout>

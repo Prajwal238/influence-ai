@@ -1,5 +1,5 @@
 
-import { Instagram, Youtube, Twitter, Linkedin, Users, Globe, Verified } from "lucide-react";
+import { Instagram, Youtube, Twitter, Linkedin, Users, Globe, Verified, Facebook } from "lucide-react";
 
 interface Platform {
   name: string;
@@ -21,6 +21,7 @@ const PlatformPill = ({ platform }: PlatformPillProps) => {
       case 'youtube': return Youtube;
       case 'twitter': return Twitter;
       case 'linkedin': return Linkedin;
+      case 'facebook': return Facebook;
       case 'tiktok': return Users;
       default: return Globe;
     }
@@ -32,6 +33,7 @@ const PlatformPill = ({ platform }: PlatformPillProps) => {
       case 'youtube': return 'from-red-500 to-red-600';
       case 'twitter': return 'from-blue-400 to-blue-500';
       case 'linkedin': return 'from-blue-600 to-blue-700';
+      case 'facebook': return 'from-blue-600 to-blue-800';
       case 'tiktok': return 'from-gray-800 to-black';
       default: return 'from-gray-400 to-gray-500';
     }
