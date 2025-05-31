@@ -29,6 +29,7 @@ export const transformApiDataToInfluencer = (apiData: ApiInfluencer, isCampaignI
 
   const influencer: Influencer = {
     id: parseInt(apiData._id.slice(-6), 16), // Convert last 6 chars of _id to number
+    apiId: apiData._id, // Store the original API _id
     name: apiData.name,
     bio: apiData.bio,
     location: apiData.location,

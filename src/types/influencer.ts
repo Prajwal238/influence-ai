@@ -34,6 +34,7 @@ export interface Platform {
 
 export interface Influencer {
   id: number;
+  apiId: string; // Store the original API _id
   name: string;
   bio: string;
   location: string;
