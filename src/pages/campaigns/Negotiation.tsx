@@ -1,9 +1,12 @@
+
 import { useState } from "react";
 import CampaignLayout from "@/components/layout/CampaignLayout";
 import ThreadsList from "@/components/negotiation/ThreadsList";
 import ChatWindow from "@/components/negotiation/ChatWindow";
 import FloatingChatButton from "@/components/agents/FloatingChatButton";
+import { useOutreachData } from "@/hooks/useOutreachData";
 
+// Re-export types for compatibility with existing components
 interface Message {
   id: string;
   from: 'agent' | 'creator';
@@ -21,96 +24,14 @@ interface Thread {
   avatar?: string;
 }
 
-// Mock data - replace with actual API calls
-const mockThreads: Thread[] = [
-  {
-    creatorId: "1",
-    name: "Sarah Johnson",
-    handle: "@sarahjfitness",
-    platform: "instagram",
-    avatar: "/api/placeholder/40/40",
-    messages: [
-      {
-        id: "1",
-        from: "agent",
-        content: "Hi Sarah! We'd love to collaborate with you on our upcoming fitness campaign. Would you be interested in discussing rates?",
-        timestamp: "2024-01-15T10:00:00Z",
-        platform: "instagram"
-      },
-      {
-        id: "2",
-        from: "creator",
-        content: "Hi! Yes, I'm definitely interested. What did you have in mind for the collaboration?",
-        timestamp: "2024-01-15T10:30:00Z",
-        platform: "instagram"
-      },
-      {
-        id: "3",
-        from: "agent",
-        content: "We're looking at $500 for 3 posts and 5 stories. Would that work for you?",
-        timestamp: "2024-01-15T11:00:00Z",
-        platform: "instagram"
-      },
-      {
-        id: "4",
-        from: "creator",
-        content: "That sounds fair! Can we discuss the content requirements in more detail?",
-        timestamp: "2024-01-15T11:15:00Z",
-        platform: "instagram"
-      }
-    ]
-  },
-  {
-    creatorId: "2",
-    name: "Mike Chen",
-    handle: "@mikechentech",
-    platform: "email",
-    avatar: "/api/placeholder/40/40",
-    messages: [
-      {
-        id: "5",
-        from: "agent",
-        content: "Hello Mike, we've been following your tech content and would love to partner with you for our product launch.",
-        timestamp: "2024-01-14T15:00:00Z",
-        platform: "email"
-      },
-      {
-        id: "6",
-        from: "creator",
-        content: "Thanks for reaching out! I'd be happy to learn more about the partnership opportunity.",
-        timestamp: "2024-01-14T16:30:00Z",
-        platform: "email"
-      }
-    ]
-  },
-  {
-    creatorId: "3",
-    name: "Emma Rodriguez",
-    handle: "@emmalifestyle",
-    platform: "voice",
-    avatar: "/api/placeholder/40/40",
-    messages: [
-      {
-        id: "7",
-        from: "agent",
-        content: "Hi Emma! We left you a voice message about our lifestyle brand collaboration. Please let us know your thoughts!",
-        timestamp: "2024-01-13T09:00:00Z",
-        platform: "voice"
-      },
-      {
-        id: "8",
-        from: "creator",
-        content: "Thanks for the voice note! I'm interested and would like to schedule a call to discuss further.",
-        timestamp: "2024-01-13T12:00:00Z",
-        platform: "voice"
-      }
-    ]
-  }
-];
-
 const Negotiation = () => {
   const [selectedThread, setSelectedThread] = useState<Thread | undefined>();
-  const [threads, setThreads] = useState<Thread[]>(mockThreads);
+  const { threads, addMessageToThread } = useOutreachData();
+
+  // Only show threads for influencers who have replied
+  const repliedThreads = threads.filter(thread => 
+    thread.status === 'replied' || thread.messages.length > 1
+  );
 
   const handleSelectThread = (thread: Thread) => {
     setSelectedThread(thread);
@@ -119,26 +40,18 @@ const Negotiation = () => {
   const handleSendMessage = (content: string, platform: string) => {
     if (!selectedThread) return;
 
-    const newMessage: Message = {
-      id: Date.now().toString(),
+    addMessageToThread(selectedThread.creatorId, {
       from: 'agent',
       content,
       timestamp: new Date().toISOString(),
       platform: platform as 'instagram' | 'email' | 'voice'
-    };
+    });
 
-    setThreads(prevThreads =>
-      prevThreads.map(thread =>
-        thread.creatorId === selectedThread.creatorId
-          ? { ...thread, messages: [...thread.messages, newMessage] }
-          : thread
-      )
-    );
-
-    // Update selected thread
-    setSelectedThread(prev =>
-      prev ? { ...prev, messages: [...prev.messages, newMessage] } : prev
-    );
+    // Update selected thread with the new message
+    const updatedThread = repliedThreads.find(t => t.creatorId === selectedThread.creatorId);
+    if (updatedThread) {
+      setSelectedThread(updatedThread);
+    }
   };
 
   return (
@@ -158,7 +71,7 @@ const Negotiation = () => {
             {/* Threads List - 4 columns */}
             <div className="col-span-12 lg:col-span-4">
               <ThreadsList
-                threads={threads}
+                threads={repliedThreads}
                 selectedThreadId={selectedThread?.creatorId}
                 onSelectThread={handleSelectThread}
               />

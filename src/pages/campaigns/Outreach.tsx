@@ -6,6 +6,7 @@ import InfluencerSelector from "@/components/outreach/InfluencerSelector";
 import MessageComposer from "@/components/outreach/MessageComposer";
 import OutreachLog from "@/components/outreach/OutreachLog";
 import OutreachStats from "@/components/outreach/OutreachStats";
+import { useOutreachData } from "@/hooks/useOutreachData";
 
 const Outreach = () => {
   const [message, setMessage] = useState("Hi {name},\n\nI hope this message finds you well! I'm reaching out on behalf of our brand regarding a potential collaboration...");
@@ -13,59 +14,7 @@ const Outreach = () => {
   const [selectedPlatform, setSelectedPlatform] = useState("instagram");
   const [selectedInfluencers, setSelectedInfluencers] = useState<number[]>([]);
 
-  const availableInfluencers = [
-    {
-      id: 1,
-      name: "Sarah Johnson",
-      handle: "@sarahjohnson",
-      followers: "125K",
-      niche: "Fashion"
-    },
-    {
-      id: 2,
-      name: "Mike Chen",
-      handle: "@mikechen",
-      followers: "89K",
-      niche: "Tech"
-    },
-    {
-      id: 3,
-      name: "Emma Rodriguez",
-      handle: "@emmarodriguez",
-      followers: "200K",
-      niche: "Lifestyle"
-    },
-  ];
-
-  const outreachLog = [
-    {
-      id: 1,
-      influencer: "Sarah Johnson",
-      handle: "@sarahjohnson",
-      status: "sent",
-      sentAt: "2 hours ago",
-      template: "Fashion Collaboration",
-      platform: "instagram"
-    },
-    {
-      id: 2,
-      influencer: "Mike Chen", 
-      handle: "@mikechen",
-      status: "pending",
-      sentAt: "1 day ago",
-      template: "Tech Partnership",
-      platform: "email"
-    },
-    {
-      id: 3,
-      influencer: "Emma Rodriguez",
-      handle: "@emmarodriguez", 
-      status: "replied",
-      sentAt: "3 hours ago",
-      template: "Lifestyle Brand",
-      platform: "whatsapp"
-    },
-  ];
+  const { influencers, outreachLog, addOutreachEntry } = useOutreachData();
 
   const toggleInfluencerSelection = (influencerId: number) => {
     setSelectedInfluencers(prev => 
@@ -78,13 +27,49 @@ const Outreach = () => {
   const handleSendAsText = () => {
     console.log("Sending message as text:", message);
     console.log("Selected influencers:", selectedInfluencers);
-    // Add text sending logic here
+    
+    // Add outreach entries for selected influencers
+    selectedInfluencers.forEach(influencerId => {
+      const influencer = influencers.find(inf => inf.id === influencerId);
+      if (influencer) {
+        addOutreachEntry({
+          influencer: influencer.name,
+          handle: influencer.handle,
+          status: "sent",
+          sentAt: "Just now",
+          template: "Custom Message",
+          platform: selectedPlatform as any,
+          influencerId: influencer.id
+        });
+      }
+    });
+
+    // Clear selected influencers after sending
+    setSelectedInfluencers([]);
   };
 
   const handleSendAsVoice = () => {
     console.log("Sending message as voice:", message);
     console.log("Selected influencers:", selectedInfluencers);
-    // Add voice sending logic here
+    
+    // Add outreach entries for selected influencers
+    selectedInfluencers.forEach(influencerId => {
+      const influencer = influencers.find(inf => inf.id === influencerId);
+      if (influencer) {
+        addOutreachEntry({
+          influencer: influencer.name,
+          handle: influencer.handle,
+          status: "sent",
+          sentAt: "Just now",
+          template: "Voice Message",
+          platform: selectedPlatform as any,
+          influencerId: influencer.id
+        });
+      }
+    });
+
+    // Clear selected influencers after sending
+    setSelectedInfluencers([]);
   };
 
   return (
@@ -93,7 +78,7 @@ const Outreach = () => {
         {/* Message Composer */}
         <div className="lg:col-span-2 space-y-6">
           <InfluencerSelector
-            availableInfluencers={availableInfluencers}
+            availableInfluencers={influencers}
             selectedInfluencers={selectedInfluencers}
             onToggleInfluencer={toggleInfluencerSelection}
           />

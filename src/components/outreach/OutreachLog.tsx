@@ -2,16 +2,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Clock, CheckCircle, XCircle, Instagram, Mail, Phone, MessageSquare } from "lucide-react";
-
-interface OutreachEntry {
-  id: number;
-  influencer: string;
-  handle: string;
-  status: string;
-  sentAt: string;
-  template: string;
-  platform: string;
-}
+import { OutreachEntry } from "@/hooks/useOutreachData";
 
 interface OutreachLogProps {
   outreachLog: OutreachEntry[];
