@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { MessageSquare, X } from "lucide-react";
+import { MessageSquare, X, Plus } from "lucide-react";
 
 interface SessionsPanelHeaderProps {
   onClose: () => void;
