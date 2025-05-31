@@ -1,14 +1,16 @@
 
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Send, Sparkles, Volume2, Globe, Play, MessageSquare, Mic, AlertCircle, Users } from "lucide-react";
+import { Sparkles, Users } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import BulkMessagingProgress from "./BulkMessagingProgress";
+import TemplateSelector from "./TemplateSelector";
+import MessageTypeToggle from "./MessageTypeToggle";
+import TextMessageEditor from "./TextMessageEditor";
+import VoiceMessageEditor from "./VoiceMessageEditor";
+import LanguageSelector from "./LanguageSelector";
+import SendButton from "./SendButton";
 
 interface MessageComposerProps {
   message: string;
@@ -72,11 +74,12 @@ Campaign Team`);
     }, 2000);
   };
 
-  const handlePreviewVoice = () => {
-    toast({
-      title: "Voice Preview",
-      description: `Playing voice preview in ${voiceLanguage}...`,
-    });
+  const handleLanguageToggle = (language: string) => {
+    setSelectedTargetLanguages(prev => 
+      prev.includes(language) 
+        ? prev.filter(l => l !== language)
+        : [...prev, language]
+    );
   };
 
   const handleSend = async () => {
@@ -142,155 +145,39 @@ Campaign Team`);
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
-          {/* Template Selector */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">
-              Message Template
-            </label>
-            <Select value={selectedTemplate} onValueChange={setSelectedTemplate}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select a message template" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="first-reach">First Reach Out</SelectItem>
-                <SelectItem value="follow-up">Follow Up</SelectItem>
-                <SelectItem value="collaboration">Collaboration Proposal</SelectItem>
-                <SelectItem value="thank-you">Thank You Message</SelectItem>
-                <SelectItem value="custom">Custom Message</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          <TemplateSelector 
+            selectedTemplate={selectedTemplate}
+            onTemplateChange={setSelectedTemplate}
+          />
 
-          {/* Message Type Toggle */}
-          <div className="space-y-3">
-            <label className="text-sm font-medium text-gray-700">
-              Message Type
-            </label>
-            <div className="flex space-x-2">
-              <Button 
-                variant={!sendAsVoice ? "default" : "outline"}
-                size="sm"
-                onClick={() => setSendAsVoice(false)}
-                className="flex items-center space-x-2"
-              >
-                <MessageSquare className="h-4 w-4" />
-                <span>Text Message</span>
-              </Button>
-              <Button 
-                variant={sendAsVoice ? "default" : "outline"}
-                size="sm"
-                onClick={() => setSendAsVoice(true)}
-                className="flex items-center space-x-2"
-              >
-                <Mic className="h-4 w-4" />
-                <span>Voice Message</span>
-              </Button>
-            </div>
-          </div>
+          <MessageTypeToggle 
+            sendAsVoice={sendAsVoice}
+            onToggle={setSendAsVoice}
+          />
 
-          {/* Text Message Composition */}
           {!sendAsVoice && (
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <label className="text-sm font-medium text-gray-700">
-                  Message Content
-                </label>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={handleGenerateWithAI}
-                  disabled={isGenerating}
-                  className="flex items-center space-x-2"
-                >
-                  <Sparkles className="h-4 w-4" />
-                  <span>{isGenerating ? 'Generating...' : 'Generate with AI'}</span>
-                </Button>
-              </div>
-              <Textarea 
-                value={message}
-                onChange={(e) => onMessageChange(e.target.value)}
-                className="min-h-32 resize-none"
-                placeholder="Write your message..."
-              />
-              <p className="text-xs text-gray-500">
-                Use variables like {"{name}"}, {"{followers}"}, and {"{niche}"} for personalization
-              </p>
-            </div>
+            <TextMessageEditor
+              message={message}
+              onMessageChange={onMessageChange}
+              selectedPlatform={selectedPlatform}
+              onGenerateWithAI={handleGenerateWithAI}
+              isGenerating={isGenerating}
+            />
           )}
 
-          {/* Voice Message Composition */}
           {sendAsVoice && (
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">
-                  Voice Message Content
-                </label>
-                <Input
-                  value={voiceMessage}
-                  onChange={(e) => setVoiceMessage(e.target.value)}
-                  placeholder="Type message in English"
-                  className="w-full"
-                />
-              </div>
-              
-              <div className="flex space-x-3">
-                <div className="flex-1">
-                  <label className="text-sm font-medium text-gray-700 block mb-2">
-                    Voice Language
-                  </label>
-                  <Select value={voiceLanguage} onValueChange={setVoiceLanguage}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="english">English</SelectItem>
-                      <SelectItem value="spanish">Spanish</SelectItem>
-                      <SelectItem value="french">French</SelectItem>
-                      <SelectItem value="german">German</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="flex items-end">
-                  <Button 
-                    variant="outline"
-                    onClick={handlePreviewVoice}
-                    disabled={!voiceMessage.trim()}
-                    className="flex items-center space-x-2"
-                  >
-                    <Volume2 className="h-4 w-4" />
-                    <span>Preview Voice</span>
-                  </Button>
-                </div>
-              </div>
-            </div>
+            <VoiceMessageEditor
+              voiceMessage={voiceMessage}
+              onVoiceMessageChange={setVoiceMessage}
+              voiceLanguage={voiceLanguage}
+              onVoiceLanguageChange={setVoiceLanguage}
+            />
           )}
 
-          {/* Target Languages */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">
-              Target Languages
-            </label>
-            <div className="flex flex-wrap gap-2">
-              {["english", "spanish", "french", "german"].map((lang) => (
-                <Button
-                  key={lang}
-                  variant={selectedTargetLanguages.includes(lang) ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => {
-                    setSelectedTargetLanguages(prev => 
-                      prev.includes(lang) 
-                        ? prev.filter(l => l !== lang)
-                        : [...prev, lang]
-                    );
-                  }}
-                  className="capitalize flex items-center space-x-1"
-                >
-                  <Globe className="h-3 w-3" />
-                  <span>{lang}</span>
-                </Button>
-              ))}
-            </div>
-          </div>
+          <LanguageSelector
+            selectedLanguages={selectedTargetLanguages}
+            onLanguageToggle={handleLanguageToggle}
+          />
 
           {/* AI Personalization Info */}
           {selectedInfluencersCount > 1 && (
@@ -304,34 +191,15 @@ Campaign Team`);
               </p>
             </div>
           )}
-
-          {/* Error State */}
-          {selectedInfluencersCount === 0 && (
-            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-              <div className="flex items-center space-x-2">
-                <AlertCircle className="h-4 w-4 text-amber-600" />
-                <span className="text-sm font-medium text-amber-900">
-                  Please select at least one influencer to send messages
-                </span>
-              </div>
-            </div>
-          )}
         </CardContent>
       </Card>
 
-      {/* Send Button */}
-      <div className="sticky bottom-6 z-10">
-        <Button 
-          className="w-full bg-blue-600 hover:bg-blue-700 h-12 text-base font-medium shadow-lg"
-          onClick={handleSend}
-          disabled={!isFormValid || isSending}
-        >
-          <Send className="h-4 w-4 mr-2" />
-          {isSending ? 'Sending...' : 
-           selectedInfluencersCount > 1 ? `Send to ${selectedInfluencersCount} Influencers` : 
-           'Send Outreach Message'}
-        </Button>
-      </div>
+      <SendButton
+        selectedInfluencersCount={selectedInfluencersCount}
+        isFormValid={isFormValid}
+        isSending={isSending}
+        onSend={handleSend}
+      />
 
       {/* Bulk Messaging Progress */}
       <BulkMessagingProgress
