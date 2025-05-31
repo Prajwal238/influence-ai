@@ -64,9 +64,11 @@ const PlatformSelector = ({ platforms, selectedPlatform, onPlatformChange, disab
     );
   }
 
+  const selectedColors = getPlatformColors(selectedPlatform);
+
   return (
     <Select value={selectedPlatform} onValueChange={onPlatformChange} disabled={disabled}>
-      <SelectTrigger className="w-[120px] h-8 border-gray-200">
+      <SelectTrigger className={`w-[120px] h-8 ${selectedColors.bg} ${selectedColors.text} ${selectedColors.border} ${selectedColors.hover} border-0`}>
         <SelectValue>
           <div className="flex items-center space-x-1">
             {getPlatformIcon(selectedPlatform)}
