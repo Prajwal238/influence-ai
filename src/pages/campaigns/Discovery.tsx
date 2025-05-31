@@ -53,7 +53,7 @@ const Discovery = () => {
 
   return (
     <CampaignLayout>
-      <div className="h-[calc(100vh-200px)] flex flex-col space-y-6">
+      <div className="h-[calc(100vh-200px)] flex flex-col space-y-4">
         {/* Header */}
         <DiscoveryHeader />
 
@@ -66,8 +66,8 @@ const Discovery = () => {
         />
 
         {/* Scrollable Results Container */}
-        <ScrollArea className="flex-1">
-          <div className="pr-4">
+        <ScrollArea className="flex-1 min-h-0">
+          <div className="pr-4 pb-4">
             {/* Results */}
             {filteredInfluencers.length > 0 ? (
               <DiscoveryResults influencers={filteredInfluencers} />
@@ -77,8 +77,10 @@ const Discovery = () => {
           </div>
         </ScrollArea>
 
-        {/* AI Recommendations - Outside of scrollable area */}
-        <AIRecommendations />
+        {/* AI Recommendations - Compact at bottom */}
+        <div className="flex-shrink-0">
+          <AIRecommendations />
+        </div>
       </div>
 
       {/* Agent Panel */}
