@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 
 interface ApiPlatform {
   _id: string;
@@ -94,12 +95,19 @@ export const useInfluencerData = () => {
   const [influencers, setInfluencers] = useState<Influencer[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { campaignId } = useParams();
 
   useEffect(() => {
     const fetchInfluencers = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://localhost:5000/api/user_123/influencers');
+        
+        // Determine which endpoint to use based on whether we're in a campaign context
+        const endpoint = campaignId 
+          ? `http://localhost:5000/api/user_123/campaigns/${campaignId}/influencers`
+          : 'http://localhost:5000/api/user_123/influencers';
+        
+        const response = await fetch(endpoint);
         
         if (!response.ok) {
           throw new Error('Failed to fetch influencers');
@@ -107,6 +115,13 @@ export const useInfluencerData = () => {
 
         const apiData: ApiInfluencer[] = await response.json();
         const transformedData = apiData.map(transformApiDataToInfluencer);
+        
+        // If we're fetching campaign influencers, mark them as campaign influencers
+        if (campaignId) {
+          transformedData.forEach(influencer => {
+            influencer.campaignName = campaignId;
+          });
+        }
         
         setInfluencers(transformedData);
         setError(null);
@@ -119,7 +134,7 @@ export const useInfluencerData = () => {
     };
 
     fetchInfluencers();
-  }, []);
+  }, [campaignId]);
 
   return { influencers, loading, error };
 };
