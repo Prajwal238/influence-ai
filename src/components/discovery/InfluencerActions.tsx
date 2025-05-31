@@ -49,7 +49,7 @@ const InfluencerActions = ({
           disabled={isLoading}
         >
           <X className="h-4 w-4 mr-2" />
-          {isLoading ? 'Removing...' : 'Remove from Campaign'}
+          {isLoading ? 'Removing...' : 'Remove'}
         </Button>
       );
     } else {
