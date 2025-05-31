@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Message, AgentChatProps } from './types';
@@ -5,6 +6,17 @@ import { getInitialGreeting, callCampaignAPI, generateAgentResponse } from './ut
 import { getCurrentSessionId, startNewSession } from './sessionUtils';
 import NegotiationInterface from './NegotiationInterface';
 import DefaultChatInterface from './DefaultChatInterface';
+
+interface SessionMessage {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
+interface SessionData {
+  sessionId: string;
+  agentName: string;
+  messages: SessionMessage[];
+}
 
 const AgentChat = ({ agentName, agentType, onClose, className }: AgentChatProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -48,6 +60,52 @@ const AgentChat = ({ agentName, agentType, onClose, className }: AgentChatProps)
     }
   }, [messages, agentType]);
 
+  const loadSessionData = async (sessionId: string) => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/campaigns/user_123/sessions/${sessionId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch session data');
+      }
+      
+      const sessionDataArray: SessionData[] = await response.json();
+      
+      if (sessionDataArray.length === 0) {
+        throw new Error('No session data found');
+      }
+      
+      const sessionData = sessionDataArray[0];
+      
+      // Convert API messages to our Message format
+      const convertedMessages: Message[] = sessionData.messages.map((msg, index) => ({
+        id: `${sessionId}-${index}`,
+        type: msg.role === 'user' ? 'user' : 'agent',
+        content: msg.content,
+        timestamp: new Date() // We don't have timestamps from API, using current time
+      }));
+      
+      setMessages(convertedMessages);
+      console.log('Loaded session data:', sessionData);
+      
+      return true;
+    } catch (error) {
+      console.error('Error loading session data:', error);
+      
+      toast({
+        title: "Load Error",
+        description: "Failed to load session conversation. Please try again.",
+        variant: "destructive",
+      });
+      
+      return false;
+    }
+  };
+
   const handleNewSession = () => {
     const newSessionId = startNewSession(agentType);
     setCurrentSessionId(newSessionId);
@@ -68,16 +126,19 @@ const AgentChat = ({ agentName, agentType, onClose, className }: AgentChatProps)
     });
   };
 
-  const handleSessionChange = (sessionId: string) => {
-    // TODO: Load messages for the selected session
-    // This will be implemented when the user provides the API for getting past sessions
+  const handleSessionChange = async (sessionId: string) => {
     setCurrentSessionId(sessionId);
     localStorage.setItem(`current-session-${agentType}`, sessionId);
     
-    toast({
-      title: "Session Loaded",
-      description: "Previous conversation loaded successfully.",
-    });
+    // Load the session data
+    const success = await loadSessionData(sessionId);
+    
+    if (success) {
+      toast({
+        title: "Session Loaded",
+        description: "Previous conversation loaded successfully.",
+      });
+    }
   };
 
   const handleSendMessage = async () => {
