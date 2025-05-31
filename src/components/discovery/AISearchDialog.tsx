@@ -39,11 +39,29 @@ const AISearchDialog = ({
     try {
       console.log('Calling AI search API for campaign:', campaignId, 'with prompt:', prompt);
       
-      const url = prompt 
-        ? `http://localhost:5000/api/user_123/campaigns/${campaignId}/influencers/llm?prompt=${encodeURIComponent(prompt)}`
-        : `http://localhost:5000/api/user_123/campaigns/${campaignId}/influencers/llm`;
-        
-      const response = await fetch(url);
+      const url = `http://localhost:5000/api/user_123/campaigns/${campaignId}/influencers/llm`;
+      
+      let requestOptions: RequestInit;
+      
+      if (prompt) {
+        // Custom prompt search - use POST with prompt in body
+        requestOptions = {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userPrompt: prompt
+          })
+        };
+      } else {
+        // Default recommendations - use GET
+        requestOptions = {
+          method: 'GET'
+        };
+      }
+      
+      const response = await fetch(url, requestOptions);
       
       if (!response.ok) {
         throw new Error('Failed to fetch AI recommendations');
