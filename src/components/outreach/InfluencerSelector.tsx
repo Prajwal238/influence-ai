@@ -1,6 +1,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, Check } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import PlatformGroup from "./PlatformGroup";
 
 interface Influencer {
   id: number;
@@ -21,53 +22,68 @@ const InfluencerSelector = ({
   selectedInfluencers, 
   onToggleInfluencer 
 }: InfluencerSelectorProps) => {
+  // Group influencers by platform (mock data - in real app this would come from API)
+  const groupedInfluencers = {
+    instagram: availableInfluencers.filter((_, index) => index % 3 === 0),
+    email: availableInfluencers.filter((_, index) => index % 3 === 1),
+    whatsapp: availableInfluencers.filter((_, index) => index % 3 === 2)
+  };
+
+  const handleSelectAllInPlatform = (platform: 'instagram' | 'email' | 'whatsapp') => {
+    const platformInfluencers = groupedInfluencers[platform];
+    platformInfluencers.forEach(influencer => {
+      if (!selectedInfluencers.includes(influencer.id)) {
+        onToggleInfluencer(influencer.id);
+      }
+    });
+  };
+
+  const handleDeselectAllInPlatform = (platform: 'instagram' | 'email' | 'whatsapp') => {
+    const platformInfluencers = groupedInfluencers[platform];
+    platformInfluencers.forEach(influencer => {
+      if (selectedInfluencers.includes(influencer.id)) {
+        onToggleInfluencer(influencer.id);
+      }
+    });
+  };
+
   return (
-    <Card className="bg-white shadow-sm border-gray-200">
-      <CardHeader>
-        <CardTitle className="text-xl font-semibold text-gray-900">
-          Select Influencers
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-3">
-          {availableInfluencers.map((influencer) => (
-            <div 
-              key={influencer.id}
-              className={`flex items-center justify-between p-3 border rounded-lg cursor-pointer transition-colors ${
-                selectedInfluencers.includes(influencer.id) 
-                  ? 'border-blue-500 bg-blue-50' 
-                  : 'border-gray-200 hover:bg-gray-50'
-              }`}
-              onClick={() => onToggleInfluencer(influencer.id)}
-            >
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                  <Users className="h-4 w-4 text-gray-400" />
-                </div>
-                <div>
-                  <h4 className="font-medium text-gray-900 text-sm">{influencer.name}</h4>
-                  <p className="text-xs text-gray-600">{influencer.handle} • {influencer.followers} • {influencer.niche}</p>
-                </div>
-              </div>
-              <div className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
-                selectedInfluencers.includes(influencer.id) 
-                  ? 'border-blue-500 bg-blue-500' 
-                  : 'border-gray-300'
-              }`}>
-                {selectedInfluencers.includes(influencer.id) && (
-                  <Check className="h-3 w-3 text-white" />
-                )}
-              </div>
+    <div className="space-y-4">
+      <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-xl font-semibold text-gray-900">
+            Select Influencers for Bulk Outreach
+          </CardTitle>
+          {selectedInfluencers.length > 0 && (
+            <div className="flex items-center space-x-2">
+              <Badge className="bg-blue-600 text-white">
+                {selectedInfluencers.length} Total Selected
+              </Badge>
+              <span className="text-sm text-blue-800">
+                Ready for bulk messaging across platforms
+              </span>
             </div>
-          ))}
-        </div>
-        {selectedInfluencers.length > 0 && (
-          <p className="text-sm text-blue-600 mt-3">
-            {selectedInfluencers.length} influencer{selectedInfluencers.length > 1 ? 's' : ''} selected
-          </p>
-        )}
-      </CardContent>
-    </Card>
+          )}
+        </CardHeader>
+      </Card>
+
+      {/* Platform Groups */}
+      <div className="space-y-4">
+        {Object.entries(groupedInfluencers).map(([platform, influencers]) => (
+          influencers.length > 0 && (
+            <PlatformGroup
+              key={platform}
+              platform={platform as 'instagram' | 'email' | 'whatsapp'}
+              influencers={influencers}
+              selectedInfluencers={selectedInfluencers}
+              onToggleInfluencer={onToggleInfluencer}
+              onSelectAllInPlatform={() => handleSelectAllInPlatform(platform as 'instagram' | 'email' | 'whatsapp')}
+              onDeselectAllInPlatform={() => handleDeselectAllInPlatform(platform as 'instagram' | 'email' | 'whatsapp')}
+            />
+          )
+        ))}
+      </div>
+    </div>
   );
 };
 
