@@ -1,8 +1,9 @@
 
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import { Eye, Heart } from "lucide-react";
+import { Eye, Heart, Check } from "lucide-react";
 import InfluencerDialog from "./InfluencerDialog";
+import { useCampaignInfluencers } from "@/hooks/useCampaignInfluencers";
 
 interface Platform {
   name: string;
@@ -25,6 +26,7 @@ interface Influencer {
   rating: number;
   niches: string[];
   platforms: Platform[];
+  campaignName?: string;
 }
 
 interface InfluencerActionsProps {
@@ -32,6 +34,20 @@ interface InfluencerActionsProps {
 }
 
 const InfluencerActions = ({ influencer }: InfluencerActionsProps) => {
+  const { addInfluencerToCampaign, loading } = useCampaignInfluencers();
+  
+  const isAddedToCampaign = Boolean(influencer.campaignName);
+
+  const handleAddToCampaign = async () => {
+    if (isAddedToCampaign) return;
+    
+    const success = await addInfluencerToCampaign(influencer.name);
+    if (success) {
+      // Optionally refresh the page or update the local state
+      window.location.reload();
+    }
+  };
+
   return (
     <div className="px-6 pb-6 pt-2 border-t border-gray-100">
       <div className="flex space-x-3">
@@ -44,9 +60,28 @@ const InfluencerActions = ({ influencer }: InfluencerActionsProps) => {
           </DialogTrigger>
           <InfluencerDialog influencer={influencer} />
         </Dialog>
-        <Button size="sm" className="flex-1 h-9 bg-blue-600 hover:bg-blue-700">
-          <Heart className="h-4 w-4 mr-2" />
-          Add to Campaign
+        
+        <Button 
+          size="sm" 
+          className={`flex-1 h-9 ${
+            isAddedToCampaign 
+              ? 'bg-green-600 hover:bg-green-700 cursor-default' 
+              : 'bg-blue-600 hover:bg-blue-700'
+          }`}
+          onClick={handleAddToCampaign}
+          disabled={loading || isAddedToCampaign}
+        >
+          {isAddedToCampaign ? (
+            <>
+              <Check className="h-4 w-4 mr-2" />
+              Added to Campaign
+            </>
+          ) : (
+            <>
+              <Heart className="h-4 w-4 mr-2" />
+              {loading ? 'Adding...' : 'Add to Campaign'}
+            </>
+          )}
         </Button>
       </div>
     </div>
