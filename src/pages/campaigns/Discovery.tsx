@@ -53,7 +53,7 @@ const Discovery = () => {
 
   return (
     <CampaignLayout>
-      <div className="h-[calc(100vh-200px)] flex flex-col space-y-4">
+      <div className="h-[calc(100vh-200px)] flex flex-col space-y-3">
         {/* Header */}
         <DiscoveryHeader />
 

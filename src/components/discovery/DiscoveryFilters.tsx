@@ -21,9 +21,9 @@ const DiscoveryFilters = ({
 }: DiscoveryFiltersProps) => {
   return (
     <Card className="bg-white shadow-sm border-gray-200">
-      <CardContent className="p-6">
+      <CardContent className="p-4">
         {/* Toggle Switch */}
-        <div className="flex items-center space-x-3 mb-4">
+        <div className="flex items-center space-x-3 mb-3">
           <span className="text-sm font-medium">Show:</span>
           <div className="flex items-center space-x-2">
             <span className={`text-sm ${!showCampaignInfluencers ? 'font-medium' : 'text-gray-500'}`}>
@@ -40,17 +40,17 @@ const DiscoveryFilters = ({
         </div>
 
         {/* Search and Filter Row */}
-        <div className="flex space-x-4 mb-4">
+        <div className="flex space-x-3 mb-3">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input 
               placeholder="Search influencers by name, handle, or niche..." 
-              className="pl-10"
+              className="pl-10 h-9"
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
             />
           </div>
-          <Button variant="outline">
+          <Button variant="outline" size="sm">
             <Filter className="h-4 w-4 mr-2" />
             Filters
           </Button>
@@ -58,9 +58,9 @@ const DiscoveryFilters = ({
         
         {/* Active Filters */}
         <div className="flex space-x-2">
-          <Badge variant="outline">Fashion</Badge>
-          <Badge variant="outline">100K+ followers</Badge>
-          <Badge variant="outline">High engagement</Badge>
+          <Badge variant="outline" className="text-xs">Fashion</Badge>
+          <Badge variant="outline" className="text-xs">100K+ followers</Badge>
+          <Badge variant="outline" className="text-xs">High engagement</Badge>
         </div>
       </CardContent>
     </Card>
