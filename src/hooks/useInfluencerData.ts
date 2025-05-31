@@ -46,24 +46,38 @@ export const useInfluencerData = () => {
 
   // Function to update an influencer's campaign status
   const updateInfluencerCampaignStatus = (influencerId: number, campaignName?: string) => {
-    console.log('Updating influencer campaign status:', influencerId, campaignName);
+    console.log('updateInfluencerCampaignStatus called with:', { influencerId, campaignName });
     
-    setAllInfluencers(prev => prev.map(inf => 
-      inf.id === influencerId 
-        ? { ...inf, campaignName }
-        : inf
-    ));
+    setAllInfluencers(prev => {
+      const updated = prev.map(inf => 
+        inf.id === influencerId 
+          ? { ...inf, campaignName }
+          : inf
+      );
+      console.log('Updated allInfluencers:', {
+        before: prev.find(inf => inf.id === influencerId)?.campaignName,
+        after: updated.find(inf => inf.id === influencerId)?.campaignName
+      });
+      return updated;
+    });
 
     // If adding to campaign, also add to campaign influencers list
     if (campaignName) {
       const influencerToAdd = allInfluencers.find(inf => inf.id === influencerId);
+      console.log('Found influencer to add to campaign list:', influencerToAdd?.name);
+      
       if (influencerToAdd) {
         setCampaignInfluencers(prev => {
           // Check if already exists to avoid duplicates
           const exists = prev.some(inf => inf.id === influencerId);
-          if (exists) return prev;
+          if (exists) {
+            console.log('Influencer already exists in campaign list');
+            return prev;
+          }
           
-          return [...prev, { ...influencerToAdd, campaignName }];
+          const newCampaignInfluencer = { ...influencerToAdd, campaignName };
+          console.log('Adding to campaign influencers list:', newCampaignInfluencer.name);
+          return [...prev, newCampaignInfluencer];
         });
       }
     }

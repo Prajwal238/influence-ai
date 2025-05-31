@@ -19,9 +19,13 @@ const InfluencerActions = ({ influencer, onInfluencerUpdate }: InfluencerActions
   const handleAddToCampaign = async () => {
     if (isAddedToCampaign) return;
     
-    console.log('Adding influencer to campaign:', influencer.name);
+    console.log('Adding influencer to campaign:', influencer.name, 'ID:', influencer.id);
     
-    const success = await addInfluencerToCampaign(influencer.name);
+    // Convert the numeric ID back to a string format that matches the API _id format
+    const apiId = influencer.id.toString(16).padStart(24, '0');
+    console.log('Converted ID for API:', apiId);
+    
+    const success = await addInfluencerToCampaign(apiId);
     if (success) {
       console.log('Successfully added influencer to campaign');
       // Update the parent component with the correct signature
