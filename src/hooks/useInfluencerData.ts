@@ -48,6 +48,7 @@ export const useInfluencerData = () => {
   const updateInfluencerCampaignStatus = (influencerId: number, campaignName?: string) => {
     console.log('updateInfluencerCampaignStatus called with:', { influencerId, campaignName });
     
+    // Update allInfluencers state
     setAllInfluencers(prev => {
       const updated = prev.map(inf => 
         inf.id === influencerId 
@@ -59,9 +60,12 @@ export const useInfluencerData = () => {
         after: updated.find(inf => inf.id === influencerId)?.campaignName
       });
 
-      // If adding to campaign, also add to campaign influencers list
-      // We do this inside the same state update to ensure we have the latest data
-      if (campaignName) {
+      return updated;
+    });
+
+    // If adding to campaign, also add to campaign influencers list
+    if (campaignName) {
+      setAllInfluencers(prev => {
         const influencerToAdd = prev.find(inf => inf.id === influencerId);
         console.log('Found influencer to add to campaign list:', influencerToAdd?.name);
         
@@ -79,10 +83,15 @@ export const useInfluencerData = () => {
             return [...prevCampaign, newCampaignInfluencer];
           });
         }
-      }
-
-      return updated;
-    });
+        
+        // Return updated influencers with campaign status
+        return prev.map(inf => 
+          inf.id === influencerId 
+            ? { ...inf, campaignName }
+            : inf
+        );
+      });
+    }
   };
 
   console.log('Hook state:', {
