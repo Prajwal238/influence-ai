@@ -4,7 +4,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, Filter } from "lucide-react";
 
 interface DiscoveryFiltersProps {
@@ -12,23 +11,13 @@ interface DiscoveryFiltersProps {
   onSearchChange: (query: string) => void;
   showCampaignInfluencers: boolean;
   onToggleChange: (value: boolean) => void;
-  campaignStatus: string;
-  onCampaignStatusChange: (value: string) => void;
-  selectedCampaign: string;
-  onCampaignChange: (value: string) => void;
-  campaigns: { id: string; name: string; }[];
 }
 
 const DiscoveryFilters = ({ 
   searchQuery, 
   onSearchChange,
   showCampaignInfluencers,
-  onToggleChange,
-  campaignStatus,
-  onCampaignStatusChange,
-  selectedCampaign,
-  onCampaignChange,
-  campaigns
+  onToggleChange
 }: DiscoveryFiltersProps) => {
   return (
     <Card className="bg-white shadow-sm border-gray-200">
@@ -65,39 +54,6 @@ const DiscoveryFilters = ({
             <Filter className="h-4 w-4 mr-2" />
             Filters
           </Button>
-        </div>
-
-        {/* Filter Controls */}
-        <div className="flex space-x-4 mb-4">
-          <div className="flex-1">
-            <label className="text-xs font-medium text-gray-600 mb-1 block">Campaign Status</label>
-            <Select value={campaignStatus} onValueChange={onCampaignStatusChange}>
-              <SelectTrigger className="h-9">
-                <SelectValue placeholder="Select status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All</SelectItem>
-                <SelectItem value="not-added">Not Added to Campaign</SelectItem>
-                <SelectItem value="added">Added to Campaign</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="flex-1">
-            <label className="text-xs font-medium text-gray-600 mb-1 block">Campaign</label>
-            <Select value={selectedCampaign} onValueChange={onCampaignChange}>
-              <SelectTrigger className="h-9">
-                <SelectValue placeholder="Select campaign" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Campaigns</SelectItem>
-                {campaigns.map((campaign) => (
-                  <SelectItem key={campaign.id} value={campaign.id}>
-                    {campaign.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
         </div>
         
         {/* Active Filters */}

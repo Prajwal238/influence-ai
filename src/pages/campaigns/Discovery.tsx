@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import CampaignLayout from "@/components/layout/CampaignLayout";
 import AgentPanel from "@/components/agents/AgentPanel";
@@ -9,8 +8,6 @@ import AIRecommendations from "@/components/discovery/AIRecommendations";
 const Discovery = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showCampaignInfluencers, setShowCampaignInfluencers] = useState(false);
-  const [campaignStatus, setCampaignStatus] = useState("all");
-  const [selectedCampaign, setSelectedCampaign] = useState("all");
 
   // Sample campaigns data
   const campaigns = [
@@ -173,22 +170,6 @@ const Discovery = () => {
       return false;
     }
 
-    // Campaign status filter
-    if (campaignStatus === "added" && !influencer.campaignName) {
-      return false;
-    }
-    if (campaignStatus === "not-added" && influencer.campaignName) {
-      return false;
-    }
-
-    // Specific campaign filter
-    if (selectedCampaign !== "all") {
-      const campaign = campaigns.find(c => c.id === selectedCampaign);
-      if (campaign && influencer.campaignName !== campaign.name) {
-        return false;
-      }
-    }
-
     return true;
   });
 
@@ -213,11 +194,6 @@ const Discovery = () => {
           onSearchChange={setSearchQuery}
           showCampaignInfluencers={showCampaignInfluencers}
           onToggleChange={setShowCampaignInfluencers}
-          campaignStatus={campaignStatus}
-          onCampaignStatusChange={setCampaignStatus}
-          selectedCampaign={selectedCampaign}
-          onCampaignChange={setSelectedCampaign}
-          campaigns={campaigns}
         />
 
         {/* Results */}
