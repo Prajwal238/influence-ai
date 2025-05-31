@@ -11,13 +11,16 @@ interface CampaignCardProps {
 
 const CampaignCard = ({ campaign }: CampaignCardProps) => {
   const getStageColor = (stage: string) => {
-    switch (stage) {
-      case "Discovery": return "bg-blue-100 text-blue-800";
-      case "Outreach": return "bg-yellow-100 text-yellow-800";
-      case "Negotiation": return "bg-purple-100 text-purple-800";
-      case "Contracts": return "bg-orange-100 text-orange-800";
-      case "Payments": return "bg-green-100 text-green-800";
-      case "Reporting": return "bg-gray-100 text-gray-800";
+    switch (stage.toLowerCase()) {
+      case "discovery": return "bg-blue-100 text-blue-800";
+      case "outreach": return "bg-yellow-100 text-yellow-800";
+      case "negotiation": return "bg-purple-100 text-purple-800";
+      case "contracts": return "bg-orange-100 text-orange-800";
+      case "payments": return "bg-green-100 text-green-800";
+      case "reporting": return "bg-gray-100 text-gray-800";
+      case "conversions": return "bg-emerald-100 text-emerald-800";
+      case "awareness": return "bg-cyan-100 text-cyan-800";
+      case "engagement": return "bg-pink-100 text-pink-800";
       default: return "bg-gray-100 text-gray-800";
     }
   };
@@ -41,17 +44,19 @@ const CampaignCard = ({ campaign }: CampaignCardProps) => {
     }
   };
 
-  // For now, using hardcoded values as requested
+  // For now, using hardcoded progress value
   const progress = Math.floor(Math.random() * 80) + 20; // Random progress between 20-100
-  const stage = "Discovery"; // Default stage
+  
+  // Use the actual objective from the campaign data
+  const objective = campaign.objective;
 
   return (
     <div className="flex items-center justify-between p-4 rounded-lg border border-gray-100 hover:bg-gray-50 transition-colors">
       <div className="flex-1">
         <div className="flex items-center space-x-3 mb-2">
           <h3 className="font-medium text-gray-900">{campaign.campaignName}</h3>
-          <Badge className={getStageColor(stage)}>
-            {stage}
+          <Badge className={getStageColor(objective)}>
+            {objective}
           </Badge>
         </div>
         <div className="flex items-center space-x-4 text-sm text-gray-600">
