@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Loader2 } from "lucide-react";
@@ -58,11 +58,12 @@ const AISearchDialog = ({
   };
 
   // Call the API when dialog opens
-  useState(() => {
+  useEffect(() => {
     if (open && influencers.length === 0) {
+      console.log('Dialog opened, triggering API call...');
       handleSearch();
     }
-  });
+  }, [open]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
