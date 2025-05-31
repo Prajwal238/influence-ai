@@ -14,14 +14,24 @@ import { useInfluencerData } from "@/hooks/useInfluencerData";
 const Discovery = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showCampaignInfluencers, setShowCampaignInfluencers] = useState(false);
+  const [activeFilters, setActiveFilters] = useState<string[]>([]);
 
   const { influencers, loading, error } = useInfluencerData();
 
   const filteredInfluencers = useInfluencerFiltering({
     influencers,
     searchQuery,
-    showCampaignInfluencers
+    showCampaignInfluencers,
+    activeFilters
   });
+
+  const handleFilterAdd = (filter: string) => {
+    setActiveFilters(prev => [...prev, filter]);
+  };
+
+  const handleFilterRemove = (filter: string) => {
+    setActiveFilters(prev => prev.filter(f => f !== filter));
+  };
 
   if (loading) {
     return (
@@ -63,6 +73,9 @@ const Discovery = () => {
           onSearchChange={setSearchQuery}
           showCampaignInfluencers={showCampaignInfluencers}
           onToggleChange={setShowCampaignInfluencers}
+          activeFilters={activeFilters}
+          onFilterAdd={handleFilterAdd}
+          onFilterRemove={handleFilterRemove}
         />
 
         {/* Scrollable Results Container */}

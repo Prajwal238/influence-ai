@@ -29,12 +29,28 @@ interface UseInfluencerFilteringProps {
   influencers: Influencer[];
   searchQuery: string;
   showCampaignInfluencers: boolean;
+  activeFilters: string[];
 }
+
+const parseFollowerCount = (followerString: string): number => {
+  const num = parseFloat(followerString);
+  if (followerString.includes('M')) {
+    return num * 1000000;
+  } else if (followerString.includes('K')) {
+    return num * 1000;
+  }
+  return num;
+};
+
+const parseEngagementRate = (engagementString: string): number => {
+  return parseFloat(engagementString.replace('%', ''));
+};
 
 export const useInfluencerFiltering = ({
   influencers,
   searchQuery,
-  showCampaignInfluencers
+  showCampaignInfluencers,
+  activeFilters
 }: UseInfluencerFilteringProps) => {
   const filteredInfluencers = useMemo(() => {
     return influencers.filter((influencer) => {
@@ -54,9 +70,31 @@ export const useInfluencerFiltering = ({
         return false;
       }
 
+      // Active filters
+      for (const filter of activeFilters) {
+        if (filter === "Fashion") {
+          const hasFashion = influencer.niches.some(niche => 
+            niche.toLowerCase().includes('fashion') || 
+            niche.toLowerCase().includes('style') ||
+            niche.toLowerCase().includes('beauty')
+          );
+          if (!hasFashion) return false;
+        }
+        
+        if (filter === "100K+ followers") {
+          const totalFollowers = parseFollowerCount(influencer.totalFollowers);
+          if (totalFollowers < 100000) return false;
+        }
+        
+        if (filter === "High engagement") {
+          const avgEngagement = parseEngagementRate(influencer.avgEngagement);
+          if (avgEngagement < 5.0) return false; // Consider 5%+ as high engagement
+        }
+      }
+
       return true;
     });
-  }, [influencers, searchQuery, showCampaignInfluencers]);
+  }, [influencers, searchQuery, showCampaignInfluencers, activeFilters]);
 
   return filteredInfluencers;
 };

@@ -4,21 +4,37 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
-import { Search, Filter } from "lucide-react";
+import { Search, Filter, X } from "lucide-react";
 
 interface DiscoveryFiltersProps {
   searchQuery: string;
   onSearchChange: (query: string) => void;
   showCampaignInfluencers: boolean;
   onToggleChange: (value: boolean) => void;
+  activeFilters: string[];
+  onFilterAdd: (filter: string) => void;
+  onFilterRemove: (filter: string) => void;
 }
 
 const DiscoveryFilters = ({ 
   searchQuery, 
   onSearchChange,
   showCampaignInfluencers,
-  onToggleChange
+  onToggleChange,
+  activeFilters,
+  onFilterAdd,
+  onFilterRemove
 }: DiscoveryFiltersProps) => {
+  const suggestedFilters = ["Fashion", "100K+ followers", "High engagement"];
+
+  const handleFilterClick = (filter: string) => {
+    if (activeFilters.includes(filter)) {
+      onFilterRemove(filter);
+    } else {
+      onFilterAdd(filter);
+    }
+  };
+
   return (
     <Card className="bg-white shadow-sm border-gray-200">
       <CardContent className="p-4">
@@ -58,9 +74,26 @@ const DiscoveryFilters = ({
         
         {/* Active Filters */}
         <div className="flex space-x-2">
-          <Badge variant="outline" className="text-xs">Fashion</Badge>
-          <Badge variant="outline" className="text-xs">100K+ followers</Badge>
-          <Badge variant="outline" className="text-xs">High engagement</Badge>
+          {suggestedFilters.map((filter) => {
+            const isActive = activeFilters.includes(filter);
+            return (
+              <Badge 
+                key={filter}
+                variant={isActive ? "default" : "outline"} 
+                className={`text-xs cursor-pointer transition-colors ${
+                  isActive 
+                    ? "bg-blue-600 text-white hover:bg-blue-700" 
+                    : "hover:bg-gray-100"
+                }`}
+                onClick={() => handleFilterClick(filter)}
+              >
+                {filter}
+                {isActive && (
+                  <X className="h-3 w-3 ml-1" />
+                )}
+              </Badge>
+            );
+          })}
         </div>
       </CardContent>
     </Card>
