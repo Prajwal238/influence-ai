@@ -1,4 +1,5 @@
 
+import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import PlatformPill from "./PlatformPill";
 import InfluencerHeader from "./InfluencerHeader";
@@ -28,7 +29,7 @@ interface Influencer {
   rating: number;
   niches: string[];
   platforms: Platform[];
-  campaignName?: string; // New optional property for campaign status
+  campaignName?: string;
 }
 
 interface InfluencerCardProps {
@@ -36,26 +37,33 @@ interface InfluencerCardProps {
 }
 
 const InfluencerCard = ({ influencer }: InfluencerCardProps) => {
+  const [currentInfluencer, setCurrentInfluencer] = useState(influencer);
+
+  const handleInfluencerUpdate = (updatedInfluencer: Influencer) => {
+    console.log('Updating influencer state:', updatedInfluencer.name);
+    setCurrentInfluencer(updatedInfluencer);
+  };
+
   return (
     <Card className="group bg-white shadow-sm border-gray-200 hover:shadow-xl hover:border-gray-300 hover:scale-[1.02] transition-all duration-300 cursor-pointer overflow-hidden relative">
       <CardContent className="p-0">
         {/* Campaign Badge - only show if influencer is in a campaign */}
-        {influencer.campaignName && (
-          <CampaignBadge campaignName={influencer.campaignName} />
+        {currentInfluencer.campaignName && (
+          <CampaignBadge campaignName={currentInfluencer.campaignName} />
         )}
 
         {/* Influencer Identity */}
-        <InfluencerHeader influencer={influencer} />
+        <InfluencerHeader influencer={currentInfluencer} />
 
         {/* Platform Overview */}
         <div className="px-6 pb-4">
           <div className="space-y-3">
-            {influencer.platforms.slice(0, 3).map((platform) => (
+            {currentInfluencer.platforms.slice(0, 3).map((platform) => (
               <PlatformPill key={platform.name} platform={platform} />
             ))}
-            {influencer.platforms.length > 3 && (
+            {currentInfluencer.platforms.length > 3 && (
               <div className="flex items-center justify-center p-2 text-xs text-gray-500 bg-gray-50 rounded-lg">
-                +{influencer.platforms.length - 3} more platforms
+                +{currentInfluencer.platforms.length - 3} more platforms
               </div>
             )}
           </div>
@@ -63,17 +71,20 @@ const InfluencerCard = ({ influencer }: InfluencerCardProps) => {
 
         {/* Aggregated Stats */}
         <InfluencerStats 
-          totalFollowers={influencer.totalFollowers}
-          avgEngagement={influencer.avgEngagement}
-          rating={influencer.rating}
-          languages={influencer.languages}
+          totalFollowers={currentInfluencer.totalFollowers}
+          avgEngagement={currentInfluencer.avgEngagement}
+          rating={currentInfluencer.rating}
+          languages={currentInfluencer.languages}
         />
 
         {/* Niche Tags */}
-        <InfluencerNiches niches={influencer.niches} />
+        <InfluencerNiches niches={currentInfluencer.niches} />
 
         {/* Actions */}
-        <InfluencerActions influencer={influencer} />
+        <InfluencerActions 
+          influencer={currentInfluencer} 
+          onInfluencerUpdate={handleInfluencerUpdate}
+        />
       </CardContent>
     </Card>
   );

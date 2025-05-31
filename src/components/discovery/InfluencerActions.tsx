@@ -31,9 +31,10 @@ interface Influencer {
 
 interface InfluencerActionsProps {
   influencer: Influencer;
+  onInfluencerUpdate?: (updatedInfluencer: Influencer) => void;
 }
 
-const InfluencerActions = ({ influencer }: InfluencerActionsProps) => {
+const InfluencerActions = ({ influencer, onInfluencerUpdate }: InfluencerActionsProps) => {
   const { addInfluencerToCampaign, loading } = useCampaignInfluencers();
   
   const isAddedToCampaign = Boolean(influencer.campaignName);
@@ -41,10 +42,18 @@ const InfluencerActions = ({ influencer }: InfluencerActionsProps) => {
   const handleAddToCampaign = async () => {
     if (isAddedToCampaign) return;
     
+    console.log('Adding influencer to campaign:', influencer.name);
+    
     const success = await addInfluencerToCampaign(influencer.name);
     if (success) {
-      // Optionally refresh the page or update the local state
-      window.location.reload();
+      console.log('Successfully added influencer to campaign');
+      // Update the local influencer state instead of reloading the page
+      const updatedInfluencer = { ...influencer, campaignName: 'campaign' };
+      if (onInfluencerUpdate) {
+        onInfluencerUpdate(updatedInfluencer);
+      }
+    } else {
+      console.log('Failed to add influencer to campaign');
     }
   };
 
