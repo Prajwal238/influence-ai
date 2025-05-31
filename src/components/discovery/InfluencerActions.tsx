@@ -68,15 +68,15 @@ const InfluencerActions = ({
           </Button>
         );
       } else {
-        // Show "Add to Campaign" button with improved styling
+        // Show "Add to Campaign" button with larger size
         return (
           <Button 
-            size="sm" 
-            className="flex-1 h-9 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium shadow-md hover:shadow-lg transition-all duration-200 border-0"
+            size="default" 
+            className="flex-1 h-11 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium shadow-md hover:shadow-lg transition-all duration-200 border-0"
             onClick={handleCampaignAction}
             disabled={isLoading}
           >
-            <Heart className="h-4 w-4 mr-2" />
+            <Heart className="h-5 w-5 mr-2" />
             {isLoading ? 'Adding...' : 'Add to Campaign'}
           </Button>
         );
