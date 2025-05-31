@@ -5,6 +5,12 @@ export interface OutreachInfluencer {
   handle: string;
   followers: string;
   niche: string;
+  platforms?: string[]; // Add platforms support
+}
+
+export interface InfluencerSelection {
+  influencerId: number;
+  platform: string;
 }
 
 export interface OutreachEntry {

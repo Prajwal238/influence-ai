@@ -4,6 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Users, Check } from "lucide-react";
+import PlatformSelector from "./PlatformSelector";
+import { InfluencerSelection } from "@/types/outreach";
 
 interface Influencer {
   id: number;
@@ -11,42 +13,68 @@ interface Influencer {
   handle: string;
   followers: string;
   niche: string;
+  platforms: string[];
 }
 
 interface InfluencerSelectorProps {
   availableInfluencers: Influencer[];
-  selectedInfluencers: number[];
-  onToggleInfluencer: (influencerId: number) => void;
+  selectedInfluencers: InfluencerSelection[];
+  onUpdateSelection: (influencerId: number, platform: string) => void;
+  onRemoveSelection: (influencerId: number) => void;
 }
 
 const InfluencerSelector = ({ 
   availableInfluencers, 
   selectedInfluencers, 
-  onToggleInfluencer 
+  onUpdateSelection,
+  onRemoveSelection
 }: InfluencerSelectorProps) => {
+  const handleInfluencerToggle = (influencerId: number) => {
+    const isSelected = selectedInfluencers.some(sel => sel.influencerId === influencerId);
+    
+    if (isSelected) {
+      onRemoveSelection(influencerId);
+    } else {
+      const influencer = availableInfluencers.find(inf => inf.id === influencerId);
+      if (influencer) {
+        // Default to first available platform
+        const defaultPlatform = influencer.platforms[0] || 'instagram';
+        onUpdateSelection(influencerId, defaultPlatform);
+      }
+    }
+  };
+
+  const handlePlatformChange = (influencerId: number, platform: string) => {
+    onUpdateSelection(influencerId, platform);
+  };
+
   const handleSelectAll = () => {
     const allIds = availableInfluencers.map(inf => inf.id);
-    const allSelected = allIds.every(id => selectedInfluencers.includes(id));
+    const allSelected = allIds.every(id => selectedInfluencers.some(sel => sel.influencerId === id));
     
     if (allSelected) {
       // Deselect all
       allIds.forEach(id => {
-        if (selectedInfluencers.includes(id)) {
-          onToggleInfluencer(id);
+        if (selectedInfluencers.some(sel => sel.influencerId === id)) {
+          onRemoveSelection(id);
         }
       });
     } else {
-      // Select all
+      // Select all with default platforms
       allIds.forEach(id => {
-        if (!selectedInfluencers.includes(id)) {
-          onToggleInfluencer(id);
+        if (!selectedInfluencers.some(sel => sel.influencerId === id)) {
+          const influencer = availableInfluencers.find(inf => inf.id === id);
+          if (influencer) {
+            const defaultPlatform = influencer.platforms[0] || 'instagram';
+            onUpdateSelection(id, defaultPlatform);
+          }
         }
       });
     }
   };
 
   const allSelected = availableInfluencers.length > 0 && 
-    availableInfluencers.every(inf => selectedInfluencers.includes(inf.id));
+    availableInfluencers.every(inf => selectedInfluencers.some(sel => sel.influencerId === inf.id));
 
   return (
     <div className="space-y-6">
@@ -101,27 +129,23 @@ const InfluencerSelector = ({
         </CardHeader>
         <CardContent className="space-y-3">
           {availableInfluencers.map((influencer) => {
-            const isSelected = selectedInfluencers.includes(influencer.id);
-            // Determine platform for styling
-            const platformIndex = influencer.id % 3;
-            const platform = platformIndex === 0 ? 'Instagram' : platformIndex === 1 ? 'Email' : 'WhatsApp';
-            const platformColor = platformIndex === 0 ? 'bg-gradient-to-r from-purple-500 to-pink-500' : 
-                                 platformIndex === 1 ? 'bg-blue-500' : 'bg-green-500';
+            const selection = selectedInfluencers.find(sel => sel.influencerId === influencer.id);
+            const isSelected = !!selection;
             
             return (
               <div 
                 key={influencer.id}
-                className={`flex items-center justify-between p-4 border rounded-lg cursor-pointer transition-all hover:shadow-sm ${
+                className={`flex items-center justify-between p-4 border rounded-lg transition-all ${
                   isSelected 
                     ? 'border-blue-500 bg-blue-50/50 shadow-sm' 
-                    : 'border-gray-200 hover:border-gray-300'
+                    : 'border-gray-200 hover:border-gray-300 hover:shadow-sm'
                 }`}
-                onClick={() => onToggleInfluencer(influencer.id)}
               >
                 <div className="flex items-center space-x-4">
                   <div className="flex items-center space-x-3">
                     <Checkbox 
                       checked={isSelected}
+                      onCheckedChange={() => handleInfluencerToggle(influencer.id)}
                       className="data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500"
                     />
                     <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
@@ -131,9 +155,11 @@ const InfluencerSelector = ({
                   <div className="space-y-1">
                     <div className="flex items-center space-x-3">
                       <h4 className="font-medium text-gray-900">{influencer.name}</h4>
-                      <Badge className={`${platformColor} text-white text-xs`}>
-                        {platform}
-                      </Badge>
+                      {influencer.platforms.length > 1 && (
+                        <Badge variant="secondary" className="text-xs">
+                          {influencer.platforms.length} platforms
+                        </Badge>
+                      )}
                     </div>
                     <div className="flex items-center space-x-4 text-sm text-gray-600">
                       <span>{influencer.handle}</span>
@@ -146,6 +172,16 @@ const InfluencerSelector = ({
                     </div>
                   </div>
                 </div>
+                
+                {isSelected && (
+                  <div className="ml-4">
+                    <PlatformSelector
+                      platforms={influencer.platforms}
+                      selectedPlatform={selection.platform}
+                      onPlatformChange={(platform) => handlePlatformChange(influencer.id, platform)}
+                    />
+                  </div>
+                )}
               </div>
             );
           })}

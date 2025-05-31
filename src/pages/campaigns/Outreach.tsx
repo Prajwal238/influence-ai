@@ -9,12 +9,13 @@ import OutreachLog from "@/components/outreach/OutreachLog";
 import OutreachStats from "@/components/outreach/OutreachStats";
 import { useOutreachData } from "@/hooks/useOutreachData";
 import { transformApiDataToOutreachInfluencer } from "@/utils/outreachTransforms";
+import { InfluencerSelection } from "@/types/outreach";
 
 const Outreach = () => {
   const [message, setMessage] = useState("Hi {name},\n\nI hope this message finds you well! I'm reaching out on behalf of our brand regarding a potential collaboration...");
   const [selectedLanguage, setSelectedLanguage] = useState("english");
   const [selectedPlatform, setSelectedPlatform] = useState("instagram");
-  const [selectedInfluencers, setSelectedInfluencers] = useState<number[]>([]);
+  const [selectedInfluencers, setSelectedInfluencers] = useState<InfluencerSelection[]>([]);
   const [apiInfluencers, setApiInfluencers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -54,12 +55,23 @@ const Outreach = () => {
     transformApiDataToOutreachInfluencer(apiInfluencer, index + 1)
   );
 
-  const toggleInfluencerSelection = (influencerId: number) => {
-    setSelectedInfluencers(prev => 
-      prev.includes(influencerId) 
-        ? prev.filter(id => id !== influencerId)
-        : [...prev, influencerId]
-    );
+  const updateInfluencerSelection = (influencerId: number, platform: string) => {
+    setSelectedInfluencers(prev => {
+      const existingIndex = prev.findIndex(sel => sel.influencerId === influencerId);
+      if (existingIndex >= 0) {
+        // Update existing selection
+        const updated = [...prev];
+        updated[existingIndex] = { influencerId, platform };
+        return updated;
+      } else {
+        // Add new selection
+        return [...prev, { influencerId, platform }];
+      }
+    });
+  };
+
+  const removeInfluencerSelection = (influencerId: number) => {
+    setSelectedInfluencers(prev => prev.filter(sel => sel.influencerId !== influencerId));
   };
 
   const handleSendAsText = () => {
@@ -67,8 +79,8 @@ const Outreach = () => {
     console.log("Selected influencers:", selectedInfluencers);
     
     // Add outreach entries for selected influencers
-    selectedInfluencers.forEach(influencerId => {
-      const influencer = transformedInfluencers.find(inf => inf.id === influencerId);
+    selectedInfluencers.forEach(selection => {
+      const influencer = transformedInfluencers.find(inf => inf.id === selection.influencerId);
       if (influencer) {
         addOutreachEntry({
           influencer: influencer.name,
@@ -76,7 +88,7 @@ const Outreach = () => {
           status: "sent",
           sentAt: "Just now",
           template: "Custom Message",
-          platform: selectedPlatform as any,
+          platform: selection.platform as any,
           influencerId: influencer.id
         });
       }
@@ -91,8 +103,8 @@ const Outreach = () => {
     console.log("Selected influencers:", selectedInfluencers);
     
     // Add outreach entries for selected influencers
-    selectedInfluencers.forEach(influencerId => {
-      const influencer = transformedInfluencers.find(inf => inf.id === influencerId);
+    selectedInfluencers.forEach(selection => {
+      const influencer = transformedInfluencers.find(inf => inf.id === selection.influencerId);
       if (influencer) {
         addOutreachEntry({
           influencer: influencer.name,
@@ -100,7 +112,7 @@ const Outreach = () => {
           status: "sent",
           sentAt: "Just now",
           template: "Voice Message",
-          platform: selectedPlatform as any,
+          platform: selection.platform as any,
           influencerId: influencer.id
         });
       }
@@ -138,7 +150,8 @@ const Outreach = () => {
           <InfluencerSelector
             availableInfluencers={transformedInfluencers}
             selectedInfluencers={selectedInfluencers}
-            onToggleInfluencer={toggleInfluencerSelection}
+            onUpdateSelection={updateInfluencerSelection}
+            onRemoveSelection={removeInfluencerSelection}
           />
 
           <MessageComposer

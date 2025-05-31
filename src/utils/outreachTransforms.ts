@@ -7,6 +7,7 @@ export interface OutreachInfluencer {
   handle: string;
   followers: string;
   niche: string;
+  platforms: string[];
 }
 
 const formatFollowers = (count: number): string => {
@@ -25,11 +26,15 @@ export const transformApiDataToOutreachInfluencer = (apiData: ApiInfluencer, ind
   // Get the primary niche from categories
   const primaryNiche = apiData.categories[0] || 'General';
   
+  // Extract all available platforms
+  const availablePlatforms = apiData.platforms.map(p => p.name);
+  
   return {
     id: index,
     name: apiData.name,
     handle: primaryPlatform?.handle || `@${apiData.name.toLowerCase().replace(/\s+/g, '')}`,
     followers: formatFollowers(primaryPlatform?.followers || 0),
-    niche: primaryNiche.charAt(0).toUpperCase() + primaryNiche.slice(1)
+    niche: primaryNiche.charAt(0).toUpperCase() + primaryNiche.slice(1),
+    platforms: availablePlatforms
   };
 };
