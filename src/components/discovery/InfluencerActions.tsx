@@ -53,7 +53,7 @@ const InfluencerActions = ({
         </Button>
       );
     } else {
-      // In "All Influencers" tab
+      // In "All Influencers" tab or AI search dialog
       if (isInCampaign) {
         // Show disabled "Added to Campaign" state
         return (
@@ -68,11 +68,11 @@ const InfluencerActions = ({
           </Button>
         );
       } else {
-        // Show "Add to Campaign" button
+        // Show "Add to Campaign" button with improved styling
         return (
           <Button 
             size="sm" 
-            className="flex-1 h-9 bg-blue-600 hover:bg-blue-700"
+            className="flex-1 h-9 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium shadow-md hover:shadow-lg transition-all duration-200 border-0"
             onClick={handleCampaignAction}
             disabled={isLoading}
           >
