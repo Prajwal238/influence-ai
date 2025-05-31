@@ -108,40 +108,46 @@ const Discovery = () => {
 
   return (
     <CampaignLayout>
-      <div className="h-[calc(100vh-200px)] flex flex-col space-y-3">
+      <div className="flex flex-col h-[calc(100vh-240px)] space-y-4">
         {/* Header */}
-        <DiscoveryHeader />
+        <div className="flex-shrink-0">
+          <DiscoveryHeader />
+        </div>
 
         {/* Search, Filters, and Toggle */}
-        <DiscoveryFilters 
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          showCampaignInfluencers={showCampaignInfluencers}
-          onToggleChange={setShowCampaignInfluencers}
-          activeFilters={activeFilters}
-          onFilterAdd={handleFilterAdd}
-          onFilterRemove={handleFilterRemove}
-        />
+        <div className="flex-shrink-0">
+          <DiscoveryFilters 
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            showCampaignInfluencers={showCampaignInfluencers}
+            onToggleChange={setShowCampaignInfluencers}
+            activeFilters={activeFilters}
+            onFilterAdd={handleFilterAdd}
+            onFilterRemove={handleFilterRemove}
+          />
+        </div>
 
         {/* Scrollable Results Container */}
-        <ScrollArea className="flex-1 min-h-0">
-          <div className="pr-4 pb-4">
-            {/* Results */}
-            {filteredInfluencers.length > 0 ? (
-              <DiscoveryResults 
-                influencers={filteredInfluencers}
-                isInCampaign={isInCampaign}
-                onAddToCampaign={handleAddToCampaign}
-                onRemoveFromCampaign={handleRemoveFromCampaign}
-                showCampaignInfluencers={showCampaignInfluencers}
-              />
-            ) : (
-              <NoResults />
-            )}
-          </div>
-        </ScrollArea>
+        <div className="flex-1 min-h-0">
+          <ScrollArea className="h-full">
+            <div className="pr-4 pb-4">
+              {/* Results */}
+              {filteredInfluencers.length > 0 ? (
+                <DiscoveryResults 
+                  influencers={filteredInfluencers}
+                  isInCampaign={isInCampaign}
+                  onAddToCampaign={handleAddToCampaign}
+                  onRemoveFromCampaign={handleRemoveFromCampaign}
+                  showCampaignInfluencers={showCampaignInfluencers}
+                />
+              ) : (
+                <NoResults />
+              )}
+            </div>
+          </ScrollArea>
+        </div>
 
-        {/* AI Recommendations - Compact at bottom */}
+        {/* AI Recommendations - Fixed at bottom */}
         <div className="flex-shrink-0">
           <AIRecommendations />
         </div>
