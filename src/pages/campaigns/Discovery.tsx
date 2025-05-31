@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import CampaignLayout from "@/components/layout/CampaignLayout";
 import AgentPanel from "@/components/agents/AgentPanel";
@@ -149,7 +148,11 @@ const Discovery = () => {
 
         {/* AI Recommendations - Fixed at bottom */}
         <div className="flex-shrink-0">
-          <AIRecommendations />
+          <AIRecommendations 
+            isInCampaign={isInCampaign}
+            onAddToCampaign={handleAddToCampaign}
+            onRemoveFromCampaign={handleRemoveFromCampaign}
+          />
         </div>
       </div>
 
