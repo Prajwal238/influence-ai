@@ -5,6 +5,7 @@ import InfluencerHeader from "./InfluencerHeader";
 import InfluencerStats from "./InfluencerStats";
 import InfluencerNiches from "./InfluencerNiches";
 import InfluencerActions from "./InfluencerActions";
+import CampaignBadge from "./CampaignBadge";
 
 interface Platform {
   name: string;
@@ -36,8 +37,13 @@ interface InfluencerCardProps {
 
 const InfluencerCard = ({ influencer }: InfluencerCardProps) => {
   return (
-    <Card className="group bg-white shadow-sm border-gray-200 hover:shadow-xl hover:border-gray-300 hover:scale-[1.02] transition-all duration-300 cursor-pointer overflow-hidden">
+    <Card className="group bg-white shadow-sm border-gray-200 hover:shadow-xl hover:border-gray-300 hover:scale-[1.02] transition-all duration-300 cursor-pointer overflow-hidden relative">
       <CardContent className="p-0">
+        {/* Campaign Badge - only show if influencer is in a campaign */}
+        {influencer.campaignName && (
+          <CampaignBadge campaignName={influencer.campaignName} />
+        )}
+
         {/* Influencer Identity */}
         <InfluencerHeader influencer={influencer} />
 

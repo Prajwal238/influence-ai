@@ -63,7 +63,7 @@ export const useInfluencerFiltering = ({
       activeFilters
     });
 
-    // Choose the base set of influencers
+    // Choose the base set of influencers based on the toggle
     const baseInfluencers = showCampaignInfluencers ? campaignInfluencers : influencers;
     
     console.log('Using base influencers:', baseInfluencers.length);

@@ -111,18 +111,17 @@ export const useInfluencerData = () => {
         setLoading(true);
         console.log('Current campaign ID from params:', campaignId);
         
-        // Always fetch all influencers
+        // Always fetch all influencers first
         console.log('Fetching all influencers...');
         const allInfluencersResponse = await fetch('http://localhost:5000/api/user_123/influencers');
         if (!allInfluencersResponse.ok) {
           throw new Error('Failed to fetch all influencers');
         }
         const allInfluencersData: ApiInfluencer[] = await allInfluencersResponse.json();
-        const transformedAllInfluencers = allInfluencersData.map(data => transformApiDataToInfluencer(data, false));
-        setAllInfluencers(transformedAllInfluencers);
-        console.log('All influencers fetched:', transformedAllInfluencers.length);
+        console.log('All influencers fetched:', allInfluencersData.length);
 
         // If we're in a campaign context, also fetch campaign-specific influencers
+        let campaignInfluencersData: ApiInfluencer[] = [];
         if (campaignId) {
           const campaignUrl = `http://localhost:5000/api/user_123/campaigns/${campaignId}/influencers`;
           console.log('Fetching campaign influencers from:', campaignUrl);
@@ -130,19 +129,30 @@ export const useInfluencerData = () => {
           const campaignResponse = await fetch(campaignUrl);
           
           if (campaignResponse.ok) {
-            const campaignData: ApiInfluencer[] = await campaignResponse.json();
-            const transformedCampaignInfluencers = campaignData.map(data => transformApiDataToInfluencer(data, true));
-            setCampaignInfluencers(transformedCampaignInfluencers);
-            console.log('Campaign influencers fetched:', transformedCampaignInfluencers.length);
+            campaignInfluencersData = await campaignResponse.json();
+            console.log('Campaign influencers fetched:', campaignInfluencersData.length);
           } else {
             console.log('Campaign influencers API response status:', campaignResponse.status);
             console.log('No campaign influencers found or error fetching them');
-            setCampaignInfluencers([]);
           }
         } else {
           console.log('No campaign ID found, skipping campaign influencers fetch');
-          setCampaignInfluencers([]);
         }
+
+        // Create a Set of campaign influencer IDs for quick lookup
+        const campaignInfluencerIds = new Set(campaignInfluencersData.map(inf => inf._id));
+
+        // Transform all influencers, marking those that are in the campaign
+        const transformedAllInfluencers = allInfluencersData.map(data => {
+          const isInCampaign = campaignInfluencerIds.has(data._id);
+          return transformApiDataToInfluencer(data, isInCampaign);
+        });
+
+        // Transform campaign influencers
+        const transformedCampaignInfluencers = campaignInfluencersData.map(data => transformApiDataToInfluencer(data, true));
+
+        setAllInfluencers(transformedAllInfluencers);
+        setCampaignInfluencers(transformedCampaignInfluencers);
         
         setError(null);
       } catch (err) {
@@ -156,46 +166,15 @@ export const useInfluencerData = () => {
     fetchInfluencers();
   }, [campaignId]);
 
-  // Combine all influencers with campaign influencers, avoiding duplicates
-  const combinedInfluencers = useMemo(() => {
-    // Create a Map to track unique influencers by ID
-    const influencerMap = new Map<number, Influencer>();
-    
-    // First, add all influencers to the map
-    allInfluencers.forEach(influencer => {
-      influencerMap.set(influencer.id, influencer);
-    });
-    
-    // Then, add campaign influencers, updating existing ones or adding new ones
-    campaignInfluencers.forEach(campaignInfluencer => {
-      const existingInfluencer = influencerMap.get(campaignInfluencer.id);
-      if (existingInfluencer) {
-        // Update existing influencer to mark it as campaign influencer
-        influencerMap.set(campaignInfluencer.id, { 
-          ...existingInfluencer, 
-          campaignName: 'campaign' 
-        });
-      } else {
-        // Add new campaign influencer
-        influencerMap.set(campaignInfluencer.id, campaignInfluencer);
-      }
-    });
-
-    // Convert map back to array
-    const combined = Array.from(influencerMap.values());
-
-    console.log('Combined influencers result:', {
-      allInfluencers: allInfluencers.length,
-      campaignInfluencers: campaignInfluencers.length,
-      combined: combined.length,
-      uniqueIds: new Set(combined.map(inf => inf.id)).size
-    });
-
-    return combined;
-  }, [allInfluencers, campaignInfluencers]);
+  console.log('Hook state:', {
+    allInfluencers: allInfluencers.length,
+    campaignInfluencers: campaignInfluencers.length,
+    loading,
+    error
+  });
 
   return { 
-    influencers: combinedInfluencers, 
+    influencers: allInfluencers, 
     campaignInfluencers,
     loading, 
     error 
