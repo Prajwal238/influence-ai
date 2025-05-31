@@ -28,10 +28,15 @@ const Negotiation = () => {
   const [selectedThread, setSelectedThread] = useState<Thread | undefined>();
   const { threads, addMessageToThread } = useOutreachData();
 
-  // Only show threads for influencers who have replied
-  const repliedThreads = threads.filter(thread => 
-    thread.status === 'replied' || thread.messages.length > 1
-  );
+  // Convert threads to the format expected by the negotiation components
+  const negotiationThreads = threads.map(thread => ({
+    creatorId: thread.creatorId,
+    name: thread.name,
+    handle: thread.handle,
+    platform: thread.platform,
+    messages: thread.messages,
+    avatar: thread.avatar
+  }));
 
   const handleSelectThread = (thread: Thread) => {
     setSelectedThread(thread);
@@ -48,7 +53,7 @@ const Negotiation = () => {
     });
 
     // Update selected thread with the new message
-    const updatedThread = repliedThreads.find(t => t.creatorId === selectedThread.creatorId);
+    const updatedThread = negotiationThreads.find(t => t.creatorId === selectedThread.creatorId);
     if (updatedThread) {
       setSelectedThread(updatedThread);
     }
@@ -71,7 +76,7 @@ const Negotiation = () => {
             {/* Threads List - 4 columns */}
             <div className="col-span-12 lg:col-span-4">
               <ThreadsList
-                threads={repliedThreads}
+                threads={negotiationThreads}
                 selectedThreadId={selectedThread?.creatorId}
                 onSelectThread={handleSelectThread}
               />

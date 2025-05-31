@@ -39,7 +39,7 @@ export interface NegotiationThread {
   status: 'sent' | 'pending' | 'replied' | 'declined';
 }
 
-// Mock data that both components will share
+// Unified mock data - single source of truth
 const mockInfluencers: OutreachInfluencer[] = [
   {
     id: 1,
@@ -64,7 +64,8 @@ const mockInfluencers: OutreachInfluencer[] = [
   },
 ];
 
-const mockOutreachLog: OutreachEntry[] = [
+// Create initial outreach entries with proper synchronization
+const createInitialOutreachLog = (): OutreachEntry[] => [
   {
     id: 1,
     influencer: "Sarah Johnson",
@@ -79,7 +80,7 @@ const mockOutreachLog: OutreachEntry[] = [
     id: 2,
     influencer: "Mike Chen",
     handle: "@mikechentech",
-    status: "pending",
+    status: "sent",
     sentAt: "1 day ago",
     template: "Tech Partnership",
     platform: "email",
@@ -97,95 +98,71 @@ const mockOutreachLog: OutreachEntry[] = [
   },
 ];
 
-const mockThreads: NegotiationThread[] = [
-  {
-    creatorId: "1",
-    name: "Sarah Johnson",
-    handle: "@sarahjfitness",
-    platform: "instagram",
-    avatar: "/api/placeholder/40/40",
-    influencerId: 1,
-    status: "replied",
-    messages: [
-      {
-        id: "1",
-        from: "agent",
-        content: "Hi Sarah! We'd love to collaborate with you on our upcoming fitness campaign. Would you be interested in discussing rates?",
-        timestamp: "2024-01-15T10:00:00Z",
-        platform: "instagram"
-      },
-      {
-        id: "2",
-        from: "creator",
-        content: "Hi! Yes, I'm definitely interested. What did you have in mind for the collaboration?",
-        timestamp: "2024-01-15T10:30:00Z",
-        platform: "instagram"
-      },
-      {
-        id: "3",
-        from: "agent",
-        content: "We're looking at $500 for 3 posts and 5 stories. Would that work for you?",
-        timestamp: "2024-01-15T11:00:00Z",
-        platform: "instagram"
-      },
-      {
-        id: "4",
-        from: "creator",
-        content: "That sounds fair! Can we discuss the content requirements in more detail?",
-        timestamp: "2024-01-15T11:15:00Z",
-        platform: "instagram"
+// Create initial threads based on outreach entries
+const createInitialThreads = (outreachLog: OutreachEntry[]): NegotiationThread[] => {
+  return outreachLog
+    .filter(entry => entry.status === 'replied')
+    .map(entry => {
+      const influencer = mockInfluencers.find(inf => inf.id === entry.influencerId);
+      if (!influencer) return null;
+
+      const baseMessages: NegotiationMessage[] = [
+        {
+          id: `${entry.influencerId}_1`,
+          from: "agent",
+          content: `Hi ${influencer.name}! We'd love to collaborate with you on our upcoming ${influencer.niche.toLowerCase()} campaign. Would you be interested in discussing rates?`,
+          timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+          platform: entry.platform as 'instagram' | 'email' | 'voice'
+        },
+        {
+          id: `${entry.influencerId}_2`,
+          from: "creator",
+          content: "Hi! Yes, I'm definitely interested. What did you have in mind for the collaboration?",
+          timestamp: new Date(Date.now() - 90 * 60 * 1000).toISOString(),
+          platform: entry.platform as 'instagram' | 'email' | 'voice'
+        }
+      ];
+
+      // Add more messages for some threads
+      if (entry.influencerId === 1) {
+        baseMessages.push(
+          {
+            id: `${entry.influencerId}_3`,
+            from: "agent",
+            content: "We're looking at $500 for 3 posts and 5 stories. Would that work for you?",
+            timestamp: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
+            platform: entry.platform as 'instagram' | 'email' | 'voice'
+          },
+          {
+            id: `${entry.influencerId}_4`,
+            from: "creator",
+            content: "That sounds fair! Can we discuss the content requirements in more detail?",
+            timestamp: new Date(Date.now() - 45 * 60 * 1000).toISOString(),
+            platform: entry.platform as 'instagram' | 'email' | 'voice'
+          }
+        );
       }
-    ]
-  },
-  {
-    creatorId: "2",
-    name: "Mike Chen",
-    handle: "@mikechentech",
-    platform: "email",
-    avatar: "/api/placeholder/40/40",
-    influencerId: 2,
-    status: "pending",
-    messages: [
-      {
-        id: "5",
-        from: "agent",
-        content: "Hello Mike, we've been following your tech content and would love to partner with you for our product launch.",
-        timestamp: "2024-01-14T15:00:00Z",
-        platform: "email"
-      }
-    ]
-  },
-  {
-    creatorId: "3",
-    name: "Emma Rodriguez",
-    handle: "@emmalifestyle",
-    platform: "voice",
-    avatar: "/api/placeholder/40/40",
-    influencerId: 3,
-    status: "replied",
-    messages: [
-      {
-        id: "7",
-        from: "agent",
-        content: "Hi Emma! We left you a voice message about our lifestyle brand collaboration. Please let us know your thoughts!",
-        timestamp: "2024-01-13T09:00:00Z",
-        platform: "voice"
-      },
-      {
-        id: "8",
-        from: "creator",
-        content: "Thanks for the voice note! I'm interested and would like to schedule a call to discuss further.",
-        timestamp: "2024-01-13T12:00:00Z",
-        platform: "voice"
-      }
-    ]
-  }
-];
+
+      return {
+        creatorId: entry.influencerId.toString(),
+        name: influencer.name,
+        handle: influencer.handle,
+        platform: entry.platform as 'instagram' | 'email' | 'voice',
+        avatar: "/api/placeholder/40/40",
+        influencerId: entry.influencerId,
+        status: entry.status,
+        messages: baseMessages
+      };
+    })
+    .filter(Boolean) as NegotiationThread[];
+};
 
 export const useOutreachData = () => {
+  // Initialize data with proper synchronization
+  const initialOutreachLog = createInitialOutreachLog();
   const [influencers] = useState<OutreachInfluencer[]>(mockInfluencers);
-  const [outreachLog, setOutreachLog] = useState<OutreachEntry[]>(mockOutreachLog);
-  const [threads, setThreads] = useState<NegotiationThread[]>(mockThreads);
+  const [outreachLog, setOutreachLog] = useState<OutreachEntry[]>(initialOutreachLog);
+  const [threads, setThreads] = useState<NegotiationThread[]>(() => createInitialThreads(initialOutreachLog));
 
   // Function to add new outreach entry and update negotiations if needed
   const addOutreachEntry = (entry: Omit<OutreachEntry, 'id'>) => {
@@ -207,7 +184,15 @@ export const useOutreachData = () => {
               avatar: "/api/placeholder/40/40",
               influencerId: entry.influencerId,
               status: entry.status,
-              messages: []
+              messages: [
+                {
+                  id: `${entry.influencerId}_initial`,
+                  from: "agent",
+                  content: `Hi ${influencer.name}! Thank you for your interest in collaborating with us.`,
+                  timestamp: new Date().toISOString(),
+                  platform: entry.platform as 'instagram' | 'email' | 'voice'
+                }
+              ]
             };
             return [...prev, newThread];
           }
