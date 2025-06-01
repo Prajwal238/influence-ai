@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -104,7 +103,7 @@ const CampaignCard = ({ campaign }: CampaignCardProps) => {
         <div className="flex items-center space-x-4 text-sm text-gray-600">
           <span>{progress}% Complete</span>
           <span>•</span>
-          <span>Updated {formatTimeAgo(campaign.lastModifiedAt)}</span>
+          <span>Created {formatTimeAgo(campaign.lastModifiedAt)}</span>
           <span>•</span>
           <span>Budget: {formatBudgetInINR(campaign.totalBudget)}</span>
         </div>
