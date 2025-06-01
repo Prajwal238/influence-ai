@@ -1,4 +1,3 @@
-
 import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -20,12 +19,23 @@ const CampaignsList = ({ searchQuery }: CampaignsListProps) => {
       return (
         campaign.campaignName.toLowerCase().includes(query) ||
         campaign.objective.toLowerCase().includes(query) ||
-        campaign.targetAudience.toLowerCase().includes(query) ||
-        campaign.productCategory.toLowerCase().includes(query)
+        campaign.targetAudience.location.toLowerCase().includes(query) ||
+        campaign.targetAudience.gender.toLowerCase().includes(query) ||
+        campaign.targetAudience.ageRange.toLowerCase().includes(query) ||
+        campaign.targetAudience.interests.some(interest => 
+          interest.toLowerCase().includes(query)
+        ) ||
+        campaign.preferredPlatforms.some(platform => 
+          platform.toLowerCase().includes(query)
+        ) ||
+        campaign.languages.some(language => 
+          language.toLowerCase().includes(query)
+        )
       );
     });
   }, [campaigns, searchQuery]);
 
+  
   if (isLoading) {
     return (
       <Card className="bg-white shadow-sm border-gray-200">
@@ -45,6 +55,7 @@ const CampaignsList = ({ searchQuery }: CampaignsListProps) => {
     );
   }
 
+  
   if (error) {
     return (
       <Card className="bg-white shadow-sm border-gray-200">
