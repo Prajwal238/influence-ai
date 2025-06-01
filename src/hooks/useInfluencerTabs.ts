@@ -33,10 +33,27 @@ export const useInfluencerTabs = () => {
           transformApiDataToInfluencer(data, true)
         );
 
+        // Debug: Check for duplicates in allInfluencers
+        const allInfluencerNames = transformedAllInfluencers.map(inf => inf.name);
+        const duplicateNames = allInfluencerNames.filter((name, index) => allInfluencerNames.indexOf(name) !== index);
+        if (duplicateNames.length > 0) {
+          console.error('DUPLICATE INFLUENCERS DETECTED IN ALL INFLUENCERS:', duplicateNames);
+          console.log('Full allInfluencers data:', transformedAllInfluencers);
+        }
+
+        // Debug: Check for duplicates by apiId
+        const allInfluencerApiIds = transformedAllInfluencers.map(inf => inf.apiId);
+        const duplicateApiIds = allInfluencerApiIds.filter((id, index) => allInfluencerApiIds.indexOf(id) !== index);
+        if (duplicateApiIds.length > 0) {
+          console.error('DUPLICATE API IDS DETECTED:', duplicateApiIds);
+        }
+
         console.log('Loaded influencer data:', {
           allInfluencers: transformedAllInfluencers.length,
           campaignInfluencers: transformedCampaignInfluencers.length,
-          campaignIds: Array.from(campaignIds)
+          campaignIds: Array.from(campaignIds),
+          duplicateNames,
+          duplicateApiIds
         });
 
         setAllInfluencers(transformedAllInfluencers);
@@ -69,9 +86,20 @@ export const useInfluencerTabs = () => {
       setCampaignInfluencerIds(prev => new Set(prev).add(influencer.apiId));
       
       // Update all influencers list - ensure no duplicates
-      setAllInfluencers(prev => prev.map(inf => 
-        inf.apiId === influencer.apiId ? updatedInfluencer : inf
-      ));
+      setAllInfluencers(prev => {
+        const updated = prev.map(inf => 
+          inf.apiId === influencer.apiId ? updatedInfluencer : inf
+        );
+        
+        // Debug: Check if we're creating duplicates
+        const updatedNames = updated.map(inf => inf.name);
+        const duplicates = updatedNames.filter((name, index) => updatedNames.indexOf(name) !== index);
+        if (duplicates.length > 0) {
+          console.error('DUPLICATES CREATED IN addToCampaign - allInfluencers:', duplicates);
+        }
+        
+        return updated;
+      });
       
       // Add to campaign influencers list only if not already present
       setCampaignInfluencers(prev => {
