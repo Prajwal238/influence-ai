@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -27,15 +28,15 @@ const App = () => (
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/dashboard/campaign-agent" element={<Dashboard />} />
           <Route path="/admin" element={<Admin />} />
-          {/* Keep negotiation route active */}
+          {/* Campaign routes - all active */}
+          <Route path="/campaigns/:id/discovery" element={<CampaignDiscovery />} />
+          <Route path="/campaigns/:id/outreach" element={<CampaignOutreach />} />
           <Route path="/campaigns/:id/negotiation" element={<CampaignNegotiation />} />
-          {/* Redirect other campaign routes to dashboard */}
-          <Route path="/campaigns/:id" element={<Navigate to="/dashboard" replace />} />
-          <Route path="/campaigns/:id/discovery" element={<Navigate to="/dashboard" replace />} />
-          <Route path="/campaigns/:id/outreach" element={<Navigate to="/dashboard" replace />} />
-          <Route path="/campaigns/:id/contracts" element={<Navigate to="/dashboard" replace />} />
-          <Route path="/campaigns/:id/payments" element={<Navigate to="/dashboard" replace />} />
-          <Route path="/campaigns/:id/reporting" element={<Navigate to="/dashboard" replace />} />
+          <Route path="/campaigns/:id/contracts" element={<CampaignContracts />} />
+          <Route path="/campaigns/:id/payments" element={<CampaignPayments />} />
+          <Route path="/campaigns/:id/reporting" element={<CampaignReporting />} />
+          {/* Default campaign route redirects to discovery */}
+          <Route path="/campaigns/:id" element={<Navigate to="/campaigns/:id/discovery" replace />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         <CampaignAgentModal />
