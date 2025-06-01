@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import CampaignLayout from "@/components/layout/CampaignLayout";
 import NegotiationThreadsList from "@/components/negotiation/NegotiationThreadsList";
@@ -10,7 +9,7 @@ import { NegotiationThread, NegotiationMessage, AgentStatus } from "@/types/outr
 const Negotiation = () => {
   const [selectedThread, setSelectedThread] = useState<NegotiationThread | undefined>();
   const [negotiationThreads, setNegotiationThreads] = useState<NegotiationThread[]>([]);
-  const { fetchAllInfluencerConversations, loading, error } = useNegotiationAPI();
+  const { fetchAllInfluencerConversations, pollConversation, loading, error } = useNegotiationAPI();
 
   // Fetch conversations when component mounts
   useEffect(() => {
@@ -85,9 +84,57 @@ const Negotiation = () => {
     // TODO: Integrate with AI response API when provided
   };
 
-  const handlePoll = () => {
-    console.log('Poll clicked - API integration coming soon');
-    // TODO: Integrate with poll API when provided
+  const handlePoll = async () => {
+    if (!selectedThread) return;
+
+    try {
+      console.log('Polling for latest conversation updates...');
+      
+      // Extract campaign ID from URL or use default
+      const campaignId = 'summer_fashion_2024'; // This could be extracted from the route
+      
+      const pollResults = await pollConversation(
+        campaignId,
+        selectedThread.platform,
+        selectedThread.name
+      );
+
+      // Transform poll results to messages and check for duplicates
+      const existingMessageContents = new Set(selectedThread.messages.map(msg => msg.content));
+      
+      const newMessages: NegotiationMessage[] = pollResults
+        .filter(pollMsg => !existingMessageContents.has(pollMsg.message))
+        .map((pollMsg, index) => ({
+          id: `poll-${Date.now()}-${index}`,
+          from: pollMsg.role === 'negotiator' ? 'agent' : 'creator',
+          content: pollMsg.message,
+          timestamp: new Date().toISOString(),
+          platform: selectedThread.platform
+        }));
+
+      if (newMessages.length > 0) {
+        console.log(`Adding ${newMessages.length} new messages from poll`);
+        
+        // Update selected thread with new messages
+        const updatedThread: NegotiationThread = {
+          ...selectedThread,
+          messages: [...selectedThread.messages, ...newMessages],
+          lastActivity: new Date().toISOString()
+        };
+        setSelectedThread(updatedThread);
+
+        // Update threads list
+        setNegotiationThreads(prev => 
+          prev.map(thread => 
+            thread.creatorId === selectedThread.creatorId ? updatedThread : thread
+          )
+        );
+      } else {
+        console.log('No new messages found in poll');
+      }
+    } catch (err) {
+      console.error('Failed to poll conversation:', err);
+    }
   };
 
   if (loading) {

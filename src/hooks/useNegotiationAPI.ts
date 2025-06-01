@@ -17,6 +17,11 @@ interface ApiNegotiationResponse {
   updatedAt: string;
 }
 
+interface PollMessageResponse {
+  role: string;
+  message: string;
+}
+
 export const useNegotiationAPI = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -87,8 +92,33 @@ export const useNegotiationAPI = () => {
     }
   }, []);
 
+  const pollConversation = useCallback(async (campaignId: string, platform: string, influencerName: string): Promise<PollMessageResponse[]> => {
+    try {
+      console.log('Polling conversation for:', { campaignId, platform, influencerName });
+      
+      const response = await fetch(
+        buildApiUrl(`/api/campaigns/${campaignId}/platform/${platform}/getConversation/${encodeURIComponent(influencerName)}`)
+      );
+      
+      if (!response.ok) {
+        throw new Error('Failed to poll conversation');
+      }
+      
+      const data: PollMessageResponse[] = await response.json();
+      console.log('Polled conversation data:', data);
+      
+      return data;
+    } catch (err) {
+      console.error('Error polling conversation:', err);
+      const errorMessage = err instanceof Error ? err.message : 'Failed to poll conversation';
+      setError(errorMessage);
+      throw err;
+    }
+  }, []);
+
   return {
     fetchAllInfluencerConversations,
+    pollConversation,
     loading,
     error
   };
