@@ -36,22 +36,23 @@ const Contracts = () => {
   return (
     <CampaignLayout>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Contract List */}
+        {/* Main Content */}
         <div className="lg:col-span-2 space-y-6">
+          {/* Contract List */}
           <ContractList 
             contracts={contracts}
             selectedContract={selectedContract}
             onViewContract={handleViewContract}
           />
-        </div>
 
-        {/* Contract Preview & Quick Actions */}
-        <div className="space-y-6">
-          {/* Contract Preview */}
+          {/* Contract Preview - moved here */}
           {selectedContract && (
             <ContractPreview contract={selectedContract} />
           )}
+        </div>
 
+        {/* Sidebar - Quick Actions & Stats */}
+        <div className="space-y-6">
           {/* Quick Actions */}
           <ContractQuickActions />
 
