@@ -11,6 +11,8 @@ const Negotiation = () => {
     negotiationThreads,
     loading,
     error,
+    aiResponseInput,
+    setAiResponseInput,
     handleSelectThread,
     handleSendMessage,
     handleStatusChange,
@@ -36,6 +38,8 @@ const Negotiation = () => {
         onStatusChange={handleStatusChange}
         onAIResponse={handleAIResponse}
         onPoll={handlePoll}
+        aiResponseInput={aiResponseInput}
+        onAiResponseInputChange={setAiResponseInput}
       />
     </CampaignLayout>
   );

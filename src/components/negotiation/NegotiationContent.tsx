@@ -12,6 +12,8 @@ interface NegotiationContentProps {
   onStatusChange: (status: AgentStatus) => void;
   onAIResponse: () => void;
   onPoll: () => void;
+  aiResponseInput?: string;
+  onAiResponseInputChange?: (value: string) => void;
 }
 
 const NegotiationContent = ({
@@ -21,7 +23,9 @@ const NegotiationContent = ({
   onSendMessage,
   onStatusChange,
   onAIResponse,
-  onPoll
+  onPoll,
+  aiResponseInput,
+  onAiResponseInputChange
 }: NegotiationContentProps) => {
   return (
     <div className="min-h-screen bg-[#FAFAFA]">
@@ -53,6 +57,8 @@ const NegotiationContent = ({
               onStatusChange={onStatusChange}
               onAIResponse={onAIResponse}
               onPoll={onPoll}
+              aiResponseInput={aiResponseInput}
+              onAiResponseInputChange={onAiResponseInputChange}
             />
           </div>
 

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { NegotiationThread, NegotiationMessage, AgentStatus } from "@/types/outreach";
 import { useNegotiationAPI } from "@/hooks/useNegotiationAPI";
@@ -6,7 +5,8 @@ import { useNegotiationAPI } from "@/hooks/useNegotiationAPI";
 export const useNegotiationState = () => {
   const [selectedThread, setSelectedThread] = useState<NegotiationThread | undefined>();
   const [negotiationThreads, setNegotiationThreads] = useState<NegotiationThread[]>([]);
-  const { fetchAllInfluencerConversations, pollConversation, sendMessage, loading, error } = useNegotiationAPI();
+  const [aiResponseInput, setAiResponseInput] = useState<string>('');
+  const { fetchAllInfluencerConversations, pollConversation, sendMessage, getAIResponse, loading, error } = useNegotiationAPI();
 
   // Fetch conversations when component mounts
   useEffect(() => {
@@ -30,6 +30,7 @@ export const useNegotiationState = () => {
 
   const handleSelectThread = (thread: NegotiationThread) => {
     setSelectedThread(thread);
+    setAiResponseInput(''); // Clear AI response input when switching threads
   };
 
   const handleSendMessage = async (content: string, platform: string) => {
@@ -86,9 +87,17 @@ export const useNegotiationState = () => {
     );
   };
 
-  const handleAIResponse = () => {
-    console.log('AI Response clicked - API integration coming soon');
-    // TODO: Integrate with AI response API when provided
+  const handleAIResponse = async () => {
+    if (!selectedThread) return;
+
+    try {
+      console.log('Getting AI response for conversation...');
+      const aiMessage = await getAIResponse(selectedThread.messages);
+      setAiResponseInput(aiMessage);
+      console.log('AI response received and set in input:', aiMessage);
+    } catch (err) {
+      console.error('Failed to get AI response:', err);
+    }
   };
 
   const handlePoll = async () => {
@@ -147,6 +156,8 @@ export const useNegotiationState = () => {
   return {
     selectedThread,
     negotiationThreads,
+    aiResponseInput,
+    setAiResponseInput,
     loading,
     error,
     handleSelectThread,

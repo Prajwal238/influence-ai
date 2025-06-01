@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Bot, Phone, PhoneOff, Send, RefreshCw } from "lucide-react";
@@ -11,6 +11,8 @@ interface NegotiationActionBarProps {
   onStatusChange: (status: AgentStatus) => void;
   onAIResponse?: () => void;
   onPoll?: () => void;
+  aiResponseInput?: string;
+  onAiResponseInputChange?: (value: string) => void;
 }
 
 const NegotiationActionBar = ({ 
@@ -18,10 +20,23 @@ const NegotiationActionBar = ({
   onSendMessage, 
   onStatusChange,
   onAIResponse,
-  onPoll
+  onPoll,
+  aiResponseInput = '',
+  onAiResponseInputChange
 }: NegotiationActionBarProps) => {
   const [messageInput, setMessageInput] = useState('');
   const [isCallActive, setIsCallActive] = useState(false);
+
+  // Update messageInput when aiResponseInput changes
+  useEffect(() => {
+    if (aiResponseInput) {
+      setMessageInput(aiResponseInput);
+      // Clear the AI response input after setting it to the message input
+      if (onAiResponseInputChange) {
+        onAiResponseInputChange('');
+      }
+    }
+  }, [aiResponseInput, onAiResponseInputChange]);
 
   const handleSend = () => {
     if (messageInput.trim() && selectedThread) {

@@ -27,6 +27,18 @@ interface SendMessageRequest {
   message: string;
 }
 
+interface AIResponseRequest {
+  messages: Array<{
+    role: string;
+    message: string;
+  }>;
+}
+
+interface AIResponseResponse {
+  type: string;
+  message: string;
+}
+
 export const useNegotiationAPI = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -154,10 +166,52 @@ export const useNegotiationAPI = () => {
     }
   }, []);
 
+  const getAIResponse = useCallback(async (messages: NegotiationMessage[]): Promise<string> => {
+    try {
+      console.log('Getting AI response for messages:', messages);
+      
+      // Transform messages to API format
+      const apiMessages = messages.map(msg => ({
+        role: msg.from === 'agent' ? 'negotiator' : 'Influencor',
+        message: msg.content
+      }));
+
+      const requestBody: AIResponseRequest = {
+        messages: apiMessages
+      };
+
+      const response = await fetch(
+        buildApiUrl('/api/user_123/getAIResponse'),
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(requestBody)
+        }
+      );
+      
+      if (!response.ok) {
+        throw new Error('Failed to get AI response');
+      }
+      
+      const data: AIResponseResponse = await response.json();
+      console.log('AI response received:', data);
+      
+      return data.message;
+    } catch (err) {
+      console.error('Error getting AI response:', err);
+      const errorMessage = err instanceof Error ? err.message : 'Failed to get AI response';
+      setError(errorMessage);
+      throw err;
+    }
+  }, []);
+
   return {
     fetchAllInfluencerConversations,
     pollConversation,
     sendMessage,
+    getAIResponse,
     loading,
     error
   };

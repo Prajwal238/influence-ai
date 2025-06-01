@@ -12,6 +12,8 @@ interface NegotiationChatPanelProps {
   onStatusChange: (status: AgentStatus) => void;
   onAIResponse?: () => void;
   onPoll?: () => void;
+  aiResponseInput?: string;
+  onAiResponseInputChange?: (value: string) => void;
 }
 
 const NegotiationChatPanel = ({ 
@@ -19,7 +21,9 @@ const NegotiationChatPanel = ({
   onSendMessage, 
   onStatusChange,
   onAIResponse,
-  onPoll
+  onPoll,
+  aiResponseInput,
+  onAiResponseInputChange
 }: NegotiationChatPanelProps) => {
   if (!selectedThread) {
     return (
@@ -51,6 +55,8 @@ const NegotiationChatPanel = ({
         onStatusChange={onStatusChange}
         onAIResponse={onAIResponse}
         onPoll={onPoll}
+        aiResponseInput={aiResponseInput}
+        onAiResponseInputChange={onAiResponseInputChange}
       />
     </Card>
   );
