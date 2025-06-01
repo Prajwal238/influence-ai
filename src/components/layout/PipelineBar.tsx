@@ -48,26 +48,18 @@ const PipelineBar = ({ stages, currentStage, stageStatus }: PipelineBarProps) =>
 
   const activeStage = currentStage || getCurrentStageFromUrl();
 
-  // Only mark stages as completed when moving forward, not when navigating back
+  // Mark current stage as completed when user visits it (except for the first stage)
   useEffect(() => {
-    if (campaignId && activeStage && progress) {
+    if (campaignId && activeStage) {
       const currentStageIndex = defaultStages.findIndex(s => s.key === activeStage);
-      const lastCompletedStageIndex = progress.completedStages.length > 0 
-        ? Math.max(...progress.completedStages.map(stage => defaultStages.findIndex(s => s.key === stage)))
-        : -1;
-
-      console.log('Current stage index:', currentStageIndex, 'Last completed:', lastCompletedStageIndex);
       
-      // Only complete stages if we're moving forward or if no progress exists yet
-      if (currentStageIndex > lastCompletedStageIndex) {
-        console.log('Moving forward - completing stages up to:', currentStageIndex);
-        for (let i = 0; i <= currentStageIndex; i++) {
-          const stageToComplete = defaultStages[i].key as CampaignStage;
-          completeStage(stageToComplete);
-        }
+      // Complete all previous stages when visiting a stage
+      for (let i = 0; i < currentStageIndex; i++) {
+        const previousStage = defaultStages[i].key as CampaignStage;
+        completeStage(previousStage);
       }
     }
-  }, [activeStage, campaignId, completeStage, progress?.completedStages?.length]);
+  }, [activeStage, campaignId, completeStage]);
 
   // Get stage status based on progress
   const getStageStatus = (stageKey: StageKey): 'pending' | 'active' | 'complete' => {
@@ -81,11 +73,19 @@ const PipelineBar = ({ stages, currentStage, stageStatus }: PipelineBarProps) =>
     }
     
     // Check if this is the currently active stage
-    const isCurrentlyActive = location.pathname.includes(`/${stageKey}`);
-    if (isCurrentlyActive) return 'active';
+    const isActive = location.pathname.includes(`/${stageKey}`);
+    if (isActive) return 'active';
     
     // Check if this stage is completed based on progress
     if (progress && progress.completedStages.includes(stageKey as CampaignStage)) {
+      return 'complete';
+    }
+    
+    // For stages that come before the current active stage, mark as complete
+    const currentStageIndex = defaultStages.findIndex(s => s.key === activeStage);
+    const thisStageIndex = defaultStages.findIndex(s => s.key === stageKey);
+    
+    if (thisStageIndex < currentStageIndex) {
       return 'complete';
     }
     
