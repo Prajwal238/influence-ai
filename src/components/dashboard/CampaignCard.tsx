@@ -54,7 +54,7 @@ const CampaignCard = ({ campaign }: CampaignCardProps) => {
   const { percentage: progress } = getCampaignProgressForDashboard(campaign._id);
   const objective = campaign.objective;
 
-  // Get campaign redirect URL based on progress
+  // Get campaign redirect URL based on progress - always return campaign routes
   const getCampaignRedirectUrl = (campaignId: string): string => {
     const savedProgress = localStorage.getItem('campaign_progress');
     if (!savedProgress) return `/campaigns/${campaignId}/discovery`;

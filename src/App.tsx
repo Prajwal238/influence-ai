@@ -30,9 +30,11 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
+          {/* Single home route */}
           <Route path="/" element={<Dashboard />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/dashboard/campaign-agent" element={<Dashboard />} />
+          {/* Redirect /dashboard to home */}
+          <Route path="/dashboard" element={<Navigate to="/" replace />} />
+          <Route path="/dashboard/campaign-agent" element={<Navigate to="/" replace />} />
           <Route path="/admin" element={<Admin />} />
           {/* Campaign routes - all active */}
           <Route path="/campaigns/:id/discovery" element={<CampaignDiscovery />} />

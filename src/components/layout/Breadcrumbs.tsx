@@ -25,7 +25,7 @@ const Breadcrumbs = () => {
     <div className="bg-white border-b border-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center space-x-2 py-3 text-sm text-gray-600">
-          <Link to="/dashboard" className="hover:text-blue-600">
+          <Link to="/" className="hover:text-blue-600">
             Campaigns
           </Link>
           <ChevronRight className="h-4 w-4" />

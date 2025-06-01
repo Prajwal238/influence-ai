@@ -7,7 +7,7 @@ const Navigation = () => {
   const location = useLocation();
 
   const navItems = [
-    { name: "Dashboard", path: "/dashboard" },
+    { name: "Dashboard", path: "/" },
     { name: "Admin", path: "/admin" },
   ];
 
@@ -16,7 +16,7 @@ const Navigation = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link to="/dashboard" className="flex items-center">
+          <Link to="/" className="flex items-center">
             <div className="text-2xl font-semibold text-gray-900">
               In<span className="text-blue-600">flow</span>encer.ai
             </div>

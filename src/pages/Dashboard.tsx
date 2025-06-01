@@ -26,7 +26,7 @@ const Dashboard = () => {
                 Manage your influencer campaigns with AI-powered automation
               </p>
             </div>
-            <Link to="/dashboard/campaign-agent">
+            <Link to="/campaign-agent">
               <Button className="bg-blue-600 hover:bg-blue-700 rounded-2xl shadow-sm">
                 <Plus className="h-4 w-4 mr-2" />
                 New Campaign
@@ -74,7 +74,7 @@ const Dashboard = () => {
           </Card>
           <Card className="bg-white shadow-sm border-gray-200">
             <CardContent className="p-6">
-              <div className="text-2xl font-semibold text-gray-900 mb-1">$47K</div>
+              <div className="text-2xl font-semibent text-gray-900 mb-1">$47K</div>
               <div className="text-sm text-gray-600">Revenue Generated</div>
             </CardContent>
           </Card>
