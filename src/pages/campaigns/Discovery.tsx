@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import CampaignLayout from "@/components/layout/CampaignLayout";
 import DiscoveryFilters from "@/components/discovery/DiscoveryFilters";
@@ -27,8 +26,11 @@ const Discovery = () => {
     isInCampaign 
   } = useInfluencerTabs();
 
+  // Use the appropriate dataset based on toggle state
+  const baseInfluencers = showCampaignInfluencers ? campaignInfluencers : allInfluencers;
+
   const filteredInfluencers = useInfluencerFiltering({
-    influencers: allInfluencers,
+    influencers: baseInfluencers,
     campaignInfluencers,
     searchQuery,
     showCampaignInfluencers,
