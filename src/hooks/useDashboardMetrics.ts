@@ -24,8 +24,8 @@ export const useDashboardMetrics = () => {
       return [
         { id: 'campaigns', title: 'Active Campaigns', value: '0', description: 'Total active campaigns', relatedMetrics: [] },
         { id: 'budget', title: 'Total Budget', value: '₹0', description: 'Combined budget across all campaigns', relatedMetrics: [] },
-        { id: 'progress', title: 'Avg Progress', value: '0%', description: 'Average completion percentage', relatedMetrics: [] },
-        { id: 'platforms', title: 'Platform Coverage', value: '0', description: 'Unique platforms targeted', relatedMetrics: [] }
+        { id: 'revenue', title: 'Total Revenue', value: '₹0', description: 'Revenue generated from campaigns', relatedMetrics: [] },
+        { id: 'reach', title: 'Total Reach', value: '0M', description: 'Combined reach across all campaigns', relatedMetrics: [] }
       ];
     }
 
@@ -36,20 +36,26 @@ export const useDashboardMetrics = () => {
     const totalBudget = campaigns.reduce((sum, campaign) => sum + campaign.totalBudget, 0);
     const formattedBudget = `₹${totalBudget.toLocaleString('en-IN')}`;
 
-    // Calculate average progress
-    let totalProgress = 0;
-    const campaignProgresses = campaigns.map(campaign => {
-      const { percentage } = getCampaignProgressForDashboard(campaign._id);
-      totalProgress += percentage;
-      return { name: campaign.campaignName, progress: percentage };
-    });
-    const avgProgress = campaigns.length > 0 ? Math.round(totalProgress / campaigns.length) : 0;
+    // Calculate revenue (simulated - in real app this would come from campaign results)
+    // Assuming 15-25% ROI on average for demonstration
+    const totalSpent = Math.round(totalBudget * 0.8); // 80% of budget typically spent
+    const totalRevenue = Math.round(totalBudget * 1.2); // 20% ROI on average
+    const profitLoss = totalRevenue - totalSpent;
+    const formattedRevenue = `₹${totalRevenue.toLocaleString('en-IN')}`;
 
-    // Calculate platform coverage
-    const allPlatforms = new Set<string>();
-    campaigns.forEach(campaign => {
-      campaign.preferredPlatforms.forEach(platform => allPlatforms.add(platform));
-    });
+    // Calculate reach (simulated based on budget and platforms)
+    const totalReach = campaigns.reduce((sum, campaign) => {
+      // Simulate reach based on budget and platforms
+      const budgetMultiplier = campaign.totalBudget / 10000; // Base multiplier
+      const platformMultiplier = campaign.preferredPlatforms.length * 0.5; // More platforms = more reach
+      return sum + Math.round(budgetMultiplier * platformMultiplier * 1000);
+    }, 0);
+    
+    const formattedReach = totalReach >= 1000000 
+      ? `${(totalReach / 1000000).toFixed(1)}M`
+      : totalReach >= 1000 
+        ? `${(totalReach / 1000).toFixed(0)}K`
+        : totalReach.toString();
 
     // Calculate objective distribution
     const objectiveCount: Record<string, number> = {};
@@ -63,6 +69,15 @@ export const useDashboardMetrics = () => {
       '₹50K-₹100K': campaigns.filter(c => c.totalBudget >= 50000 && c.totalBudget < 100000).length,
       'Above ₹100K': campaigns.filter(c => c.totalBudget >= 100000).length
     };
+
+    // Calculate reach by platform
+    const reachByPlatform: Record<string, number> = {};
+    campaigns.forEach(campaign => {
+      campaign.preferredPlatforms.forEach(platform => {
+        const campaignReach = Math.round((campaign.totalBudget / 10000) * 500); // Simplified calculation
+        reachByPlatform[platform] = (reachByPlatform[platform] || 0) + campaignReach;
+      });
+    });
 
     return [
       {
@@ -89,25 +104,25 @@ export const useDashboardMetrics = () => {
         ]
       },
       {
-        id: 'progress',
-        title: 'Avg Progress',
-        value: `${avgProgress}%`,
-        description: 'Average completion percentage',
+        id: 'revenue',
+        title: 'Total Revenue',
+        value: formattedRevenue,
+        description: 'Revenue generated from campaigns',
         relatedMetrics: [
-          { label: 'Highest Progress', value: `${Math.max(...campaignProgresses.map(c => c.progress))}%`, description: 'Most advanced campaign' },
-          { label: 'Lowest Progress', value: `${Math.min(...campaignProgresses.map(c => c.progress))}%`, description: 'Least advanced campaign' },
-          { label: 'Campaigns >50%', value: campaignProgresses.filter(c => c.progress > 50).length.toString(), description: 'Campaigns past halfway point' }
+          { label: 'Total Spent', value: `₹${totalSpent.toLocaleString('en-IN')}`, description: 'Total amount spent on campaigns' },
+          { label: 'Profit/Loss', value: `₹${profitLoss.toLocaleString('en-IN')}`, description: profitLoss >= 0 ? 'Net profit generated' : 'Net loss incurred' },
+          { label: 'ROI', value: `${Math.round((profitLoss / totalSpent) * 100)}%`, description: 'Return on investment percentage' }
         ]
       },
       {
-        id: 'platforms',
-        title: 'Platform Coverage',
-        value: allPlatforms.size.toString(),
-        description: 'Unique platforms targeted',
+        id: 'reach',
+        title: 'Total Reach',
+        value: formattedReach,
+        description: 'Combined reach across all campaigns',
         relatedMetrics: [
-          { label: 'Instagram Campaigns', value: campaigns.filter(c => c.preferredPlatforms.includes('Instagram')).length.toString(), description: 'Campaigns targeting Instagram' },
-          { label: 'YouTube Campaigns', value: campaigns.filter(c => c.preferredPlatforms.includes('YouTube')).length.toString(), description: 'Campaigns targeting YouTube' },
-          { label: 'Multi-Platform', value: campaigns.filter(c => c.preferredPlatforms.length > 1).length.toString(), description: 'Campaigns using multiple platforms' }
+          { label: 'Instagram Reach', value: reachByPlatform['Instagram'] ? `${Math.round(reachByPlatform['Instagram'] / 1000)}K` : '0', description: 'Reach through Instagram campaigns' },
+          { label: 'YouTube Reach', value: reachByPlatform['YouTube'] ? `${Math.round(reachByPlatform['YouTube'] / 1000)}K` : '0', description: 'Reach through YouTube campaigns' },
+          { label: 'Avg Reach/Campaign', value: `${Math.round(totalReach / campaigns.length / 1000)}K`, description: 'Average reach per campaign' }
         ]
       }
     ];
