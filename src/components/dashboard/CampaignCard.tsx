@@ -44,10 +44,39 @@ const CampaignCard = ({ campaign }: CampaignCardProps) => {
     }
   };
 
-  // For now, using hardcoded progress value
-  const progress = Math.floor(Math.random() * 80) + 20; // Random progress between 20-100
-  
-  // Use the actual objective from the campaign data
+  // Calculate progress based on campaign flow completion
+  const calculateCampaignProgress = (): number => {
+    // Define all campaign stages in order
+    const campaignStages = ['discovery', 'outreach', 'negotiation', 'contracts', 'payments', 'reporting'];
+    
+    // For demo purposes, we'll simulate completion based on campaign age and some randomization
+    // In a real app, this would come from actual campaign data
+    const campaignAge = Math.floor((new Date().getTime() - new Date(campaign.lastModifiedAt).getTime()) / (1000 * 60 * 60 * 24));
+    
+    // Simulate stages completed based on campaign age and objective
+    let completedStages = 0;
+    
+    if (campaignAge > 0) completedStages = 1; // Discovery
+    if (campaignAge > 2) completedStages = 2; // Outreach
+    if (campaignAge > 5) completedStages = 3; // Negotiation
+    if (campaignAge > 8) completedStages = 4; // Contracts
+    if (campaignAge > 12) completedStages = 5; // Payments
+    if (campaignAge > 15) completedStages = 6; // Reporting
+    
+    // Add some variation based on objective
+    if (campaign.objective.toLowerCase().includes('awareness')) {
+      completedStages = Math.min(completedStages + 1, 6);
+    }
+    
+    return Math.round((completedStages / campaignStages.length) * 100);
+  };
+
+  // Format budget in INR
+  const formatBudgetInINR = (budget: number): string => {
+    return `₹${budget.toLocaleString('en-IN')}`;
+  };
+
+  const progress = calculateCampaignProgress();
   const objective = campaign.objective;
 
   return (
@@ -64,13 +93,13 @@ const CampaignCard = ({ campaign }: CampaignCardProps) => {
           <span>•</span>
           <span>Updated {formatTimeAgo(campaign.lastModifiedAt)}</span>
           <span>•</span>
-          <span>Budget: ${campaign.totalBudget.toLocaleString()}</span>
+          <span>Budget: {formatBudgetInINR(campaign.totalBudget)}</span>
         </div>
       </div>
       <div className="flex items-center space-x-3">
         <div className="w-24 bg-gray-200 rounded-full h-2">
           <div 
-            className="bg-blue-600 h-2 rounded-full" 
+            className="bg-blue-600 h-2 rounded-full transition-all duration-300" 
             style={{ width: `${progress}%` }}
           ></div>
         </div>
