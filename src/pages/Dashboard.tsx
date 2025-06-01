@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -27,7 +26,7 @@ const Dashboard = ({ openCampaignAgentModal = false }: DashboardProps) => {
   };
 
   const handleNewCampaign = () => {
-    navigate("/dashboard/new-campaign/step-1");
+    navigate("/dashboard/campaign-agent");
   };
 
   const handleMetricClick = (metric: DashboardMetric) => {
