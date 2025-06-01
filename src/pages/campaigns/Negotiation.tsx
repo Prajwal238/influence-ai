@@ -1,4 +1,5 @@
 
+import { useParams } from "react-router-dom";
 import CampaignLayout from "@/components/layout/CampaignLayout";
 import NegotiationContent from "@/components/negotiation/NegotiationContent";
 import NegotiationLoadingState from "@/components/negotiation/NegotiationLoadingState";
@@ -6,6 +7,8 @@ import NegotiationErrorState from "@/components/negotiation/NegotiationErrorStat
 import { useNegotiationState } from "@/hooks/useNegotiationState";
 
 const Negotiation = () => {
+  const { id: campaignId } = useParams<{ id: string }>();
+  
   const {
     selectedThread,
     negotiationThreads,
@@ -18,7 +21,7 @@ const Negotiation = () => {
     handleStatusChange,
     handleAIResponse,
     handlePoll
-  } = useNegotiationState();
+  } = useNegotiationState(campaignId);
 
   if (loading) {
     return <NegotiationLoadingState />;

@@ -1,8 +1,9 @@
+
 import { useState, useEffect } from "react";
 import { NegotiationThread, NegotiationMessage, AgentStatus } from "@/types/outreach";
 import { useNegotiationAPI } from "@/hooks/useNegotiationAPI";
 
-export const useNegotiationState = () => {
+export const useNegotiationState = (campaignId?: string) => {
   const [selectedThread, setSelectedThread] = useState<NegotiationThread | undefined>();
   const [negotiationThreads, setNegotiationThreads] = useState<NegotiationThread[]>([]);
   const [aiResponseInput, setAiResponseInput] = useState<string>('');
@@ -34,7 +35,7 @@ export const useNegotiationState = () => {
   };
 
   const handleSendMessage = async (content: string, platform: string) => {
-    if (!selectedThread) return;
+    if (!selectedThread || !campaignId) return;
 
     const newMessage: NegotiationMessage = {
       id: `msg-${Date.now()}`,
@@ -59,9 +60,8 @@ export const useNegotiationState = () => {
       )
     );
 
-    // Call API to send message
+    // Call API to send message using the actual campaign ID
     try {
-      const campaignId = 'summer_fashion_2024'; // Extract from route if needed
       await sendMessage(campaignId, selectedThread.platform, selectedThread.name, content);
       console.log('Message sent to API successfully');
     } catch (err) {
@@ -101,16 +101,13 @@ export const useNegotiationState = () => {
   };
 
   const handlePoll = async () => {
-    if (!selectedThread) return;
+    if (!selectedThread || !campaignId) return;
 
     try {
       console.log('Polling for latest conversation updates...');
       
-      // Extract campaign ID from URL or use default
-      const campaignId = 'summer_fashion_2024'; // This could be extracted from the route
-      
       const pollResults = await pollConversation(
-        campaignId,
+        campaignId, // Use the actual campaign ID instead of hardcoded value
         selectedThread.platform,
         selectedThread.name
       );
