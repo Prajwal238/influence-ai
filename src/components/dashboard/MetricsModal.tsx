@@ -124,14 +124,6 @@ const MetricsModal = ({ isOpen, onClose, metric }: MetricsModalProps) => {
             {getModalIcon()}
             <span className="text-gray-900">{getModalTitle()}</span>
           </DialogTitle>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute right-4 top-4 rounded-full hover:bg-gray-100"
-            onClick={onClose}
-          >
-            <X className="h-5 w-5 text-gray-500" />
-          </Button>
         </DialogHeader>
         
         <div className="space-y-6">
