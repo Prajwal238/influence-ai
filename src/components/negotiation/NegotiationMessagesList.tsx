@@ -33,7 +33,7 @@ const NegotiationMessagesList = ({ messages }: NegotiationMessagesListProps) => 
               {message.from === 'agent' ? (
                 <div className="flex items-center space-x-1">
                   <Bot className="h-3 w-3" />
-                  <span>Agent</span>
+                  <span>You</span>
                 </div>
               ) : message.from === 'creator' ? (
                 <div className="flex items-center space-x-1">
