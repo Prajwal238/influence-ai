@@ -16,6 +16,13 @@ export interface RelatedMetric {
   description: string;
 }
 
+export interface DashboardMetrics {
+  totalCampaigns: number;
+  activeInfluencers: number;
+  totalSpend: number;
+  avgEngagement: number;
+}
+
 export const useDashboardMetrics = () => {
   const { data: campaigns, isLoading } = useCampaigns();
 
@@ -128,8 +135,30 @@ export const useDashboardMetrics = () => {
     ];
   };
 
+  const calculateSimpleMetrics = (): DashboardMetrics => {
+    if (!campaigns || campaigns.length === 0) {
+      return {
+        totalCampaigns: 0,
+        activeInfluencers: 0,
+        totalSpend: 0,
+        avgEngagement: 0
+      };
+    }
+
+    const totalBudget = campaigns.reduce((sum, campaign) => sum + campaign.totalBudget, 0);
+    const totalSpent = Math.round(totalBudget * 0.8); // 80% of budget typically spent
+
+    return {
+      totalCampaigns: campaigns.length,
+      activeInfluencers: campaigns.length * 3, // Simulated: avg 3 influencers per campaign
+      totalSpend: totalSpent,
+      avgEngagement: 3.2 // Simulated engagement rate
+    };
+  };
+
   return {
-    metrics: calculateMetrics(),
+    metrics: calculateSimpleMetrics(),
+    detailedMetrics: calculateMetrics(),
     isLoading
   };
 };
