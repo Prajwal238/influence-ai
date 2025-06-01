@@ -1,5 +1,6 @@
 
 import { Message } from './types';
+import { buildApiUrl } from '@/config/api';
 
 export const getInitialGreeting = (type: string) => {
   switch (type) {
@@ -18,7 +19,7 @@ export const getInitialGreeting = (type: string) => {
 
 export const callCampaignAPI = async (prompt: string, sessionId: string) => {
   try {
-    const response = await fetch('http://localhost:5000/api/campaigns', {
+    const response = await fetch(buildApiUrl('/api/campaigns'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

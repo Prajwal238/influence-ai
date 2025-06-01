@@ -1,9 +1,10 @@
 
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Campaign } from '@/types/campaign';
+import { apiConfig } from '@/config/api';
 
 const fetchCampaigns = async (): Promise<Campaign[]> => {
-  const response = await fetch('http://localhost:5000/api/user_123/campaigns', {
+  const response = await fetch(apiConfig.endpoints.campaigns, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',

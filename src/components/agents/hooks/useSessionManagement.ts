@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { getCurrentSessionId, startNewSession } from '../sessionUtils';
+import { buildApiUrl } from '@/config/api';
 
 interface SessionMessage {
   role: 'user' | 'assistant';
@@ -25,7 +26,7 @@ export const useSessionManagement = (agentType: string) => {
 
   const loadSessionData = async (sessionId: string) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/campaigns/user_123/sessions/${sessionId}`, {
+      const response = await fetch(buildApiUrl(`/api/campaigns/user_123/sessions/${sessionId}`), {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

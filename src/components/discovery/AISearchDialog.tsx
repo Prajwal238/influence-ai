@@ -8,6 +8,7 @@ import { Loader2, Send } from "lucide-react";
 import DiscoveryResults from "./DiscoveryResults";
 import { Influencer, ApiInfluencer } from "@/types/influencer";
 import { transformApiDataToInfluencer } from "@/utils/influencerTransforms";
+import { buildApiUrl } from "@/config/api";
 
 interface AISearchDialogProps {
   open: boolean;
@@ -39,7 +40,7 @@ const AISearchDialog = ({
     try {
       console.log('Calling AI search API for campaign:', campaignId, 'with prompt:', prompt);
       
-      const url = `http://localhost:5000/api/user_123/campaigns/${campaignId}/influencers/llm`;
+      const url = buildApiUrl(`/api/user_123/campaigns/${campaignId}/influencers/llm`);
       
       let requestOptions: RequestInit;
       

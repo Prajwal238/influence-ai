@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { MessageType } from "./MessageTypeToggle";
+import { buildApiUrl } from "@/config/api";
 
 interface MessageGenerationHandlerProps {
   messageType: MessageType;
@@ -50,7 +51,7 @@ export const useMessageGeneration = ({
         return;
       }
 
-      const response = await fetch('http://localhost:5000/api/user_123/campaigns/summer_fashion_2024/ai_message', {
+      const response = await fetch(buildApiUrl('/api/user_123/campaigns/summer_fashion_2024/ai_message'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
