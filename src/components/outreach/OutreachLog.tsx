@@ -1,7 +1,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Clock, CheckCircle, XCircle, Instagram, Mail, Phone, MessageSquare, Video, Play } from "lucide-react";
+import { Clock, CheckCircle, XCircle, Instagram, Mail, Phone, MessageSquare, Video, Play, Send } from "lucide-react";
 import { OutreachEntry } from "@/hooks/useOutreachData";
 
 interface OutreachLogProps {
@@ -91,55 +91,63 @@ const OutreachLog = ({ outreachLog }: OutreachLogProps) => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
-          {latestEntries.map((entry) => {
-            const messageType = getMessageTypeDisplay(entry.template);
-            return (
-              <div key={entry.id} className="border border-gray-100 rounded-lg p-3">
-                <div className="flex items-center justify-between mb-2">
-                  <div>
-                    <h4 className="font-medium text-gray-900 text-sm">{entry.influencer}</h4>
-                    <p className="text-xs text-gray-600">{entry.handle}</p>
+        {latestEntries.length === 0 ? (
+          <div className="text-center py-8 text-gray-500">
+            <Send className="h-8 w-8 mx-auto mb-3 text-gray-400" />
+            <p className="text-sm font-medium">No outreach messages sent yet</p>
+            <p className="text-xs mt-1">Send your first message to see it logged here</p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {latestEntries.map((entry) => {
+              const messageType = getMessageTypeDisplay(entry.template);
+              return (
+                <div key={entry.id} className="border border-gray-100 rounded-lg p-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <div>
+                      <h4 className="font-medium text-gray-900 text-sm">{entry.influencer}</h4>
+                      <p className="text-xs text-gray-600">{entry.handle}</p>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      {getStatusIcon(entry.status)}
+                      <Badge className={getStatusColor(entry.status)}>
+                        {entry.status}
+                      </Badge>
+                    </div>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    {getStatusIcon(entry.status)}
-                    <Badge className={getStatusColor(entry.status)}>
-                      {entry.status}
-                    </Badge>
+                  
+                  {/* Message Type and Video Thumbnail */}
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center space-x-2">
+                      <Badge className={`${messageType.color} flex items-center space-x-1`}>
+                        {messageType.icon}
+                        <span>{messageType.text}</span>
+                      </Badge>
+                      
+                      {entry.template.includes("Video") && (
+                        <div className="bg-gray-100 rounded p-1 flex items-center space-x-1">
+                          <Play className="h-3 w-3 text-gray-600" />
+                          <span className="text-xs text-gray-600">mock_video.mp4</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="text-xs text-gray-500">
+                      <p>{entry.template}</p>
+                      <p>Sent {entry.sentAt}</p>
+                    </div>
+                    <div className={`inline-flex items-center space-x-1 px-2 py-1 rounded-full text-xs font-medium ${getPlatformColor(entry.platform)}`}>
+                      {getPlatformIcon(entry.platform)}
+                      <span className="capitalize">{entry.platform}</span>
+                    </div>
                   </div>
                 </div>
-                
-                {/* Message Type and Video Thumbnail */}
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center space-x-2">
-                    <Badge className={`${messageType.color} flex items-center space-x-1`}>
-                      {messageType.icon}
-                      <span>{messageType.text}</span>
-                    </Badge>
-                    
-                    {entry.template.includes("Video") && (
-                      <div className="bg-gray-100 rounded p-1 flex items-center space-x-1">
-                        <Play className="h-3 w-3 text-gray-600" />
-                        <span className="text-xs text-gray-600">mock_video.mp4</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div className="text-xs text-gray-500">
-                    <p>{entry.template}</p>
-                    <p>Sent {entry.sentAt}</p>
-                  </div>
-                  <div className={`inline-flex items-center space-x-1 px-2 py-1 rounded-full text-xs font-medium ${getPlatformColor(entry.platform)}`}>
-                    {getPlatformIcon(entry.platform)}
-                    <span className="capitalize">{entry.platform}</span>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        )}
       </CardContent>
     </Card>
   );

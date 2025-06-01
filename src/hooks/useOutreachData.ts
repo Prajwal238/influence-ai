@@ -1,13 +1,11 @@
 
 import { useState } from 'react';
 import { OutreachEntry, NegotiationThread, NegotiationMessage } from '@/types/outreach';
-import { createInitialOutreachLog, createInitialThreads } from '@/data/outreachMockData';
 
 export const useOutreachData = () => {
-  // Initialize data with mock data for now (will be replaced by API later)
-  const initialOutreachLog = createInitialOutreachLog();
-  const [outreachLog, setOutreachLog] = useState<OutreachEntry[]>(initialOutreachLog);
-  const [threads, setThreads] = useState<NegotiationThread[]>(() => createInitialThreads(initialOutreachLog));
+  // Start with empty data - no mock data
+  const [outreachLog, setOutreachLog] = useState<OutreachEntry[]>([]);
+  const [threads, setThreads] = useState<NegotiationThread[]>([]);
 
   // Function to add new outreach entry
   const addOutreachEntry = (entry: Omit<OutreachEntry, 'id'>) => {
