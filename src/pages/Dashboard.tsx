@@ -1,11 +1,12 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Navigation from "@/components/layout/Navigation";
 import { Plus, Search, Filter, Activity, DollarSign, Eye, Target } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import CampaignsList from "@/components/dashboard/CampaignsList";
 import CampaignAgentModal from "@/components/modals/CampaignAgentModal";
 import MetricsModal from "@/components/dashboard/MetricsModal";
 import { useDashboardMetrics, DashboardMetric } from "@/hooks/useDashboardMetrics";
@@ -143,6 +144,22 @@ const Dashboard = ({ openCampaignAgentModal = false }: DashboardProps) => {
               </CardContent>
             </Card>
           ))}
+        </div>
+
+        {/* Active Campaigns Section */}
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+          <Tabs defaultValue="active" className="w-full">
+            <div className="px-6 py-4 border-b border-gray-100">
+              <TabsList className="grid w-full max-w-md grid-cols-1">
+                <TabsTrigger value="active" className="text-lg font-semibold">
+                  Active Campaigns
+                </TabsTrigger>
+              </TabsList>
+            </div>
+            <TabsContent value="active" className="mt-0">
+              <CampaignsList searchQuery={searchQuery} />
+            </TabsContent>
+          </Tabs>
         </div>
       </main>
 
