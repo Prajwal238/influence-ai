@@ -159,29 +159,4 @@ const PipelineBar = ({ stages, currentStage, stageStatus }: PipelineBarProps) =>
   );
 };
 
-const getStageStyles = (stageKey: StageKey) => {
-  const status = getStageStatus(stageKey);
-  
-  switch (status) {
-    case 'complete':
-      return {
-        container: "bg-green-100 text-green-600 border border-green-200",
-        icon: "text-green-600",
-        label: "text-green-600"
-      };
-    case 'active':
-      return {
-        container: "bg-blue-600 text-white",
-        icon: "text-white",
-        label: "text-white"
-      };
-    default:
-      return {
-        container: "text-gray-400 hover:bg-gray-100 border border-transparent",
-        icon: "text-gray-400",
-        label: "text-gray-400"
-      };
-  }
-};
-
 export default PipelineBar;
