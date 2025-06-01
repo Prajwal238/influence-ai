@@ -48,7 +48,7 @@ const ChatOrchestrator = ({ agentName, agentType, onClose, className }: AgentCha
     }
   };
 
-  // Render negotiation-specific interface
+  // Render negotiation-specific interface ONLY for negotiation agent type
   if (agentType === 'negotiation') {
     return (
       <NegotiationInterface
@@ -64,7 +64,7 @@ const ChatOrchestrator = ({ agentName, agentType, onClose, className }: AgentCha
     );
   }
 
-  // Default chat interface for other agent types
+  // Default chat interface for all other agent types (campaign, discovery, outreach)
   return (
     <DefaultChatInterface
       agentName={agentName}
