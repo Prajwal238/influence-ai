@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useParams } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
 import CampaignDiscovery from "./pages/campaigns/Discovery";
 import CampaignOutreach from "./pages/campaigns/Outreach";
@@ -16,6 +16,12 @@ import NotFound from "./pages/NotFound";
 import CampaignAgentModal from "./components/modals/CampaignAgentModal";
 
 const queryClient = new QueryClient();
+
+// Component to handle campaign redirect with proper ID
+const CampaignRedirect = () => {
+  const { id } = useParams();
+  return <Navigate to={`/campaigns/${id}/discovery`} replace />;
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -35,8 +41,8 @@ const App = () => (
           <Route path="/campaigns/:id/contracts" element={<CampaignContracts />} />
           <Route path="/campaigns/:id/payments" element={<CampaignPayments />} />
           <Route path="/campaigns/:id/reporting" element={<CampaignReporting />} />
-          {/* Default campaign route redirects to discovery */}
-          <Route path="/campaigns/:id" element={<Navigate to="/campaigns/:id/discovery" replace />} />
+          {/* Default campaign route redirects to discovery with proper ID */}
+          <Route path="/campaigns/:id" element={<CampaignRedirect />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         <CampaignAgentModal />
