@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import CampaignLayout from "@/components/layout/CampaignLayout";
 import NegotiationThreadsList from "@/components/negotiation/NegotiationThreadsList";
@@ -154,8 +153,8 @@ const Negotiation = () => {
               />
             </div>
 
-            {/* Chat & Control Panel - 6 columns */}
-            <div className="col-span-12 lg:col-span-6">
+            {/* Chat & Control Panel - 5 columns */}
+            <div className="col-span-12 lg:col-span-5">
               <NegotiationChatPanel
                 selectedThread={selectedThread}
                 onSendMessage={handleSendMessage}
@@ -164,8 +163,8 @@ const Negotiation = () => {
               />
             </div>
 
-            {/* Side Panel - 3 columns */}
-            <div className="col-span-12 lg:col-span-3">
+            {/* Side Panel - 4 columns */}
+            <div className="col-span-12 lg:col-span-4">
               <NegotiationSidePanel
                 selectedThread={selectedThread}
               />
