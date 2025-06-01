@@ -8,6 +8,8 @@ import { Plus, Search, Filter } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import CampaignsList from "@/components/dashboard/CampaignsList";
 import CampaignAgentModal from "@/components/modals/CampaignAgentModal";
+import MetricsModal from "@/components/dashboard/MetricsModal";
+import { useDashboardMetrics, DashboardMetric } from "@/hooks/useDashboardMetrics";
 
 interface DashboardProps {
   openCampaignAgentModal?: boolean;
@@ -15,10 +17,23 @@ interface DashboardProps {
 
 const Dashboard = ({ openCampaignAgentModal = false }: DashboardProps) => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedMetric, setSelectedMetric] = useState<DashboardMetric | null>(null);
+  const [isMetricsModalOpen, setIsMetricsModalOpen] = useState(false);
   const navigate = useNavigate();
+  const { metrics, isLoading } = useDashboardMetrics();
 
   const handleCloseModal = () => {
     navigate("/dashboard");
+  };
+
+  const handleMetricClick = (metric: DashboardMetric) => {
+    setSelectedMetric(metric);
+    setIsMetricsModalOpen(true);
+  };
+
+  const handleCloseMetricsModal = () => {
+    setIsMetricsModalOpen(false);
+    setSelectedMetric(null);
   };
 
   return (
@@ -62,30 +77,21 @@ const Dashboard = ({ openCampaignAgentModal = false }: DashboardProps) => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card className="bg-white shadow-sm border-gray-200">
-            <CardContent className="p-6">
-              <div className="text-2xl font-semibold text-gray-900 mb-1">12</div>
-              <div className="text-sm text-gray-600">Active Campaigns</div>
-            </CardContent>
-          </Card>
-          <Card className="bg-white shadow-sm border-gray-200">
-            <CardContent className="p-6">
-              <div className="text-2xl font-semibold text-gray-900 mb-1">87%</div>
-              <div className="text-sm text-gray-600">Success Rate</div>
-            </CardContent>
-          </Card>
-          <Card className="bg-white shadow-sm border-gray-200">
-            <CardContent className="p-6">
-              <div className="text-2xl font-semibold text-gray-900 mb-1">2.4M</div>
-              <div className="text-sm text-gray-600">Total Reach</div>
-            </CardContent>
-          </Card>
-          <Card className="bg-white shadow-sm border-gray-200">
-            <CardContent className="p-6">
-              <div className="text-2xl font-semibold text-gray-900 mb-1">$47K</div>
-              <div className="text-sm text-gray-600">Revenue Generated</div>
-            </CardContent>
-          </Card>
+          {metrics.map((metric) => (
+            <Card 
+              key={metric.id}
+              className="bg-white shadow-sm border-gray-200 cursor-pointer hover:shadow-md transition-shadow"
+              onClick={() => handleMetricClick(metric)}
+            >
+              <CardContent className="p-6">
+                <div className="text-2xl font-semibold text-gray-900 mb-1">
+                  {isLoading ? "..." : metric.value}
+                </div>
+                <div className="text-sm text-gray-600">{metric.title}</div>
+                <div className="text-xs text-gray-500 mt-1">{metric.description}</div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
 
         {/* Campaigns List */}
@@ -99,6 +105,13 @@ const Dashboard = ({ openCampaignAgentModal = false }: DashboardProps) => {
           onClose={handleCloseModal}
         />
       )}
+
+      {/* Metrics Modal */}
+      <MetricsModal
+        isOpen={isMetricsModalOpen}
+        onClose={handleCloseMetricsModal}
+        metric={selectedMetric}
+      />
     </div>
   );
 };
