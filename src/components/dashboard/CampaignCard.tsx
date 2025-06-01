@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Eye } from "lucide-react";
 import { Campaign } from "@/types/campaign";
+import { getCampaignProgressForDashboard } from "@/hooks/useCampaignProgress";
 
 interface CampaignCardProps {
   campaign: Campaign;
@@ -44,40 +45,45 @@ const CampaignCard = ({ campaign }: CampaignCardProps) => {
     }
   };
 
-  // Calculate progress based on campaign flow completion
-  const calculateCampaignProgress = (): number => {
-    // Define all campaign stages in order
-    const campaignStages = ['discovery', 'outreach', 'negotiation', 'contracts', 'payments', 'reporting'];
-    
-    // For demo purposes, we'll simulate completion based on campaign age and some randomization
-    // In a real app, this would come from actual campaign data
-    const campaignAge = Math.floor((new Date().getTime() - new Date(campaign.lastModifiedAt).getTime()) / (1000 * 60 * 60 * 24));
-    
-    // Simulate stages completed based on campaign age and objective
-    let completedStages = 0;
-    
-    if (campaignAge > 0) completedStages = 1; // Discovery
-    if (campaignAge > 2) completedStages = 2; // Outreach
-    if (campaignAge > 5) completedStages = 3; // Negotiation
-    if (campaignAge > 8) completedStages = 4; // Contracts
-    if (campaignAge > 12) completedStages = 5; // Payments
-    if (campaignAge > 15) completedStages = 6; // Reporting
-    
-    // Add some variation based on objective
-    if (campaign.objective.toLowerCase().includes('awareness')) {
-      completedStages = Math.min(completedStages + 1, 6);
-    }
-    
-    return Math.round((completedStages / campaignStages.length) * 100);
-  };
-
   // Format budget in INR
   const formatBudgetInINR = (budget: number): string => {
     return `₹${budget.toLocaleString('en-IN')}`;
   };
 
-  const progress = calculateCampaignProgress();
+  // Get real campaign progress from localStorage
+  const { percentage: progress } = getCampaignProgressForDashboard(campaign._id);
   const objective = campaign.objective;
+
+  // Get campaign redirect URL based on progress
+  const getCampaignRedirectUrl = (campaignId: string): string => {
+    const savedProgress = localStorage.getItem('campaign_progress');
+    if (!savedProgress) return `/campaigns/${campaignId}/discovery`;
+    
+    const allProgress = JSON.parse(savedProgress);
+    const campaignProgress = allProgress.find((p: any) => p.campaignId === campaignId);
+    
+    if (!campaignProgress || campaignProgress.completedStages.length === 0) {
+      return `/campaigns/${campaignId}/discovery`;
+    }
+    
+    const allStages = ['discovery', 'outreach', 'negotiation', 'contracts', 'payments', 'reporting'];
+    let lastCompletedIndex = -1;
+    
+    campaignProgress.completedStages.forEach((stage: string) => {
+      const index = allStages.indexOf(stage);
+      if (index > lastCompletedIndex) {
+        lastCompletedIndex = index;
+      }
+    });
+    
+    const nextStageIndex = lastCompletedIndex + 1;
+    if (nextStageIndex >= allStages.length) {
+      return `/campaigns/${campaignId}/reporting`;
+    }
+    
+    const nextStage = allStages[nextStageIndex];
+    return `/campaigns/${campaignId}/${nextStage}`;
+  };
 
   return (
     <div className="flex items-center justify-between p-4 rounded-lg border border-gray-100 hover:bg-gray-50 transition-colors">
@@ -103,7 +109,7 @@ const CampaignCard = ({ campaign }: CampaignCardProps) => {
             style={{ width: `${progress}%` }}
           ></div>
         </div>
-        <Link to={`/campaigns/${campaign._id}/discovery`}>
+        <Link to={getCampaignRedirectUrl(campaign._id)}>
           <Button variant="outline" size="sm">
             <Eye className="h-4 w-4 mr-2" />
             View

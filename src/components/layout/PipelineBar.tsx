@@ -1,6 +1,8 @@
 
 import { Link, useParams, useLocation } from "react-router-dom";
 import { Search, MessageSquare, Handshake, FileText, CreditCard, BarChart3, CheckCircle } from "lucide-react";
+import { useCampaignProgress, CampaignStage } from "@/hooks/useCampaignProgress";
+import { useEffect } from "react";
 
 type StageKey = 
   | 'discovery' 
@@ -19,6 +21,9 @@ interface PipelineBarProps {
 const PipelineBar = ({ stages, currentStage, stageStatus }: PipelineBarProps) => {
   const { id } = useParams();
   const location = useLocation();
+  const campaignId = id || '';
+
+  const { progress, completeStage, getProgressPercentage } = useCampaignProgress(campaignId);
 
   // Default stages if not provided via props
   const defaultStages = [
@@ -43,20 +48,31 @@ const PipelineBar = ({ stages, currentStage, stageStatus }: PipelineBarProps) =>
 
   const activeStage = currentStage || getCurrentStageFromUrl();
 
-  // Get stage status
+  // Mark current stage as completed when user visits it
+  useEffect(() => {
+    if (campaignId && activeStage) {
+      const currentStageIndex = defaultStages.findIndex(s => s.key === activeStage);
+      if (currentStageIndex > 0) {
+        // Complete the previous stage when moving to next stage
+        const previousStage = defaultStages[currentStageIndex - 1].key as CampaignStage;
+        completeStage(previousStage);
+      }
+    }
+  }, [activeStage, campaignId]);
+
+  // Get stage status based on progress
   const getStageStatus = (stageKey: StageKey): 'pending' | 'active' | 'complete' => {
     if (stageStatus && stageStatus[stageKey]) {
       return stageStatus[stageKey];
     }
     
-    // Fallback to URL-based logic for backward compatibility
+    if (!progress) return 'pending';
+    
     const isActive = location.pathname.includes(`/${stageKey}`);
     if (isActive) return 'active';
     
-    // Mock completion status for demo
-    const stageIndex = defaultStages.findIndex(s => s.key === stageKey);
-    const activeIndex = defaultStages.findIndex(s => s.key === activeStage);
-    return stageIndex < activeIndex ? 'complete' : 'pending';
+    const isCompleted = progress.completedStages.includes(stageKey as CampaignStage);
+    return isCompleted ? 'complete' : 'pending';
   };
 
   const getStageStyles = (stageKey: StageKey) => {
