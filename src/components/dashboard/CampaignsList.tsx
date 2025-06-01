@@ -1,11 +1,30 @@
 
+import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useCampaigns } from "@/hooks/useCampaigns";
 import CampaignCard from "./CampaignCard";
 
-const CampaignsList = () => {
+interface CampaignsListProps {
+  searchQuery: string;
+}
+
+const CampaignsList = ({ searchQuery }: CampaignsListProps) => {
   const { data: campaigns, isLoading, error } = useCampaigns();
+
+  const filteredCampaigns = useMemo(() => {
+    if (!campaigns || !searchQuery) return campaigns;
+    
+    const query = searchQuery.toLowerCase().trim();
+    return campaigns.filter((campaign) => {
+      return (
+        campaign.campaignName.toLowerCase().includes(query) ||
+        campaign.objective.toLowerCase().includes(query) ||
+        campaign.targetAudience.toLowerCase().includes(query) ||
+        campaign.productCategory.toLowerCase().includes(query)
+      );
+    });
+  }, [campaigns, searchQuery]);
 
   if (isLoading) {
     return (
@@ -43,23 +62,29 @@ const CampaignsList = () => {
     );
   }
 
+  const displayCampaigns = filteredCampaigns || [];
+  const hasSearchQuery = searchQuery.trim().length > 0;
+
   return (
     <Card className="bg-white shadow-sm border-gray-200">
       <CardHeader>
         <CardTitle className="text-xl font-semibold text-gray-900">
-          Active Campaigns
+          {hasSearchQuery ? `Search Results (${displayCampaigns.length})` : 'Active Campaigns'}
         </CardTitle>
       </CardHeader>
       <CardContent>
         <ScrollArea className="h-96">
           <div className="space-y-4 pr-4">
-            {campaigns && campaigns.length > 0 ? (
-              campaigns.map((campaign) => (
+            {displayCampaigns && displayCampaigns.length > 0 ? (
+              displayCampaigns.map((campaign) => (
                 <CampaignCard key={campaign._id} campaign={campaign} />
               ))
             ) : (
               <div className="text-gray-500 text-center py-8">
-                No campaigns found. Create your first campaign to get started.
+                {hasSearchQuery 
+                  ? `No campaigns found matching "${searchQuery}". Try a different search term.`
+                  : "No campaigns found. Create your first campaign to get started."
+                }
               </div>
             )}
           </div>

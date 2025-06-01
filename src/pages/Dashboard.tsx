@@ -1,4 +1,5 @@
 
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -8,6 +9,8 @@ import { Input } from "@/components/ui/input";
 import CampaignsList from "@/components/dashboard/CampaignsList";
 
 const Dashboard = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Navigation />
@@ -38,6 +41,8 @@ const Dashboard = () => {
               <Input 
                 placeholder="Search campaigns..." 
                 className="pl-10 bg-white border-gray-200"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
             <Button variant="outline" className="border-gray-200">
@@ -76,7 +81,7 @@ const Dashboard = () => {
         </div>
 
         {/* Campaigns List */}
-        <CampaignsList />
+        <CampaignsList searchQuery={searchQuery} />
       </main>
     </div>
   );
