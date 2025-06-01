@@ -78,14 +78,6 @@ const InfluencerSelector = ({
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="text-center space-y-2">
-        <h1 className="text-3xl font-bold text-gray-900">Outreach</h1>
-        <p className="text-gray-600 max-w-2xl mx-auto">
-          Send personalized messages to selected influencers for this campaign.
-        </p>
-      </div>
-
       {/* Selection Summary */}
       {selectedInfluencers.length > 0 && (
         <Card className="border-l-4 border-l-blue-500 bg-blue-50/50">
