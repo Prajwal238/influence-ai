@@ -11,12 +11,14 @@ interface MessageFormProps {
   message: string;
   onMessageChange: (message: string) => void;
   selectedPlatform: string;
+  campaignId?: string;
 }
 
 const MessageForm = ({
   message,
   onMessageChange,
-  selectedPlatform
+  selectedPlatform,
+  campaignId
 }: MessageFormProps) => {
   const [selectedTemplate, setSelectedTemplate] = useState("first-reach");
   const [voiceMessage, setVoiceMessage] = useState("");
@@ -25,6 +27,7 @@ const MessageForm = ({
   const [selectedTargetLanguage, setSelectedTargetLanguage] = useState("english");
 
   const { isGenerating, handleGenerateWithAI } = useMessageGeneration({
+    campaignId,
     messageType,
     selectedPlatform,
     selectedTemplate,

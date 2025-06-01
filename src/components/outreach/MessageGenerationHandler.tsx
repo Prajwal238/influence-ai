@@ -5,6 +5,7 @@ import { MessageType } from "./MessageTypeToggle";
 import { buildApiUrl } from "@/config/api";
 
 interface MessageGenerationHandlerProps {
+  campaignId?: string;
   messageType: MessageType;
   selectedPlatform: string;
   selectedTemplate: string;
@@ -15,6 +16,7 @@ interface MessageGenerationHandlerProps {
 }
 
 export const useMessageGeneration = ({
+  campaignId,
   messageType,
   selectedPlatform,
   selectedTemplate,
@@ -27,6 +29,15 @@ export const useMessageGeneration = ({
   const { toast } = useToast();
 
   const handleGenerateWithAI = async () => {
+    if (!campaignId) {
+      toast({
+        title: "Campaign Not Found",
+        description: "No campaign ID available for message generation.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setIsGenerating(true);
     
     try {
@@ -35,7 +46,7 @@ export const useMessageGeneration = ({
         description: "AI is creating your personalized message...",
       });
 
-      const response = await fetch(buildApiUrl('/api/user_123/campaigns/summer_fashion_2024/ai_message'), {
+      const response = await fetch(buildApiUrl(`/api/user_123/campaigns/${campaignId}/ai_message`), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
