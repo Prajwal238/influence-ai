@@ -13,6 +13,7 @@ import CampaignPayments from "./pages/campaigns/Payments";
 import CampaignReporting from "./pages/campaigns/Reporting";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
+import NewCampaignModal from "./components/modals/NewCampaignModal";
 
 const queryClient = new QueryClient();
 
@@ -39,6 +40,11 @@ const App = () => (
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/dashboard/campaign-agent" element={<DashboardWithModal />} />
           <Route path="/admin" element={<Admin />} />
+          
+          {/* New Campaign Modal Routes */}
+          <Route path="/dashboard/new-campaign/step-1" element={<><Dashboard /><NewCampaignModal /></>} />
+          <Route path="/dashboard/new-campaign/step-2" element={<><Dashboard /><NewCampaignModal /></>} />
+          <Route path="/dashboard/new-campaign/step-3" element={<><Dashboard /><NewCampaignModal /></>} />
           
           {/* Campaign routes */}
           <Route path="/campaigns/:id" element={<CampaignRedirect />} />

@@ -26,6 +26,10 @@ const Dashboard = ({ openCampaignAgentModal = false }: DashboardProps) => {
     navigate("/dashboard");
   };
 
+  const handleNewCampaign = () => {
+    navigate("/dashboard/new-campaign/step-1");
+  };
+
   const handleMetricClick = (metric: DashboardMetric) => {
     setSelectedMetric(metric);
     setIsMetricsModalOpen(true);
@@ -81,7 +85,10 @@ const Dashboard = ({ openCampaignAgentModal = false }: DashboardProps) => {
                 Manage your influencer campaigns with AI-powered automation
               </p>
             </div>
-            <Button className="bg-blue-600 hover:bg-blue-700 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-200 px-6 py-3">
+            <Button 
+              className="bg-blue-600 hover:bg-blue-700 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-200 px-6 py-3"
+              onClick={handleNewCampaign}
+            >
               <Plus className="h-5 w-5 mr-2" />
               New Campaign
             </Button>
