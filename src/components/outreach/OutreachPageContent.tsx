@@ -30,7 +30,6 @@ const OutreachPageContent = ({
   onClearSelectedInfluencers
 }: OutreachPageContentProps) => {
   const [message, setMessage] = useState("Hi {name},\n\nI hope this message finds you well! I'm reaching out on behalf of our brand regarding a potential collaboration...");
-  const [selectedLanguage, setSelectedLanguage] = useState("english");
   const [selectedPlatform, setSelectedPlatform] = useState("instagram");
 
   const { addOutreachEntry } = useOutreachData();
@@ -95,13 +94,7 @@ const OutreachPageContent = ({
       <MessageComposer
         message={message}
         onMessageChange={setMessage}
-        selectedLanguage={selectedLanguage}
-        onLanguageChange={setSelectedLanguage}
         selectedPlatform={selectedPlatform}
-        onPlatformChange={setSelectedPlatform}
-        selectedInfluencersCount={selectedInfluencers.length}
-        onSendAsText={handleSendAsText}
-        onSendAsVoice={handleSendAsVoice}
       />
     </div>
   );

@@ -41,77 +41,46 @@ const MessageForm = ({
     setSelectedTargetLanguage(language);
   };
 
-  const getContentForValidation = () => {
-    switch (messageType) {
-      case "voice":
-        return voiceMessage.trim();
-      default:
-        return message.trim();
-    }
-  };
+  return (
+    <>
+      <TemplateSelector 
+        selectedTemplate={selectedTemplate}
+        onTemplateChange={setSelectedTemplate}
+      />
 
-  return {
-    // Form state
-    selectedTemplate,
-    setSelectedTemplate,
-    voiceMessage,
-    setVoiceMessage,
-    voiceLanguage,
-    setVoiceLanguage,
-    messageType,
-    setMessageType,
-    selectedTargetLanguage,
-    handleLanguageChange,
-    
-    // Generation state
-    isGenerating,
-    handleGenerateWithAI,
-    
-    // Validation
-    getContentForValidation,
-    
-    // Components JSX
-    renderForm: () => (
-      <>
-        <TemplateSelector 
-          selectedTemplate={selectedTemplate}
-          onTemplateChange={setSelectedTemplate}
+      <MessageTypeToggle 
+        messageType={messageType}
+        onTypeChange={setMessageType}
+      />
+
+      {messageType === "text" && (
+        <TextMessageEditor
+          message={message}
+          onMessageChange={onMessageChange}
+          selectedPlatform={selectedPlatform}
+          onGenerateWithAI={handleGenerateWithAI}
+          isGenerating={isGenerating}
         />
+      )}
 
-        <MessageTypeToggle 
-          messageType={messageType}
-          onTypeChange={setMessageType}
+      {messageType === "voice" && (
+        <VoiceMessageEditor
+          voiceMessage={voiceMessage}
+          onVoiceMessageChange={setVoiceMessage}
+          voiceLanguage={voiceLanguage}
+          onVoiceLanguageChange={setVoiceLanguage}
+          selectedPlatform={selectedPlatform}
+          onGenerateWithAI={handleGenerateWithAI}
+          isGenerating={isGenerating}
         />
+      )}
 
-        {messageType === "text" && (
-          <TextMessageEditor
-            message={message}
-            onMessageChange={onMessageChange}
-            selectedPlatform={selectedPlatform}
-            onGenerateWithAI={handleGenerateWithAI}
-            isGenerating={isGenerating}
-          />
-        )}
-
-        {messageType === "voice" && (
-          <VoiceMessageEditor
-            voiceMessage={voiceMessage}
-            onVoiceMessageChange={setVoiceMessage}
-            voiceLanguage={voiceLanguage}
-            onVoiceLanguageChange={setVoiceLanguage}
-            selectedPlatform={selectedPlatform}
-            onGenerateWithAI={handleGenerateWithAI}
-            isGenerating={isGenerating}
-          />
-        )}
-
-        <LanguageSelector
-          selectedLanguage={selectedTargetLanguage}
-          onLanguageChange={handleLanguageChange}
-        />
-      </>
-    )
-  };
+      <LanguageSelector
+        selectedLanguage={selectedTargetLanguage}
+        onLanguageChange={handleLanguageChange}
+      />
+    </>
+  );
 };
 
 export default MessageForm;
