@@ -4,6 +4,8 @@ import InfluencerSelector from "./InfluencerSelector";
 import MessageComposer from "./MessageComposer";
 import { InfluencerSelection } from "@/types/outreach";
 import { useOutreachData } from "@/hooks/useOutreachData";
+import { buildApiUrl } from "@/config/api";
+import { useToast } from "@/hooks/use-toast";
 
 interface OutreachInfluencer {
   id: number;
@@ -33,15 +35,46 @@ const OutreachPageContent = ({
   const [selectedPlatform, setSelectedPlatform] = useState("instagram");
 
   const { addOutreachEntry } = useOutreachData();
+  const { toast } = useToast();
 
-  const handleSendAsText = () => {
+  const logOutreachAttempt = async (influencerId: number, platform: string, messageType: string) => {
+    try {
+      const response = await fetch(buildApiUrl('/api/outreach/log'), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          host: 'outreach.platform.com', // This would be modified based on platform
+          platform: platform,
+          influencerId: influencerId,
+          messageType: messageType,
+          timestamp: new Date().toISOString()
+        }),
+      });
+
+      if (!response.ok) {
+        console.error('Failed to log outreach attempt:', response.statusText);
+      } else {
+        console.log('Outreach attempt logged successfully for influencer:', influencerId);
+      }
+    } catch (error) {
+      console.error('Error logging outreach attempt:', error);
+    }
+  };
+
+  const handleSendAsText = async () => {
     console.log("Sending message as text:", message);
     console.log("Selected influencers:", selectedInfluencers);
     
-    // Add outreach entries for selected influencers
-    selectedInfluencers.forEach(selection => {
+    // Log API calls and add outreach entries for selected influencers
+    for (const selection of selectedInfluencers) {
       const influencer = transformedInfluencers.find(inf => inf.id === selection.influencerId);
       if (influencer) {
+        // Log the outreach attempt via API
+        await logOutreachAttempt(selection.influencerId, selection.platform, 'text');
+        
+        // Add to local outreach log
         addOutreachEntry({
           influencer: influencer.name,
           handle: influencer.handle,
@@ -52,20 +85,30 @@ const OutreachPageContent = ({
           influencerId: influencer.id
         });
       }
+    }
+
+    // Show success toast
+    toast({
+      title: "Messages Sent!",
+      description: `Successfully sent ${selectedInfluencers.length} text message${selectedInfluencers.length > 1 ? 's' : ''}.`,
     });
 
     // Clear selected influencers after sending
     onClearSelectedInfluencers();
   };
 
-  const handleSendAsVoice = () => {
+  const handleSendAsVoice = async () => {
     console.log("Sending message as voice:", message);
     console.log("Selected influencers:", selectedInfluencers);
     
-    // Add outreach entries for selected influencers
-    selectedInfluencers.forEach(selection => {
+    // Log API calls and add outreach entries for selected influencers
+    for (const selection of selectedInfluencers) {
       const influencer = transformedInfluencers.find(inf => inf.id === selection.influencerId);
       if (influencer) {
+        // Log the outreach attempt via API
+        await logOutreachAttempt(selection.influencerId, selection.platform, 'voice');
+        
+        // Add to local outreach log
         addOutreachEntry({
           influencer: influencer.name,
           handle: influencer.handle,
@@ -76,6 +119,12 @@ const OutreachPageContent = ({
           influencerId: influencer.id
         });
       }
+    }
+
+    // Show success toast
+    toast({
+      title: "Voice Messages Sent!",
+      description: `Successfully sent ${selectedInfluencers.length} voice message${selectedInfluencers.length > 1 ? 's' : ''}.`,
     });
 
     // Clear selected influencers after sending
