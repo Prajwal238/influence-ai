@@ -2,21 +2,23 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Bot, User, Phone, PhoneOff, Send } from "lucide-react";
+import { Bot, Phone, PhoneOff, Send, RefreshCw } from "lucide-react";
 import { NegotiationThread, AgentStatus } from "@/types/outreach";
 
 interface NegotiationActionBarProps {
   selectedThread: NegotiationThread;
   onSendMessage: (content: string, platform: string) => void;
-  onControlToggle: () => void;
   onStatusChange: (status: AgentStatus) => void;
+  onAIResponse?: () => void;
+  onPoll?: () => void;
 }
 
 const NegotiationActionBar = ({ 
   selectedThread, 
   onSendMessage, 
-  onControlToggle,
-  onStatusChange 
+  onStatusChange,
+  onAIResponse,
+  onPoll
 }: NegotiationActionBarProps) => {
   const [messageInput, setMessageInput] = useState('');
   const [isCallActive, setIsCallActive] = useState(false);
@@ -47,42 +49,46 @@ const NegotiationActionBar = ({
     }
   };
 
-  const isAgentActive = selectedThread.controlMode === 'agent' && selectedThread.agentStatus !== 'complete';
+  const handleAIResponse = () => {
+    if (onAIResponse) {
+      onAIResponse();
+    }
+  };
+
+  const handlePoll = () => {
+    if (onPoll) {
+      onPoll();
+    }
+  };
+
   const canCall = selectedThread.contact?.phone && selectedThread.agentStatus === 'waitingPhone';
+  const isPolling = selectedThread.agentStatus === 'polling';
 
   return (
     <div className="p-6 border-t border-[#F2F2F7] bg-[#FAFAFA] rounded-b-2xl space-y-4">
-      {/* Control Toggle */}
+      {/* Action Buttons Row */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
-          {isAgentActive ? (
-            <>
-              <div className="flex items-center space-x-2">
-                <Bot className="h-4 w-4 text-[#0071E3]" />
-                <span className="text-sm font-sans text-[#1D1D1F] font-medium">Agent is active</span>
-              </div>
-              <Button
-                onClick={onControlToggle}
-                className="bg-[#FF3B30] hover:bg-[#D70015] text-white rounded-xl px-4 py-2 text-sm font-sans font-medium shadow-sm"
-                size="sm"
-              >
-                Take Over
-              </Button>
-            </>
-          ) : (
-            <>
-              <div className="flex items-center space-x-2">
-                <User className="h-4 w-4 text-[#34C759]" />
-                <span className="text-sm font-sans text-[#1D1D1F] font-medium">You are in control</span>
-              </div>
-              <Button
-                onClick={onControlToggle}
-                className="bg-[#0071E3] hover:bg-[#005BB5] text-white rounded-xl px-4 py-2 text-sm font-sans font-medium shadow-sm"
-                size="sm"
-              >
-                Return to Agent
-              </Button>
-            </>
+          {/* AI Response Button */}
+          <Button
+            onClick={handleAIResponse}
+            className="bg-[#0071E3] hover:bg-[#005BB5] text-white rounded-xl px-4 py-2 text-sm font-sans font-medium flex items-center space-x-2 shadow-sm"
+            size="sm"
+          >
+            <Bot className="h-3 w-3" />
+            <span>AI Response</span>
+          </Button>
+
+          {/* Poll Button (shown when polling status) */}
+          {isPolling && (
+            <Button
+              onClick={handlePoll}
+              className="bg-[#34C759] hover:bg-[#28A745] text-white rounded-xl px-4 py-2 text-sm font-sans font-medium flex items-center space-x-2 shadow-sm"
+              size="sm"
+            >
+              <RefreshCw className="h-3 w-3" />
+              <span>Poll</span>
+            </Button>
           )}
         </div>
 
@@ -121,17 +127,15 @@ const NegotiationActionBar = ({
           placeholder={
             selectedThread.agentStatus === 'complete' 
               ? 'Negotiation complete' 
-              : isAgentActive 
-                ? 'Take over to send manual messages...' 
-                : 'Type your message...'
+              : 'Type your message...'
           }
-          disabled={isAgentActive || selectedThread.agentStatus === 'complete'}
+          disabled={selectedThread.agentStatus === 'complete'}
           className="flex-1 rounded-xl border-[#E0E0E0] focus:border-[#0071E3] focus:ring-[#0071E3] font-sans disabled:bg-[#F2F2F7] disabled:text-[#8E8E93] text-sm"
         />
         
         <Button
           onClick={handleSend}
-          disabled={!messageInput.trim() || isAgentActive || selectedThread.agentStatus === 'complete'}
+          disabled={!messageInput.trim() || selectedThread.agentStatus === 'complete'}
           className="bg-[#0071E3] hover:bg-[#005BB5] text-white rounded-xl px-4 py-2 font-sans disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
         >
           <Send className="h-4 w-4" />

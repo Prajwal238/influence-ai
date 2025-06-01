@@ -1,10 +1,11 @@
+
 import { useState } from "react";
 import CampaignLayout from "@/components/layout/CampaignLayout";
 import NegotiationThreadsList from "@/components/negotiation/NegotiationThreadsList";
 import NegotiationChatPanel from "@/components/negotiation/NegotiationChatPanel";
 import NegotiationSidePanel from "@/components/negotiation/NegotiationSidePanel";
 import { useInfluencerData } from "@/hooks/useInfluencerData";
-import { NegotiationThread, NegotiationMessage, AgentStatus, ControlMode } from "@/types/outreach";
+import { NegotiationThread, NegotiationMessage, AgentStatus } from "@/types/outreach";
 
 const Negotiation = () => {
   const [selectedThread, setSelectedThread] = useState<NegotiationThread | undefined>();
@@ -66,7 +67,7 @@ const Negotiation = () => {
         influencerId: influencer.id,
         status: 'replied' as const,
         agentStatus: agentStatus,
-        controlMode: 'agent' as ControlMode,
+        controlMode: 'agent' as const,
         contact: {
           email: `${influencer.name.toLowerCase().replace(/\s+/g, '.')}@email.com`,
           phone: Math.random() > 0.3 ? `+1 (555) ${Math.floor(Math.random() * 900) + 100}-${Math.floor(Math.random() * 9000) + 1000}` : undefined
@@ -94,7 +95,7 @@ const Negotiation = () => {
 
     const newMessage: NegotiationMessage = {
       id: `msg-${Date.now()}`,
-      from: selectedThread.controlMode === 'agent' ? 'agent' : 'user',
+      from: 'user',
       content,
       timestamp: new Date().toISOString(),
       platform: platform as 'instagram' | 'email' | 'voice'
@@ -109,17 +110,6 @@ const Negotiation = () => {
     setSelectedThread(updatedThread);
   };
 
-  const handleControlToggle = () => {
-    if (!selectedThread) return;
-
-    const newControlMode: ControlMode = selectedThread.controlMode === 'agent' ? 'user' : 'agent';
-    const updatedThread: NegotiationThread = {
-      ...selectedThread,
-      controlMode: newControlMode
-    };
-    setSelectedThread(updatedThread);
-  };
-
   const handleStatusChange = (newStatus: AgentStatus) => {
     if (!selectedThread) return;
 
@@ -128,6 +118,16 @@ const Negotiation = () => {
       agentStatus: newStatus
     };
     setSelectedThread(updatedThread);
+  };
+
+  const handleAIResponse = () => {
+    console.log('AI Response clicked - API integration coming soon');
+    // TODO: Integrate with AI response API when provided
+  };
+
+  const handlePoll = () => {
+    console.log('Poll clicked - API integration coming soon');
+    // TODO: Integrate with poll API when provided
   };
 
   return (
@@ -158,8 +158,9 @@ const Negotiation = () => {
               <NegotiationChatPanel
                 selectedThread={selectedThread}
                 onSendMessage={handleSendMessage}
-                onControlToggle={handleControlToggle}
                 onStatusChange={handleStatusChange}
+                onAIResponse={handleAIResponse}
+                onPoll={handlePoll}
               />
             </div>
 

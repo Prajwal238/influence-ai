@@ -9,15 +9,17 @@ import NegotiationActionBar from "./NegotiationActionBar";
 interface NegotiationChatPanelProps {
   selectedThread?: NegotiationThread;
   onSendMessage: (content: string, platform: string) => void;
-  onControlToggle: () => void;
   onStatusChange: (status: AgentStatus) => void;
+  onAIResponse?: () => void;
+  onPoll?: () => void;
 }
 
 const NegotiationChatPanel = ({ 
   selectedThread, 
   onSendMessage, 
-  onControlToggle,
-  onStatusChange 
+  onStatusChange,
+  onAIResponse,
+  onPoll
 }: NegotiationChatPanelProps) => {
   if (!selectedThread) {
     return (
@@ -46,8 +48,9 @@ const NegotiationChatPanel = ({
       <NegotiationActionBar
         selectedThread={selectedThread}
         onSendMessage={onSendMessage}
-        onControlToggle={onControlToggle}
         onStatusChange={onStatusChange}
+        onAIResponse={onAIResponse}
+        onPoll={onPoll}
       />
     </Card>
   );
