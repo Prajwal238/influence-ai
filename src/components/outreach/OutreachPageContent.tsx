@@ -95,6 +95,9 @@ const OutreachPageContent = ({
         message={message}
         onMessageChange={setMessage}
         selectedPlatform={selectedPlatform}
+        selectedInfluencersCount={selectedInfluencers.length}
+        onSendAsText={handleSendAsText}
+        onSendAsVoice={handleSendAsVoice}
       />
     </div>
   );
