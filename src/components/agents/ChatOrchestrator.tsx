@@ -6,7 +6,11 @@ import { useMessageHandling } from './hooks/useMessageHandling';
 import NegotiationInterface from './NegotiationInterface';
 import DefaultChatInterface from './DefaultChatInterface';
 
-const ChatOrchestrator = ({ agentName, agentType, onClose, className }: AgentChatProps) => {
+interface ChatOrchestratorProps extends AgentChatProps {
+  isAnalyticsContext?: boolean;
+}
+
+const ChatOrchestrator = ({ agentName, agentType, onClose, className, isAnalyticsContext }: ChatOrchestratorProps) => {
   const [inputValue, setInputValue] = useState("");
   
   const {
@@ -22,7 +26,7 @@ const ChatOrchestrator = ({ agentName, agentType, onClose, className }: AgentCha
     handleSendMessage,
     loadSessionMessages,
     resetMessagesWithGreeting
-  } = useMessageHandling(agentType);
+  } = useMessageHandling(agentType, isAnalyticsContext);
 
   const handleNewSessionClick = () => {
     handleNewSession();

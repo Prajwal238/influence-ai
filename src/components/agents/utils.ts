@@ -1,7 +1,12 @@
 
 import { Message } from './types';
 
-export const getInitialGreeting = (type: string) => {
+export const getInitialGreeting = (type: string, isAnalyticsContext?: boolean) => {
+  // Special handling for analytics context (when used on reporting page)
+  if (type === 'campaign' && isAnalyticsContext) {
+    return "Hi! I'm your Analytics Agent. I can help you understand your campaign performance, analyze engagement metrics, ROI data, and provide insights about your influencer results. What would you like to know about your campaign performance?";
+  }
+
   switch (type) {
     case 'campaign':
       return "Hi! I'm your Campaign Agent. I'll help you create a new campaign step by step. Please describe your campaign idea including details like name, budget, target audience, platforms, dates, and any other requirements.";
@@ -42,22 +47,28 @@ export const callCampaignAPI = async (prompt: string, sessionId: string) => {
   }
 };
 
-export const generateAgentResponse = (userInput: string, type: string) => {
+export const generateAgentResponse = (userInput: string, type: string, isAnalyticsContext?: boolean) => {
   // Check if this is being used in a reporting/analytics context
-  const isAnalyticsContext = userInput.toLowerCase().includes('performance') || 
+  const isAnalyticsRelated = userInput.toLowerCase().includes('performance') || 
                             userInput.toLowerCase().includes('analytics') || 
                             userInput.toLowerCase().includes('roi') || 
                             userInput.toLowerCase().includes('engagement') ||
                             userInput.toLowerCase().includes('impressions') ||
-                            userInput.toLowerCase().includes('reach');
+                            userInput.toLowerCase().includes('reach') ||
+                            userInput.toLowerCase().includes('metrics') ||
+                            userInput.toLowerCase().includes('data') ||
+                            isAnalyticsContext;
 
-  if (type === 'campaign' && isAnalyticsContext) {
+  if (type === 'campaign' && (isAnalyticsRelated || isAnalyticsContext)) {
     const analyticsResponses = [
       "Based on your campaign data, I can see that your engagement rate is 18% above industry benchmarks. Your Instagram Stories are performing particularly well with a 4.2% engagement rate.",
       "Looking at the performance metrics, Sarah Johnson is your top performer with 560% ROI. Her content generates the highest engagement rates across all platforms.",
       "Your campaign reached 2.4M people with 186K engagements. The peak engagement time is between 7-9 PM EST. Would you like me to analyze specific platform performance?",
       "The ROI analysis shows impressive results - you've generated $7,200 revenue from a $1,900 investment, achieving a 279% ROI. TikTok is driving the highest engagement numbers.",
-      "Your impressions have grown steadily from 45K to 92K over the campaign period. The reach-to-impression ratio suggests good content quality and audience targeting."
+      "Your impressions have grown steadily from 45K to 92K over the campaign period. The reach-to-impression ratio suggests good content quality and audience targeting.",
+      "The engagement breakdown shows TikTok leading with 78K likes, followed by Instagram with 45K likes. Comments are highest on TikTok at 4.5K, indicating strong audience interaction.",
+      "Your campaign's performance trend shows consistent growth. The steepest increase was between July 15-22, coinciding with Sarah Johnson's Instagram story series.",
+      "Cost per engagement is $0.012, which is 23% below industry average. Your content resonates well with the target demographic, particularly the 18-34 age group."
     ];
     return analyticsResponses[Math.floor(Math.random() * analyticsResponses.length)];
   }

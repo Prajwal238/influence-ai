@@ -310,6 +310,7 @@ const Reporting = () => {
       <FloatingChatButton 
         agentName="Analytics Agent"
         agentType="campaign"
+        isAnalyticsContext={true}
       />
     </CampaignLayout>
   );

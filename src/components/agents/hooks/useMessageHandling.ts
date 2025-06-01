@@ -15,7 +15,7 @@ interface SessionData {
   messages: SessionMessage[];
 }
 
-export const useMessageHandling = (agentType: string) => {
+export const useMessageHandling = (agentType: string, isAnalyticsContext?: boolean) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isTyping, setIsTyping] = useState(false);
   const [isApiLoading, setIsApiLoading] = useState(false);
@@ -34,7 +34,7 @@ export const useMessageHandling = (agentType: string) => {
       setMessages(messagesWithDates);
     } else {
       // Initial greeting message
-      const greeting = getInitialGreeting(agentType);
+      const greeting = getInitialGreeting(agentType, isAnalyticsContext);
       setMessages([{
         id: '1',
         type: 'agent',
@@ -42,7 +42,7 @@ export const useMessageHandling = (agentType: string) => {
         timestamp: new Date()
       }]);
     }
-  }, [agentType]);
+  }, [agentType, isAnalyticsContext]);
 
   useEffect(() => {
     // Save conversation history to localStorage
@@ -64,7 +64,7 @@ export const useMessageHandling = (agentType: string) => {
   };
 
   const resetMessagesWithGreeting = () => {
-    const greeting = getInitialGreeting(agentType);
+    const greeting = getInitialGreeting(agentType, isAnalyticsContext);
     const newMessages = [{
       id: '1',
       type: 'agent' as const,
@@ -86,8 +86,8 @@ export const useMessageHandling = (agentType: string) => {
 
     setMessages(prev => [...prev, userMessage]);
 
-    // For campaign agent, call the API
-    if (agentType === 'campaign') {
+    // For campaign agent, call the API (unless it's analytics context)
+    if (agentType === 'campaign' && !isAnalyticsContext) {
       setIsApiLoading(true);
       
       try {
@@ -122,13 +122,13 @@ export const useMessageHandling = (agentType: string) => {
         setIsApiLoading(false);
       }
     } else {
-      // For other agent types, use the existing simulation
+      // For other agent types or analytics context, use the existing simulation
       setIsTyping(true);
       setTimeout(() => {
         const agentResponse: Message = {
           id: (Date.now() + 1).toString(),
           type: 'agent',
-          content: generateAgentResponse(inputValue, agentType),
+          content: generateAgentResponse(inputValue, agentType, isAnalyticsContext),
           timestamp: new Date()
         };
         setMessages(prev => [...prev, agentResponse]);
