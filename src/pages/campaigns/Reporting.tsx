@@ -4,7 +4,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
 import { TrendingUp, Eye, Heart, MessageCircle, Share, DollarSign } from "lucide-react";
-import FloatingChatButton from "@/components/agents/FloatingChatButton";
 
 const Reporting = () => {
   const kpiData = [
@@ -305,13 +304,6 @@ const Reporting = () => {
           </TabsContent>
         </Tabs>
       </div>
-
-      {/* Floating Analytics Agent */}
-      <FloatingChatButton 
-        agentName="Analytics Agent"
-        agentType="campaign"
-        isAnalyticsContext={true}
-      />
     </CampaignLayout>
   );
 };
