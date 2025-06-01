@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import CampaignLayout from "@/components/layout/CampaignLayout";
@@ -122,6 +121,30 @@ const Outreach = () => {
     setSelectedInfluencers([]);
   };
 
+  const handleSendAsVideo = () => {
+    console.log("Sending message as video (mock)");
+    console.log("Selected influencers:", selectedInfluencers);
+    
+    // Add outreach entries for selected influencers
+    selectedInfluencers.forEach(selection => {
+      const influencer = transformedInfluencers.find(inf => inf.id === selection.influencerId);
+      if (influencer) {
+        addOutreachEntry({
+          influencer: influencer.name,
+          handle: influencer.handle,
+          status: "sent",
+          sentAt: "Just now",
+          template: "Video Message (Mock)",
+          platform: selection.platform as any,
+          influencerId: influencer.id
+        });
+      }
+    });
+
+    // Clear selected influencers after sending
+    setSelectedInfluencers([]);
+  };
+
   if (loading) {
     return (
       <CampaignLayout>
@@ -164,6 +187,7 @@ const Outreach = () => {
             selectedInfluencersCount={selectedInfluencers.length}
             onSendAsText={handleSendAsText}
             onSendAsVoice={handleSendAsVoice}
+            onSendAsVideo={handleSendAsVideo}
           />
         </div>
 

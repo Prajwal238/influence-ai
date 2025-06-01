@@ -1,9 +1,10 @@
 
 import { useState } from "react";
 import TemplateSelector from "./TemplateSelector";
-import MessageTypeToggle from "./MessageTypeToggle";
+import MessageTypeToggle, { MessageType } from "./MessageTypeToggle";
 import TextMessageEditor from "./TextMessageEditor";
 import VoiceMessageEditor from "./VoiceMessageEditor";
+import VideoMessageEditor from "./VideoMessageEditor";
 import LanguageSelector from "./LanguageSelector";
 import { useMessageGeneration } from "./MessageGenerationHandler";
 
@@ -21,16 +22,19 @@ const MessageForm = ({
   const [selectedTemplate, setSelectedTemplate] = useState("first-reach");
   const [voiceMessage, setVoiceMessage] = useState("");
   const [voiceLanguage, setVoiceLanguage] = useState("english");
-  const [sendAsVoice, setSendAsVoice] = useState(false);
+  const [messageType, setMessageType] = useState<MessageType>("text");
   const [selectedTargetLanguage, setSelectedTargetLanguage] = useState("english");
+  const [videoScript, setVideoScript] = useState("");
+  const [voiceStyle, setVoiceStyle] = useState("Friendly Female");
 
   const { isGenerating, handleGenerateWithAI } = useMessageGeneration({
-    sendAsVoice,
+    messageType,
     selectedPlatform,
     selectedTemplate,
     selectedTargetLanguage,
     onMessageChange,
-    onVoiceMessageChange: setVoiceMessage
+    onVoiceMessageChange: setVoiceMessage,
+    onVideoScriptChange: setVideoScript
   });
 
   const handleLanguageChange = (language: string) => {
@@ -38,7 +42,14 @@ const MessageForm = ({
   };
 
   const getContentForValidation = () => {
-    return sendAsVoice ? voiceMessage.trim() : message.trim();
+    switch (messageType) {
+      case "voice":
+        return voiceMessage.trim();
+      case "video":
+        return videoScript.trim();
+      default:
+        return message.trim();
+    }
   };
 
   return {
@@ -49,10 +60,14 @@ const MessageForm = ({
     setVoiceMessage,
     voiceLanguage,
     setVoiceLanguage,
-    sendAsVoice,
-    setSendAsVoice,
+    messageType,
+    setMessageType,
     selectedTargetLanguage,
     handleLanguageChange,
+    videoScript,
+    setVideoScript,
+    voiceStyle,
+    setVoiceStyle,
     
     // Generation state
     isGenerating,
@@ -70,11 +85,11 @@ const MessageForm = ({
         />
 
         <MessageTypeToggle 
-          sendAsVoice={sendAsVoice}
-          onToggle={setSendAsVoice}
+          messageType={messageType}
+          onTypeChange={setMessageType}
         />
 
-        {!sendAsVoice && (
+        {messageType === "text" && (
           <TextMessageEditor
             message={message}
             onMessageChange={onMessageChange}
@@ -84,12 +99,24 @@ const MessageForm = ({
           />
         )}
 
-        {sendAsVoice && (
+        {messageType === "voice" && (
           <VoiceMessageEditor
             voiceMessage={voiceMessage}
             onVoiceMessageChange={setVoiceMessage}
             voiceLanguage={voiceLanguage}
             onVoiceLanguageChange={setVoiceLanguage}
+            selectedPlatform={selectedPlatform}
+            onGenerateWithAI={handleGenerateWithAI}
+            isGenerating={isGenerating}
+          />
+        )}
+
+        {messageType === "video" && (
+          <VideoMessageEditor
+            videoScript={videoScript}
+            onVideoScriptChange={setVideoScript}
+            voiceStyle={voiceStyle}
+            onVoiceStyleChange={setVoiceStyle}
             selectedPlatform={selectedPlatform}
             onGenerateWithAI={handleGenerateWithAI}
             isGenerating={isGenerating}

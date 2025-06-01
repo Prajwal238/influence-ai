@@ -1,7 +1,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Clock, CheckCircle, XCircle, Instagram, Mail, Phone, MessageSquare } from "lucide-react";
+import { Clock, CheckCircle, XCircle, Instagram, Mail, Phone, MessageSquare, Video, Play } from "lucide-react";
 import { OutreachEntry } from "@/hooks/useOutreachData";
 
 interface OutreachLogProps {
@@ -61,6 +61,28 @@ const OutreachLog = ({ outreachLog }: OutreachLogProps) => {
     }
   };
 
+  const getMessageTypeDisplay = (template: string) => {
+    if (template.includes("Video")) {
+      return {
+        icon: <Video className="h-3 w-3" />,
+        text: "Video (Mock)",
+        color: "bg-purple-100 text-purple-800"
+      };
+    }
+    if (template.includes("Voice")) {
+      return {
+        icon: <MessageSquare className="h-3 w-3" />,
+        text: "Voice",
+        color: "bg-blue-100 text-blue-800"
+      };
+    }
+    return {
+      icon: <MessageSquare className="h-3 w-3" />,
+      text: "Text",
+      color: "bg-gray-100 text-gray-800"
+    };
+  };
+
   return (
     <Card className="bg-white shadow-sm border-gray-200">
       <CardHeader>
@@ -70,32 +92,53 @@ const OutreachLog = ({ outreachLog }: OutreachLogProps) => {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {latestEntries.map((entry) => (
-            <div key={entry.id} className="border border-gray-100 rounded-lg p-3">
-              <div className="flex items-center justify-between mb-2">
-                <div>
-                  <h4 className="font-medium text-gray-900 text-sm">{entry.influencer}</h4>
-                  <p className="text-xs text-gray-600">{entry.handle}</p>
+          {latestEntries.map((entry) => {
+            const messageType = getMessageTypeDisplay(entry.template);
+            return (
+              <div key={entry.id} className="border border-gray-100 rounded-lg p-3">
+                <div className="flex items-center justify-between mb-2">
+                  <div>
+                    <h4 className="font-medium text-gray-900 text-sm">{entry.influencer}</h4>
+                    <p className="text-xs text-gray-600">{entry.handle}</p>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    {getStatusIcon(entry.status)}
+                    <Badge className={getStatusColor(entry.status)}>
+                      {entry.status}
+                    </Badge>
+                  </div>
                 </div>
-                <div className="flex items-center space-x-2">
-                  {getStatusIcon(entry.status)}
-                  <Badge className={getStatusColor(entry.status)}>
-                    {entry.status}
-                  </Badge>
+                
+                {/* Message Type and Video Thumbnail */}
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center space-x-2">
+                    <Badge className={`${messageType.color} flex items-center space-x-1`}>
+                      {messageType.icon}
+                      <span>{messageType.text}</span>
+                    </Badge>
+                    
+                    {entry.template.includes("Video") && (
+                      <div className="bg-gray-100 rounded p-1 flex items-center space-x-1">
+                        <Play className="h-3 w-3 text-gray-600" />
+                        <span className="text-xs text-gray-600">mock_video.mp4</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                
+                <div className="flex items-center justify-between">
+                  <div className="text-xs text-gray-500">
+                    <p>{entry.template}</p>
+                    <p>Sent {entry.sentAt}</p>
+                  </div>
+                  <div className={`inline-flex items-center space-x-1 px-2 py-1 rounded-full text-xs font-medium ${getPlatformColor(entry.platform)}`}>
+                    {getPlatformIcon(entry.platform)}
+                    <span className="capitalize">{entry.platform}</span>
+                  </div>
                 </div>
               </div>
-              <div className="flex items-center justify-between">
-                <div className="text-xs text-gray-500">
-                  <p>{entry.template}</p>
-                  <p>Sent {entry.sentAt}</p>
-                </div>
-                <div className={`inline-flex items-center space-x-1 px-2 py-1 rounded-full text-xs font-medium ${getPlatformColor(entry.platform)}`}>
-                  {getPlatformIcon(entry.platform)}
-                  <span className="capitalize">{entry.platform}</span>
-                </div>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </CardContent>
     </Card>

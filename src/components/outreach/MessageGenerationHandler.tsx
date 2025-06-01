@@ -1,23 +1,26 @@
 
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { MessageType } from "./MessageTypeToggle";
 
 interface MessageGenerationHandlerProps {
-  sendAsVoice: boolean;
+  messageType: MessageType;
   selectedPlatform: string;
   selectedTemplate: string;
   selectedTargetLanguage: string;
   onMessageChange: (message: string) => void;
   onVoiceMessageChange: (message: string) => void;
+  onVideoScriptChange: (script: string) => void;
 }
 
 export const useMessageGeneration = ({
-  sendAsVoice,
+  messageType,
   selectedPlatform,
   selectedTemplate,
   selectedTargetLanguage,
   onMessageChange,
-  onVoiceMessageChange
+  onVoiceMessageChange,
+  onVideoScriptChange
 }: MessageGenerationHandlerProps) => {
   const [isGenerating, setIsGenerating] = useState(false);
   const { toast } = useToast();
@@ -26,10 +29,26 @@ export const useMessageGeneration = ({
     setIsGenerating(true);
     
     try {
+      const generationType = messageType === "video" ? "video generation" : "message generation";
+      
       toast({
-        title: "Generating Message",
-        description: "AI is creating your personalized message...",
+        title: messageType === "video" ? "Generating Video" : "Generating Message",
+        description: messageType === "video" 
+          ? "AI is creating your personalized video (mock)..." 
+          : "AI is creating your personalized message...",
       });
+
+      // Mock video generation delay
+      if (messageType === "video") {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        toast({
+          title: "Video Generated (Mock)",
+          description: "Your video preview is ready! This is a demo using mock Eleven Labs integration.",
+        });
+        
+        return;
+      }
 
       const response = await fetch('http://localhost:5000/api/user_123/campaigns/summer_fashion_2024/ai_message', {
         method: 'POST',
@@ -49,7 +68,7 @@ export const useMessageGeneration = ({
       const data = await response.json();
       
       if (data.type === 'message' && data.message) {
-        if (sendAsVoice) {
+        if (messageType === "voice") {
           onVoiceMessageChange(data.message);
         } else {
           onMessageChange(data.message);
@@ -63,10 +82,10 @@ export const useMessageGeneration = ({
         throw new Error('Invalid response format');
       }
     } catch (error) {
-      console.error('Error generating AI message:', error);
+      console.error(`Error generating AI ${messageType}:`, error);
       toast({
         title: "Generation Failed",
-        description: "Failed to generate AI message. Please try again.",
+        description: `Failed to generate AI ${messageType}. Please try again.`,
         variant: "destructive"
       });
     } finally {

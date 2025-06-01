@@ -18,6 +18,7 @@ interface MessageComposerProps {
   selectedInfluencersCount: number;
   onSendAsText: () => void;
   onSendAsVoice: () => void;
+  onSendAsVideo?: () => void;
 }
 
 const MessageComposer = ({
@@ -29,7 +30,8 @@ const MessageComposer = ({
   onPlatformChange,
   selectedInfluencersCount,
   onSendAsText,
-  onSendAsVoice
+  onSendAsVoice,
+  onSendAsVideo
 }: MessageComposerProps) => {
   const messageForm = MessageForm({
     message,
@@ -39,7 +41,7 @@ const MessageComposer = ({
   
   const bulkMessaging = useBulkMessaging({
     selectedInfluencersCount,
-    sendAsVoice: messageForm.sendAsVoice,
+    sendAsVoice: messageForm.messageType === "voice",
     onSendAsText,
     onSendAsVoice
   });
@@ -53,10 +55,27 @@ const MessageComposer = ({
 
   const handleSend = async () => {
     const contentToValidate = messageForm.getContentForValidation();
+    
+    if (messageForm.messageType === "video" && onSendAsVideo) {
+      onSendAsVideo();
+      return;
+    }
+    
     await bulkMessaging.handleSend(contentToValidate);
   };
 
   const isFormValid = messageForm.getContentForValidation() && selectedInfluencersCount > 0;
+
+  const getSendButtonText = () => {
+    if (messageForm.messageType === "video") {
+      return selectedInfluencersCount > 1 
+        ? `Send Video to ${selectedInfluencersCount} Influencers` 
+        : 'Send Video Message (Mock)';
+    }
+    return selectedInfluencersCount > 1 
+      ? `Send to ${selectedInfluencersCount} Influencers` 
+      : 'Send Outreach Message';
+  };
 
   return (
     <div className="space-y-6">
@@ -77,7 +96,7 @@ const MessageComposer = ({
 
           <AIPersonalizationInfo
             selectedInfluencersCount={selectedInfluencersCount}
-            sendAsVoice={messageForm.sendAsVoice}
+            sendAsVoice={messageForm.messageType === "voice"}
           />
         </CardContent>
       </Card>
@@ -87,6 +106,7 @@ const MessageComposer = ({
         isFormValid={isFormValid}
         isSending={bulkMessaging.isSending}
         onSend={handleSend}
+        customText={getSendButtonText()}
       />
 
       <BulkMessagingProgress

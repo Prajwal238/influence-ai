@@ -7,9 +7,20 @@ interface SendButtonProps {
   isFormValid: boolean;
   isSending: boolean;
   onSend: () => void;
+  customText?: string;
 }
 
-const SendButton = ({ selectedInfluencersCount, isFormValid, isSending, onSend }: SendButtonProps) => {
+const SendButton = ({ selectedInfluencersCount, isFormValid, isSending, onSend, customText }: SendButtonProps) => {
+  const getButtonText = () => {
+    if (customText) return customText;
+    
+    if (isSending) return 'Sending...';
+    
+    return selectedInfluencersCount > 1 
+      ? `Send to ${selectedInfluencersCount} Influencers` 
+      : 'Send Outreach Message';
+  };
+
   return (
     <div className="space-y-4">
       {/* Error State */}
@@ -32,9 +43,7 @@ const SendButton = ({ selectedInfluencersCount, isFormValid, isSending, onSend }
           disabled={!isFormValid || isSending}
         >
           <Send className="h-4 w-4 mr-2" />
-          {isSending ? 'Sending...' : 
-           selectedInfluencersCount > 1 ? `Send to ${selectedInfluencersCount} Influencers` : 
-           'Send Outreach Message'}
+          {getButtonText()}
         </Button>
       </div>
     </div>
