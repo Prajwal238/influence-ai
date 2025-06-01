@@ -30,21 +30,26 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          {/* Single home route */}
+          {/* Home route */}
           <Route path="/" element={<Dashboard />} />
-          {/* Redirect /dashboard to home */}
-          <Route path="/dashboard" element={<Navigate to="/" replace />} />
-          <Route path="/dashboard/campaign-agent" element={<Navigate to="/" replace />} />
-          <Route path="/admin" element={<Admin />} />
-          {/* Campaign routes - all active */}
+          
+          {/* Campaign routes */}
+          <Route path="/campaigns/:id" element={<CampaignRedirect />} />
           <Route path="/campaigns/:id/discovery" element={<CampaignDiscovery />} />
           <Route path="/campaigns/:id/outreach" element={<CampaignOutreach />} />
           <Route path="/campaigns/:id/negotiation" element={<CampaignNegotiation />} />
           <Route path="/campaigns/:id/contracts" element={<CampaignContracts />} />
           <Route path="/campaigns/:id/payments" element={<CampaignPayments />} />
           <Route path="/campaigns/:id/reporting" element={<CampaignReporting />} />
-          {/* Default campaign route redirects to discovery with proper ID */}
-          <Route path="/campaigns/:id" element={<CampaignRedirect />} />
+          
+          {/* Admin route */}
+          <Route path="/admin" element={<Admin />} />
+          
+          {/* Redirects for legacy routes */}
+          <Route path="/dashboard" element={<Navigate to="/" replace />} />
+          <Route path="/campaign-agent" element={<Navigate to="/" replace />} />
+          
+          {/* 404 route */}
           <Route path="*" element={<NotFound />} />
         </Routes>
         <CampaignAgentModal />

@@ -54,35 +54,42 @@ const CampaignCard = ({ campaign }: CampaignCardProps) => {
   const { percentage: progress } = getCampaignProgressForDashboard(campaign._id);
   const objective = campaign.objective;
 
-  // Get campaign redirect URL based on progress - always return campaign routes
+  // Get campaign redirect URL based on progress
   const getCampaignRedirectUrl = (campaignId: string): string => {
     const savedProgress = localStorage.getItem('campaign_progress');
-    if (!savedProgress) return `/campaigns/${campaignId}/discovery`;
-    
-    const allProgress = JSON.parse(savedProgress);
-    const campaignProgress = allProgress.find((p: any) => p.campaignId === campaignId);
-    
-    if (!campaignProgress || campaignProgress.completedStages.length === 0) {
+    if (!savedProgress) {
       return `/campaigns/${campaignId}/discovery`;
     }
     
-    const allStages = ['discovery', 'outreach', 'negotiation', 'contracts', 'payments', 'reporting'];
-    let lastCompletedIndex = -1;
-    
-    campaignProgress.completedStages.forEach((stage: string) => {
-      const index = allStages.indexOf(stage);
-      if (index > lastCompletedIndex) {
-        lastCompletedIndex = index;
+    try {
+      const allProgress = JSON.parse(savedProgress);
+      const campaignProgress = allProgress.find((p: any) => p.campaignId === campaignId);
+      
+      if (!campaignProgress || !campaignProgress.completedStages || campaignProgress.completedStages.length === 0) {
+        return `/campaigns/${campaignId}/discovery`;
       }
-    });
-    
-    const nextStageIndex = lastCompletedIndex + 1;
-    if (nextStageIndex >= allStages.length) {
-      return `/campaigns/${campaignId}/reporting`;
+      
+      const allStages = ['discovery', 'outreach', 'negotiation', 'contracts', 'payments', 'reporting'];
+      let lastCompletedIndex = -1;
+      
+      campaignProgress.completedStages.forEach((stage: string) => {
+        const index = allStages.indexOf(stage);
+        if (index > lastCompletedIndex) {
+          lastCompletedIndex = index;
+        }
+      });
+      
+      const nextStageIndex = lastCompletedIndex + 1;
+      if (nextStageIndex >= allStages.length) {
+        return `/campaigns/${campaignId}/reporting`;
+      }
+      
+      const nextStage = allStages[nextStageIndex];
+      return `/campaigns/${campaignId}/${nextStage}`;
+    } catch (error) {
+      console.error('Error parsing campaign progress:', error);
+      return `/campaigns/${campaignId}/discovery`;
     }
-    
-    const nextStage = allStages[nextStageIndex];
-    return `/campaigns/${campaignId}/${nextStage}`;
   };
 
   return (
