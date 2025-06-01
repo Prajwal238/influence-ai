@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
 import CampaignDiscovery from "./pages/campaigns/Discovery";
 import CampaignOutreach from "./pages/campaigns/Outreach";
@@ -34,6 +34,8 @@ const App = () => (
           <Route path="/campaigns/:id/payments" element={<CampaignPayments />} />
           <Route path="/campaigns/:id/reporting" element={<CampaignReporting />} />
           <Route path="/admin" element={<Admin />} />
+          {/* Redirect any campaign root path to dashboard */}
+          <Route path="/campaigns/:id" element={<Navigate to="/dashboard" replace />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         <CampaignAgentModal />
