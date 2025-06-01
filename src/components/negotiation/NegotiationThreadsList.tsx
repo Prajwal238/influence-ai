@@ -1,3 +1,4 @@
+
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -58,9 +59,9 @@ const NegotiationThreadsList = ({ threads, selectedThreadId, onSelectThread }: N
       </div>
       
       <div className="p-3 space-y-2 max-h-[calc(100vh-280px)] overflow-y-auto">
-        {activeThreads.map((thread) => (
+        {activeThreads.map((thread, index) => (
           <div
-            key={thread.creatorId}
+            key={`thread-${thread.creatorId}-${index}`}
             onClick={() => onSelectThread(thread)}
             className={`p-4 rounded-xl cursor-pointer transition-all duration-300 ${
               selectedThreadId === thread.creatorId 
