@@ -48,15 +48,15 @@ const PipelineBar = ({ stages, currentStage, stageStatus }: PipelineBarProps) =>
 
   const activeStage = currentStage || getCurrentStageFromUrl();
 
-  // Mark current stage as completed when user visits it (except for the first stage)
+  // Mark current stage as completed when user visits it
   useEffect(() => {
     if (campaignId && activeStage) {
       const currentStageIndex = defaultStages.findIndex(s => s.key === activeStage);
       
-      // Complete all previous stages when visiting a stage
-      for (let i = 0; i < currentStageIndex; i++) {
-        const previousStage = defaultStages[i].key as CampaignStage;
-        completeStage(previousStage);
+      // Complete all previous stages and the current stage when visiting it
+      for (let i = 0; i <= currentStageIndex; i++) {
+        const stageToComplete = defaultStages[i].key as CampaignStage;
+        completeStage(stageToComplete);
       }
     }
   }, [activeStage, campaignId, completeStage]);
@@ -72,22 +72,17 @@ const PipelineBar = ({ stages, currentStage, stageStatus }: PipelineBarProps) =>
       return 'complete';
     }
     
-    // Check if this is the currently active stage
-    const isActive = location.pathname.includes(`/${stageKey}`);
-    if (isActive) return 'active';
-    
     // Check if this stage is completed based on progress
     if (progress && progress.completedStages.includes(stageKey as CampaignStage)) {
-      return 'complete';
+      const isCurrentlyActive = location.pathname.includes(`/${stageKey}`);
+      // If it's completed and currently active, show as active
+      // If it's completed but not currently active, show as complete
+      return isCurrentlyActive ? 'active' : 'complete';
     }
     
-    // For stages that come before the current active stage, mark as complete
-    const currentStageIndex = defaultStages.findIndex(s => s.key === activeStage);
-    const thisStageIndex = defaultStages.findIndex(s => s.key === stageKey);
-    
-    if (thisStageIndex < currentStageIndex) {
-      return 'complete';
-    }
+    // Check if this is the currently active stage (and not yet completed)
+    const isActive = location.pathname.includes(`/${stageKey}`);
+    if (isActive) return 'active';
     
     return 'pending';
   };
