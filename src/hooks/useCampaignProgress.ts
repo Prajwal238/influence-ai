@@ -8,6 +8,7 @@ interface CampaignProgress {
   completedStages: CampaignStage[];
   currentStage: CampaignStage;
   lastUpdated: string;
+  isFullyCompleted?: boolean; // New flag for 100% completion
 }
 
 const STORAGE_KEY = 'campaign_progress';
@@ -92,9 +93,28 @@ export const useCampaignProgress = (campaignId: string) => {
     saveProgress(updatedProgress);
   };
 
+  // New method to mark campaign as fully completed
+  const markCampaignComplete = () => {
+    if (!progress) return;
+
+    const updatedProgress: CampaignProgress = {
+      ...progress,
+      completedStages: [...allStages], // All stages completed
+      currentStage: 'reporting',
+      isFullyCompleted: true,
+      lastUpdated: new Date().toISOString()
+    };
+
+    saveProgress(updatedProgress);
+  };
+
   // Calculate progress percentage
   const getProgressPercentage = (): number => {
     if (!progress) return 0;
+    
+    // If fully completed, return 100%
+    if (progress.isFullyCompleted) return 100;
+    
     return Math.round((progress.completedStages.length / allStages.length) * 100);
   };
 
@@ -132,6 +152,7 @@ export const useCampaignProgress = (campaignId: string) => {
   return {
     progress,
     completeStage,
+    markCampaignComplete, // New method
     getProgressPercentage,
     getCampaignRedirectUrl,
     allStages,
@@ -139,7 +160,7 @@ export const useCampaignProgress = (campaignId: string) => {
   };
 };
 
-// Utility function to get campaign progress for dashboard
+// Update utility function to handle fully completed campaigns
 export const getCampaignProgressForDashboard = (campaignId: string): { percentage: number; completedStages: number } => {
   const savedProgress = localStorage.getItem(STORAGE_KEY);
   if (!savedProgress) return { percentage: 0, completedStages: 0 };
@@ -150,6 +171,12 @@ export const getCampaignProgressForDashboard = (campaignId: string): { percentag
   if (!campaignProgress) return { percentage: 0, completedStages: 0 };
   
   const allStages = ['discovery', 'outreach', 'negotiation', 'contracts', 'payments', 'reporting'];
+  
+  // If fully completed, return 100%
+  if (campaignProgress.isFullyCompleted) {
+    return { percentage: 100, completedStages: allStages.length };
+  }
+  
   const percentage = Math.round((campaignProgress.completedStages.length / allStages.length) * 100);
   
   return { percentage, completedStages: campaignProgress.completedStages.length };

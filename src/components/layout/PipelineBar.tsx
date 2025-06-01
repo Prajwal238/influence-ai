@@ -67,6 +67,11 @@ const PipelineBar = ({ stages, currentStage, stageStatus }: PipelineBarProps) =>
       return stageStatus[stageKey];
     }
     
+    // Check if campaign is fully completed
+    if (progress?.isFullyCompleted) {
+      return 'complete';
+    }
+    
     // Check if this is the currently active stage
     const isActive = location.pathname.includes(`/${stageKey}`);
     if (isActive) return 'active';

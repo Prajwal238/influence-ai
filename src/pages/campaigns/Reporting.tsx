@@ -2,10 +2,19 @@ import CampaignLayout from "@/components/layout/CampaignLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
-import { TrendingUp, Eye, Heart, MessageCircle, Share, DollarSign } from "lucide-react";
+import { TrendingUp, Eye, Heart, MessageCircle, Share, DollarSign, CheckCircle } from "lucide-react";
+import { useCampaignProgress } from "@/hooks/useCampaignProgress";
+import { useParams } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 
 const Reporting = () => {
+  const { id } = useParams();
+  const campaignId = id || '';
+  const { progress, markCampaignComplete } = useCampaignProgress(campaignId);
+  const { toast } = useToast();
+
   const kpiData = [
     { name: "Total Reach", value: "2.4M", change: "+12%", icon: Eye, color: "blue" },
     { name: "Engagement", value: "186K", change: "+8%", icon: Heart, color: "red" },
@@ -38,17 +47,47 @@ const Reporting = () => {
     }
   };
 
+  const handleMarkComplete = () => {
+    markCampaignComplete();
+    toast({
+      title: "Campaign Completed!",
+      description: "Your campaign has been marked as 100% complete.",
+    });
+  };
+
+  const isCampaignComplete = progress?.isFullyCompleted || false;
+
   return (
     <CampaignLayout>
       <div className="space-y-6">
         {/* Header */}
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-900 mb-1">
-            Campaign Performance
-          </h1>
-          <p className="text-gray-600">
-            Track and analyze your campaign metrics across all channels
-          </p>
+        <div className="flex justify-between items-start">
+          <div>
+            <h1 className="text-2xl font-semibold text-gray-900 mb-1">
+              Campaign Performance
+            </h1>
+            <p className="text-gray-600">
+              Track and analyze your campaign metrics across all channels
+            </p>
+          </div>
+          
+          {/* Campaign Completion Button */}
+          {!isCampaignComplete && (
+            <Button 
+              onClick={handleMarkComplete}
+              className="bg-green-600 hover:bg-green-700 text-white"
+            >
+              <CheckCircle className="h-4 w-4 mr-2" />
+              Mark Campaign Complete
+            </Button>
+          )}
+          
+          {isCampaignComplete && (
+            <div className="flex items-center space-x-2 bg-green-100 text-green-800 px-4 py-2 rounded-lg">
+              <CheckCircle className="h-4 w-4" />
+              <span className="font-medium">Campaign Completed</span>
+            </div>
+          )}
         </div>
 
         {/* KPI Cards */}
