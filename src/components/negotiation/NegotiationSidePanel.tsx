@@ -26,16 +26,16 @@ const NegotiationSidePanel = ({ selectedThread }: NegotiationSidePanelProps) => 
   }
 
   return (
-    <Card className="h-full bg-white shadow-apple rounded-2xl border-0">
-      <CardHeader className="border-b border-[#F2F2F7] pb-4">
+    <Card className="h-full bg-white shadow-apple rounded-2xl border-0 flex flex-col">
+      <CardHeader className="border-b border-[#F2F2F7] pb-4 flex-shrink-0">
         <CardTitle className="text-xl font-semibold text-[#1D1D1F] font-sans tracking-tight">
           Thread Details
         </CardTitle>
       </CardHeader>
       
-      <CardContent className="p-0 h-full">
-        <Tabs defaultValue="overview" className="h-full flex flex-col">
-          <TabsList className="grid w-full grid-cols-3 bg-[#F2F2F7] m-4 rounded-xl p-1">
+      <CardContent className="p-0 flex-1 flex flex-col min-h-0">
+        <Tabs defaultValue="overview" className="flex-1 flex flex-col min-h-0">
+          <TabsList className="grid w-full grid-cols-3 bg-[#F2F2F7] m-4 rounded-xl p-1 flex-shrink-0">
             <TabsTrigger 
               value="overview" 
               className="text-sm data-[state=active]:bg-white data-[state=active]:text-[#1D1D1F] data-[state=active]:shadow-sm rounded-lg font-sans font-medium"
@@ -56,32 +56,32 @@ const NegotiationSidePanel = ({ selectedThread }: NegotiationSidePanelProps) => 
             </TabsTrigger>
           </TabsList>
 
-          <div className="flex-1 overflow-hidden">
-            <TabsContent value="overview" className="h-full overflow-y-auto">
+          <div className="flex-1 min-h-0 overflow-hidden">
+            <TabsContent value="overview" className="h-full m-0 overflow-y-auto">
               <NegotiationOverviewTab selectedThread={selectedThread} />
             </TabsContent>
 
-            <TabsContent value="contact" className="h-full overflow-y-auto">
+            <TabsContent value="contact" className="h-full m-0 overflow-y-auto">
               <NegotiationContactTab selectedThread={selectedThread} />
             </TabsContent>
 
-            <TabsContent value="logs" className="h-full overflow-y-auto">
+            <TabsContent value="logs" className="h-full m-0 overflow-y-auto">
               <NegotiationAgentLogsTab />
             </TabsContent>
           </div>
         </Tabs>
 
         {/* Help Footer */}
-        <div className="p-6 border-t border-[#F2F2F7] bg-[#FAFAFA] rounded-b-2xl">
-          <div className="flex items-start space-x-3">
-            <HelpCircle className="h-5 w-5 text-[#0071E3] mt-0.5 flex-shrink-0" />
-            <div>
-              <p className="text-sm font-semibold text-[#1D1D1F] font-sans mb-2">
+        <div className="p-4 border-t border-[#F2F2F7] bg-[#FAFAFA] rounded-b-2xl flex-shrink-0">
+          <div className="flex items-start space-x-2">
+            <HelpCircle className="h-4 w-4 text-[#0071E3] mt-0.5 flex-shrink-0" />
+            <div className="min-w-0">
+              <p className="text-xs font-semibold text-[#1D1D1F] font-sans mb-1">
                 Quick Help
               </p>
-              <p className="text-sm text-[#6E6E73] font-sans leading-relaxed">
-                <strong>Take Over:</strong> Your manual messages pause the agent.<br />
-                <strong>Return to Agent:</strong> Agent resumes automatically.
+              <p className="text-xs text-[#6E6E73] font-sans leading-tight">
+                <strong>Take Over:</strong> Manual messages pause agent.<br />
+                <strong>Return:</strong> Agent resumes automatically.
               </p>
             </div>
           </div>
