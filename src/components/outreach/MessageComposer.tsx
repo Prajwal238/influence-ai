@@ -55,23 +55,12 @@ const MessageComposer = ({
 
   const handleSend = async () => {
     const contentToValidate = messageForm.getContentForValidation();
-    
-    if (messageForm.messageType === "video" && onSendAsVideo) {
-      onSendAsVideo();
-      return;
-    }
-    
     await bulkMessaging.handleSend(contentToValidate);
   };
 
   const isFormValid = messageForm.getContentForValidation() && selectedInfluencersCount > 0;
 
   const getSendButtonText = () => {
-    if (messageForm.messageType === "video") {
-      return selectedInfluencersCount > 1 
-        ? `Send Video to ${selectedInfluencersCount} Influencers` 
-        : 'Send Video Message (Mock)';
-    }
     return selectedInfluencersCount > 1 
       ? `Send to ${selectedInfluencersCount} Influencers` 
       : 'Send Outreach Message';

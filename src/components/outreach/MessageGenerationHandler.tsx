@@ -30,26 +30,10 @@ export const useMessageGeneration = ({
     setIsGenerating(true);
     
     try {
-      const generationType = messageType === "video" ? "video generation" : "message generation";
-      
       toast({
-        title: messageType === "video" ? "Generating Video" : "Generating Message",
-        description: messageType === "video" 
-          ? "AI is creating your personalized video (mock)..." 
-          : "AI is creating your personalized message...",
+        title: "Generating Message",
+        description: "AI is creating your personalized message...",
       });
-
-      // Mock video generation delay
-      if (messageType === "video") {
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        
-        toast({
-          title: "Video Generated (Mock)",
-          description: "Your video preview is ready! This is a demo using mock Eleven Labs integration.",
-        });
-        
-        return;
-      }
 
       const response = await fetch(buildApiUrl('/api/user_123/campaigns/summer_fashion_2024/ai_message'), {
         method: 'POST',

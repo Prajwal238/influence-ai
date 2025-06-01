@@ -1,8 +1,8 @@
 
 import { Button } from "@/components/ui/button";
-import { MessageSquare, Mic, Video } from "lucide-react";
+import { MessageSquare, Mic } from "lucide-react";
 
-export type MessageType = "text" | "voice" | "video";
+export type MessageType = "text" | "voice";
 
 interface MessageTypeToggleProps {
   messageType: MessageType;
@@ -33,15 +33,6 @@ const MessageTypeToggle = ({ messageType, onTypeChange }: MessageTypeToggleProps
         >
           <Mic className="h-4 w-4" />
           <span>Voice Message</span>
-        </Button>
-        <Button 
-          variant={messageType === "video" ? "default" : "outline"}
-          size="sm"
-          onClick={() => onTypeChange("video")}
-          className="flex items-center space-x-2"
-        >
-          <Video className="h-4 w-4" />
-          <span>Video Message</span>
         </Button>
       </div>
     </div>

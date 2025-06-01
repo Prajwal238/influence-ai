@@ -4,7 +4,6 @@ import TemplateSelector from "./TemplateSelector";
 import MessageTypeToggle, { MessageType } from "./MessageTypeToggle";
 import TextMessageEditor from "./TextMessageEditor";
 import VoiceMessageEditor from "./VoiceMessageEditor";
-import VideoMessageEditor from "./VideoMessageEditor";
 import LanguageSelector from "./LanguageSelector";
 import { useMessageGeneration } from "./MessageGenerationHandler";
 
@@ -24,8 +23,6 @@ const MessageForm = ({
   const [voiceLanguage, setVoiceLanguage] = useState("english");
   const [messageType, setMessageType] = useState<MessageType>("text");
   const [selectedTargetLanguage, setSelectedTargetLanguage] = useState("english");
-  const [videoScript, setVideoScript] = useState("");
-  const [voiceStyle, setVoiceStyle] = useState("Friendly Female");
 
   const { isGenerating, handleGenerateWithAI } = useMessageGeneration({
     messageType,
@@ -34,7 +31,7 @@ const MessageForm = ({
     selectedTargetLanguage,
     onMessageChange,
     onVoiceMessageChange: setVoiceMessage,
-    onVideoScriptChange: setVideoScript
+    onVideoScriptChange: () => {} // No longer needed but keeping for compatibility
   });
 
   const handleLanguageChange = (language: string) => {
@@ -45,8 +42,6 @@ const MessageForm = ({
     switch (messageType) {
       case "voice":
         return voiceMessage.trim();
-      case "video":
-        return videoScript.trim();
       default:
         return message.trim();
     }
@@ -64,10 +59,6 @@ const MessageForm = ({
     setMessageType,
     selectedTargetLanguage,
     handleLanguageChange,
-    videoScript,
-    setVideoScript,
-    voiceStyle,
-    setVoiceStyle,
     
     // Generation state
     isGenerating,
@@ -105,18 +96,6 @@ const MessageForm = ({
             onVoiceMessageChange={setVoiceMessage}
             voiceLanguage={voiceLanguage}
             onVoiceLanguageChange={setVoiceLanguage}
-            selectedPlatform={selectedPlatform}
-            onGenerateWithAI={handleGenerateWithAI}
-            isGenerating={isGenerating}
-          />
-        )}
-
-        {messageType === "video" && (
-          <VideoMessageEditor
-            videoScript={videoScript}
-            onVideoScriptChange={setVideoScript}
-            voiceStyle={voiceStyle}
-            onVoiceStyleChange={setVoiceStyle}
             selectedPlatform={selectedPlatform}
             onGenerateWithAI={handleGenerateWithAI}
             isGenerating={isGenerating}
