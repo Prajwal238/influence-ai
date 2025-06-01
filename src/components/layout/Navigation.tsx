@@ -18,7 +18,7 @@ const Navigation = () => {
           {/* Logo */}
           <Link to="/dashboard" className="flex items-center">
             <div className="text-2xl font-semibold text-gray-900">
-              Flow<span className="text-blue-600">AI</span>
+              In<span className="text-blue-600">flow</span>encer.ai
             </div>
           </Link>
 

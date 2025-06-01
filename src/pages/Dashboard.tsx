@@ -17,7 +17,7 @@ const Dashboard = () => {
           <div className="flex justify-between items-center mb-6">
             <div>
               <h1 className="text-3xl font-semibold text-gray-900 mb-2">
-                Welcome back to FlowAI
+                Welcome Back to Inflowencer.ai
               </h1>
               <p className="text-gray-600">
                 Manage your influencer campaigns with AI-powered automation
