@@ -47,8 +47,15 @@ export const useNegotiationAPI = () => {
           platform: conv.platform as 'instagram' | 'email' | 'voice'
         }));
 
-        // Determine agent status based on message activity
-        const agentStatus = messages.length > 0 ? 'chatting' : 'polling';
+        // Determine agent status - if no messages or last message is from creator, show polling
+        let agentStatus;
+        if (messages.length === 0) {
+          agentStatus = 'polling';
+        } else {
+          const lastMessage = messages[messages.length - 1];
+          // If last message is from creator, agent should be polling for next action
+          agentStatus = lastMessage.from === 'creator' ? 'polling' : 'chatting';
+        }
         
         return {
           creatorId: conv._id,
