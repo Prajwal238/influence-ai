@@ -7,6 +7,7 @@ import { getInitialGreeting, callCampaignAPI, generateAgentResponse } from '../u
 interface SessionMessage {
   role: 'user' | 'assistant';
   content: string;
+  timestamp?: string;
 }
 
 interface SessionData {
@@ -25,13 +26,25 @@ export const useMessageHandling = (agentType: string, isAnalyticsContext?: boole
     // Load conversation history from localStorage
     const savedMessages = localStorage.getItem(`agent-chat-${agentType}`);
     if (savedMessages) {
-      const parsedMessages = JSON.parse(savedMessages);
-      // Convert timestamp strings back to Date objects
-      const messagesWithDates = parsedMessages.map((msg: any) => ({
-        ...msg,
-        timestamp: new Date(msg.timestamp)
-      }));
-      setMessages(messagesWithDates);
+      try {
+        const parsedMessages = JSON.parse(savedMessages);
+        // Convert timestamp strings back to Date objects with validation
+        const messagesWithDates = parsedMessages.map((msg: any) => ({
+          ...msg,
+          timestamp: msg.timestamp ? new Date(msg.timestamp) : new Date()
+        }));
+        setMessages(messagesWithDates);
+      } catch (error) {
+        console.error('Error parsing saved messages:', error);
+        // If parsing fails, start with greeting
+        const greeting = getInitialGreeting(agentType, isAnalyticsContext);
+        setMessages([{
+          id: '1',
+          type: 'agent',
+          content: greeting,
+          timestamp: new Date()
+        }]);
+      }
     } else {
       // Initial greeting message
       const greeting = getInitialGreeting(agentType, isAnalyticsContext);
@@ -47,20 +60,76 @@ export const useMessageHandling = (agentType: string, isAnalyticsContext?: boole
   useEffect(() => {
     // Save conversation history to localStorage
     if (messages.length > 0) {
-      localStorage.setItem(`agent-chat-${agentType}`, JSON.stringify(messages));
+      try {
+        localStorage.setItem(`agent-chat-${agentType}`, JSON.stringify(messages));
+      } catch (error) {
+        console.error('Error saving messages to localStorage:', error);
+      }
     }
   }, [messages, agentType]);
 
   const loadSessionMessages = (sessionData: SessionData) => {
-    // Convert API messages to our Message format
-    const convertedMessages: Message[] = sessionData.messages.map((msg, index) => ({
-      id: `${sessionData.sessionId}-${index}`,
-      type: msg.role === 'user' ? 'user' : 'agent',
-      content: msg.content,
-      timestamp: new Date() // We don't have timestamps from API, using current time
-    }));
-    
-    setMessages(convertedMessages);
+    try {
+      // Validate sessionData structure
+      if (!sessionData || !sessionData.messages || !Array.isArray(sessionData.messages)) {
+        console.error('Invalid session data structure:', sessionData);
+        toast({
+          title: "Load Error",
+          description: "Invalid session data format. Starting fresh conversation.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Convert API messages to our Message format with proper validation
+      const convertedMessages: Message[] = sessionData.messages
+        .filter((msg) => msg && typeof msg.content === 'string' && msg.content.trim()) // Filter out invalid messages
+        .map((msg, index) => {
+          // Validate message structure
+          if (!msg.role || !msg.content) {
+            console.warn('Skipping invalid message:', msg);
+            return null;
+          }
+
+          return {
+            id: `${sessionData.sessionId}-${index}`,
+            type: msg.role === 'user' ? 'user' : 'agent',
+            content: msg.content.trim(),
+            timestamp: msg.timestamp ? new Date(msg.timestamp) : new Date()
+          };
+        })
+        .filter((msg): msg is Message => msg !== null); // Remove null entries
+
+      // Ensure we have at least one message
+      if (convertedMessages.length === 0) {
+        console.warn('No valid messages found in session data');
+        const greeting = getInitialGreeting(agentType, isAnalyticsContext);
+        setMessages([{
+          id: '1',
+          type: 'agent',
+          content: greeting,
+          timestamp: new Date()
+        }]);
+      } else {
+        setMessages(convertedMessages);
+      }
+    } catch (error) {
+      console.error('Error loading session messages:', error);
+      toast({
+        title: "Load Error",
+        description: "Failed to load session messages. Starting fresh conversation.",
+        variant: "destructive",
+      });
+      
+      // Fallback to greeting message
+      const greeting = getInitialGreeting(agentType, isAnalyticsContext);
+      setMessages([{
+        id: '1',
+        type: 'agent',
+        content: greeting,
+        timestamp: new Date()
+      }]);
+    }
   };
 
   const resetMessagesWithGreeting = () => {
