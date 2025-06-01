@@ -27,12 +27,12 @@ const NegotiationMessagesList = ({ messages }: NegotiationMessagesListProps) => 
           <div className="max-w-[70%]">
             {/* Message Label */}
             <div className={`text-xs uppercase font-sans font-semibold mb-2 ${
-              message.from === 'agent' ? 'text-[#6E6E73]' :
+              message.from === 'agent' ? 'text-[#34C759]' :
               message.from === 'creator' ? 'text-[#0071E3]' : 'text-[#34C759]'
             }`}>
               {message.from === 'agent' ? (
                 <div className="flex items-center space-x-1">
-                  <Bot className="h-3 w-3" />
+                  <User className="h-3 w-3" />
                   <span>You</span>
                 </div>
               ) : message.from === 'creator' ? (
