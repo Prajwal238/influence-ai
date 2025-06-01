@@ -22,21 +22,19 @@ const MessageForm = ({
   const [voiceMessage, setVoiceMessage] = useState("");
   const [voiceLanguage, setVoiceLanguage] = useState("english");
   const [sendAsVoice, setSendAsVoice] = useState(false);
-  const [selectedTargetLanguages, setSelectedTargetLanguages] = useState<string[]>(["english"]);
+  const [selectedTargetLanguage, setSelectedTargetLanguage] = useState("english");
 
   const { isGenerating, handleGenerateWithAI } = useMessageGeneration({
     sendAsVoice,
     selectedPlatform,
+    selectedTemplate,
+    selectedTargetLanguage,
     onMessageChange,
     onVoiceMessageChange: setVoiceMessage
   });
 
-  const handleLanguageToggle = (language: string) => {
-    setSelectedTargetLanguages(prev => 
-      prev.includes(language) 
-        ? prev.filter(l => l !== language)
-        : [...prev, language]
-    );
+  const handleLanguageChange = (language: string) => {
+    setSelectedTargetLanguage(language);
   };
 
   const getContentForValidation = () => {
@@ -53,8 +51,8 @@ const MessageForm = ({
     setVoiceLanguage,
     sendAsVoice,
     setSendAsVoice,
-    selectedTargetLanguages,
-    handleLanguageToggle,
+    selectedTargetLanguage,
+    handleLanguageChange,
     
     // Generation state
     isGenerating,
@@ -99,8 +97,8 @@ const MessageForm = ({
         )}
 
         <LanguageSelector
-          selectedLanguages={selectedTargetLanguages}
-          onLanguageToggle={handleLanguageToggle}
+          selectedLanguage={selectedTargetLanguage}
+          onLanguageChange={handleLanguageChange}
         />
       </>
     )

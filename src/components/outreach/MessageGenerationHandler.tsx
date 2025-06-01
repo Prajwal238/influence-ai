@@ -5,6 +5,8 @@ import { useToast } from "@/hooks/use-toast";
 interface MessageGenerationHandlerProps {
   sendAsVoice: boolean;
   selectedPlatform: string;
+  selectedTemplate: string;
+  selectedTargetLanguage: string;
   onMessageChange: (message: string) => void;
   onVoiceMessageChange: (message: string) => void;
 }
@@ -12,6 +14,8 @@ interface MessageGenerationHandlerProps {
 export const useMessageGeneration = ({
   sendAsVoice,
   selectedPlatform,
+  selectedTemplate,
+  selectedTargetLanguage,
   onMessageChange,
   onVoiceMessageChange
 }: MessageGenerationHandlerProps) => {
@@ -28,10 +32,14 @@ export const useMessageGeneration = ({
       });
 
       const response = await fetch('http://localhost:5000/api/user_123/campaigns/summer_fashion_2024/ai_message', {
-        method: 'GET',
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-        }
+        },
+        body: JSON.stringify({
+          language: selectedTargetLanguage,
+          messageTemplate: selectedTemplate
+        })
       });
 
       if (!response.ok) {
