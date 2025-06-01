@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 
 export type CampaignStage = 'discovery' | 'outreach' | 'negotiation' | 'contracts' | 'payments' | 'reporting';
@@ -12,6 +11,15 @@ interface CampaignProgress {
 }
 
 const STORAGE_KEY = 'campaign_progress';
+
+// Helper function to dispatch campaign update events
+const dispatchCampaignUpdate = (campaignId: string) => {
+  console.log('Dispatching campaign update event for:', campaignId);
+  const event = new CustomEvent('campaignUpdated', {
+    detail: { campaignId }
+  });
+  window.dispatchEvent(event);
+};
 
 export const useCampaignProgress = (campaignId: string) => {
   const [progress, setProgress] = useState<CampaignProgress | null>(null);
@@ -62,8 +70,12 @@ export const useCampaignProgress = (campaignId: string) => {
       allProgress.push(updatedProgress);
     }
     
+    console.log('Saving progress to localStorage:', updatedProgress);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(allProgress));
     setProgress(updatedProgress);
+    
+    // Dispatch update event
+    dispatchCampaignUpdate(campaignId);
   };
 
   // Mark a stage as completed
@@ -97,6 +109,7 @@ export const useCampaignProgress = (campaignId: string) => {
   const markCampaignComplete = () => {
     if (!progress) return;
 
+    console.log('Marking campaign as fully completed:', campaignId);
     const updatedProgress: CampaignProgress = {
       ...progress,
       completedStages: [...allStages], // All stages completed
@@ -163,21 +176,33 @@ export const useCampaignProgress = (campaignId: string) => {
 // Update utility function to handle fully completed campaigns
 export const getCampaignProgressForDashboard = (campaignId: string): { percentage: number; completedStages: number } => {
   const savedProgress = localStorage.getItem(STORAGE_KEY);
-  if (!savedProgress) return { percentage: 0, completedStages: 0 };
+  console.log('Getting campaign progress for dashboard, campaignId:', campaignId);
+  
+  if (!savedProgress) {
+    console.log('No saved progress found');
+    return { percentage: 0, completedStages: 0 };
+  }
   
   const allProgress: CampaignProgress[] = JSON.parse(savedProgress);
   const campaignProgress = allProgress.find(p => p.campaignId === campaignId);
   
-  if (!campaignProgress) return { percentage: 0, completedStages: 0 };
+  console.log('Found campaign progress:', campaignProgress);
+  
+  if (!campaignProgress) {
+    console.log('No progress found for this campaign');
+    return { percentage: 0, completedStages: 0 };
+  }
   
   const allStages = ['discovery', 'outreach', 'negotiation', 'contracts', 'payments', 'reporting'];
   
   // If fully completed, return 100%
   if (campaignProgress.isFullyCompleted) {
+    console.log('Campaign is fully completed, returning 100%');
     return { percentage: 100, completedStages: allStages.length };
   }
   
   const percentage = Math.round((campaignProgress.completedStages.length / allStages.length) * 100);
+  console.log('Calculated percentage:', percentage);
   
   return { percentage, completedStages: campaignProgress.completedStages.length };
 };

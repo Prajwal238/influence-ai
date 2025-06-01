@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -17,7 +16,9 @@ const CampaignCard = ({ campaign }: CampaignCardProps) => {
   // Update progress when component mounts or when localStorage changes
   useEffect(() => {
     const updateProgress = () => {
+      console.log('Updating progress for campaign:', campaign._id);
       const { percentage } = getCampaignProgressForDashboard(campaign._id);
+      console.log('New progress percentage:', percentage);
       setProgress(percentage);
     };
 
@@ -26,17 +27,36 @@ const CampaignCard = ({ campaign }: CampaignCardProps) => {
 
     // Listen for localStorage changes (when user returns from other pages)
     const handleStorageChange = () => {
+      console.log('Storage change detected');
       updateProgress();
     };
 
+    // Listen for custom campaign update events
+    const handleCampaignUpdate = (event: CustomEvent) => {
+      console.log('Campaign update event received:', event.detail);
+      if (event.detail.campaignId === campaign._id) {
+        updateProgress();
+      }
+    };
+
+    // Listen for page visibility changes (when user returns to tab)
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        console.log('Page became visible, updating progress');
+        updateProgress();
+      }
+    };
+
     window.addEventListener('storage', handleStorageChange);
-    
-    // Also listen for focus events (when user returns to tab)
     window.addEventListener('focus', handleStorageChange);
+    window.addEventListener('campaignUpdated', handleCampaignUpdate as EventListener);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('focus', handleStorageChange);
+      window.removeEventListener('campaignUpdated', handleCampaignUpdate as EventListener);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, [campaign._id]);
 
@@ -81,7 +101,6 @@ const CampaignCard = ({ campaign }: CampaignCardProps) => {
 
   const objective = campaign.objective;
 
-  // Get campaign redirect URL based on progress - follows the new routing structure
   const getCampaignRedirectUrl = (campaignId: string): string => {
     const savedProgress = localStorage.getItem('campaign_progress');
     if (!savedProgress) {
