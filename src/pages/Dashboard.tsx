@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -5,7 +6,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import Navigation from "@/components/layout/Navigation";
 import { Plus, Search, Filter, Activity, DollarSign, Eye, Target } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import CampaignsList from "@/components/dashboard/CampaignsList";
 import CampaignAgentModal from "@/components/modals/CampaignAgentModal";
 import MetricsModal from "@/components/dashboard/MetricsModal";
 import { useDashboardMetrics, DashboardMetric } from "@/hooks/useDashboardMetrics";
@@ -143,14 +143,6 @@ const Dashboard = ({ openCampaignAgentModal = false }: DashboardProps) => {
               </CardContent>
             </Card>
           ))}
-        </div>
-
-        {/* Campaigns List */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100">
-            <h2 className="text-xl font-semibold text-gray-900">Recent Campaigns</h2>
-          </div>
-          <CampaignsList searchQuery={searchQuery} />
         </div>
       </main>
 
