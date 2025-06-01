@@ -78,10 +78,19 @@ const Negotiation = () => {
       platform: platform as 'instagram' | 'email' | 'voice'
     };
 
-    addMessageToThread(selectedThread.creatorId, newMessage);
+    // Fix TypeScript error by creating message without 'from' for addMessageToThread
+    const messageForThread = {
+      id: newMessage.id,
+      content: newMessage.content,
+      timestamp: newMessage.timestamp,
+      platform: newMessage.platform,
+      from: newMessage.from === 'user' ? 'agent' : newMessage.from
+    } as any;
+
+    addMessageToThread(selectedThread.creatorId, messageForThread);
 
     // Update selected thread
-    const updatedThread = {
+    const updatedThread: NegotiationThread = {
       ...selectedThread,
       messages: [...selectedThread.messages, newMessage],
       lastActivity: new Date().toISOString()
@@ -92,8 +101,8 @@ const Negotiation = () => {
   const handleControlToggle = () => {
     if (!selectedThread) return;
 
-    const newControlMode = selectedThread.controlMode === 'agent' ? 'user' : 'agent';
-    const updatedThread = {
+    const newControlMode: ControlMode = selectedThread.controlMode === 'agent' ? 'user' : 'agent';
+    const updatedThread: NegotiationThread = {
       ...selectedThread,
       controlMode: newControlMode
     };
@@ -103,7 +112,7 @@ const Negotiation = () => {
   const handleStatusChange = (newStatus: AgentStatus) => {
     if (!selectedThread) return;
 
-    const updatedThread = {
+    const updatedThread: NegotiationThread = {
       ...selectedThread,
       agentStatus: newStatus
     };
@@ -112,13 +121,13 @@ const Negotiation = () => {
 
   return (
     <CampaignLayout>
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-[#FAFAFA]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="mb-6">
-            <h1 className="text-2xl font-semibold text-[#1D1D1F] font-['SF_Pro_Display']">
+          <div className="mb-8">
+            <h1 className="text-3xl font-semibold text-[#1D1D1F] font-sans tracking-tight">
               Negotiation
             </h1>
-            <p className="text-[#6E6E73] font-['SF_Pro_Text'] mt-1">
+            <p className="text-[#6E6E73] font-sans mt-2 text-lg">
               AI-powered negotiations with real-time agent control
             </p>
           </div>
