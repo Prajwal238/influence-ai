@@ -62,7 +62,6 @@ const NegotiationActionBar = ({
   };
 
   const canCall = selectedThread.contact?.phone && selectedThread.agentStatus === 'waitingPhone';
-  const isPolling = selectedThread.agentStatus === 'polling';
 
   return (
     <div className="p-6 border-t border-[#F2F2F7] bg-[#FAFAFA] rounded-b-2xl space-y-4">
@@ -79,17 +78,15 @@ const NegotiationActionBar = ({
             <span>AI Response</span>
           </Button>
 
-          {/* Poll Button (shown when polling status) */}
-          {isPolling && (
-            <Button
-              onClick={handlePoll}
-              className="bg-[#34C759] hover:bg-[#28A745] text-white rounded-xl px-4 py-2 text-sm font-sans font-medium flex items-center space-x-2 shadow-sm"
-              size="sm"
-            >
-              <RefreshCw className="h-3 w-3" />
-              <span>Poll</span>
-            </Button>
-          )}
+          {/* Poll Button (always visible) */}
+          <Button
+            onClick={handlePoll}
+            className="bg-[#34C759] hover:bg-[#28A745] text-white rounded-xl px-4 py-2 text-sm font-sans font-medium flex items-center space-x-2 shadow-sm"
+            size="sm"
+          >
+            <RefreshCw className="h-3 w-3" />
+            <span>Poll</span>
+          </Button>
         </div>
 
         {/* Call Controls */}
