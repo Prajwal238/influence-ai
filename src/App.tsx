@@ -13,7 +13,6 @@ import CampaignPayments from "./pages/campaigns/Payments";
 import CampaignReporting from "./pages/campaigns/Reporting";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
-import CampaignAgentModal from "./components/modals/CampaignAgentModal";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +22,11 @@ const CampaignRedirect = () => {
   return <Navigate to={`/campaigns/${id}/discovery`} replace />;
 };
 
+// Component to handle dashboard with campaign agent modal
+const DashboardWithModal = () => {
+  return <Dashboard openCampaignAgentModal={true} />;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -30,8 +34,11 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          {/* Home route */}
+          {/* Top-level routes */}
           <Route path="/" element={<Dashboard />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard/campaign-agent" element={<DashboardWithModal />} />
+          <Route path="/admin" element={<Admin />} />
           
           {/* Campaign routes */}
           <Route path="/campaigns/:id" element={<CampaignRedirect />} />
@@ -42,17 +49,9 @@ const App = () => (
           <Route path="/campaigns/:id/payments" element={<CampaignPayments />} />
           <Route path="/campaigns/:id/reporting" element={<CampaignReporting />} />
           
-          {/* Admin route */}
-          <Route path="/admin" element={<Admin />} />
-          
-          {/* Redirects for legacy routes */}
-          <Route path="/dashboard" element={<Navigate to="/" replace />} />
-          <Route path="/campaign-agent" element={<Navigate to="/" replace />} />
-          
-          {/* 404 route */}
+          {/* 404 route - must be last */}
           <Route path="*" element={<NotFound />} />
         </Routes>
-        <CampaignAgentModal />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

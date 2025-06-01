@@ -1,19 +1,19 @@
 
-import { useNavigate, useLocation } from "react-router-dom";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import ChatOrchestrator from "@/components/agents/ChatOrchestrator";
 import { useRefreshCampaigns } from "@/hooks/useCampaigns";
 
-const CampaignAgentModal = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
+interface CampaignAgentModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+const CampaignAgentModal = ({ isOpen, onClose }: CampaignAgentModalProps) => {
   const refreshCampaigns = useRefreshCampaigns();
-  
-  const isOpen = location.pathname === '/dashboard/campaign-agent';
 
   const handleClose = () => {
     refreshCampaigns();
-    navigate('/dashboard');
+    onClose();
   };
 
   return (

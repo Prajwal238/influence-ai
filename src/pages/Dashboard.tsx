@@ -1,15 +1,25 @@
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Navigation from "@/components/layout/Navigation";
 import { Plus, Search, Filter } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import CampaignsList from "@/components/dashboard/CampaignsList";
+import CampaignAgentModal from "@/components/modals/CampaignAgentModal";
 
-const Dashboard = () => {
+interface DashboardProps {
+  openCampaignAgentModal?: boolean;
+}
+
+const Dashboard = ({ openCampaignAgentModal = false }: DashboardProps) => {
   const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
+
+  const handleCloseModal = () => {
+    navigate("/dashboard");
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -81,6 +91,14 @@ const Dashboard = () => {
         {/* Campaigns List */}
         <CampaignsList searchQuery={searchQuery} />
       </main>
+
+      {/* Campaign Agent Modal */}
+      {openCampaignAgentModal && (
+        <CampaignAgentModal 
+          isOpen={true} 
+          onClose={handleCloseModal}
+        />
+      )}
     </div>
   );
 };
