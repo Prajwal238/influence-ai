@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { useParams } from "react-router-dom";
 import InfluencerSelector from "./InfluencerSelector";
 import MessageComposer from "./MessageComposer";
 import { InfluencerSelection } from "@/types/outreach";
@@ -31,11 +32,41 @@ const OutreachPageContent = ({
   onRemoveSelection,
   onClearSelectedInfluencers
 }: OutreachPageContentProps) => {
+  const { id: campaignId } = useParams();
   const [message, setMessage] = useState("Hi {name},\n\nI hope this message finds you well! I'm reaching out on behalf of our brand regarding a potential collaboration...");
   const [selectedPlatform, setSelectedPlatform] = useState("instagram");
 
   const { addOutreachEntry } = useOutreachData();
   const { toast } = useToast();
+
+  const sendOutreachMessage = async (influencerName: string, platform: string, messageContent: string) => {
+    try {
+      const response = await fetch(
+        buildApiUrl(`/api/campaigns/${campaignId}/platform/${platform}/updateConversation/${encodeURIComponent(influencerName)}`),
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            role: 'negotiator',
+            message: messageContent
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        console.error(`Failed to send message to ${influencerName}:`, response.statusText);
+        return false;
+      } else {
+        console.log(`Message sent successfully to ${influencerName} on ${platform}`);
+        return true;
+      }
+    } catch (error) {
+      console.error(`Error sending message to ${influencerName}:`, error);
+      return false;
+    }
+  };
 
   const logOutreachAttempt = async (influencerId: number, platform: string, messageType: string) => {
     try {
@@ -45,7 +76,7 @@ const OutreachPageContent = ({
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          host: 'outreach.platform.com', // This would be modified based on platform
+          host: `${platform}.platform.com`,
           platform: platform,
           influencerId: influencerId,
           messageType: messageType,
@@ -67,30 +98,42 @@ const OutreachPageContent = ({
     console.log("Sending message as text:", message);
     console.log("Selected influencers:", selectedInfluencers);
     
-    // Log API calls and add outreach entries for selected influencers
+    let successCount = 0;
+    
+    // Send messages and log API calls for selected influencers
     for (const selection of selectedInfluencers) {
       const influencer = transformedInfluencers.find(inf => inf.id === selection.influencerId);
       if (influencer) {
-        // Log the outreach attempt via API
-        await logOutreachAttempt(selection.influencerId, selection.platform, 'text');
+        // Personalize message by replacing {name} placeholder
+        const personalizedMessage = message.replace(/{name}/g, influencer.name);
         
-        // Add to local outreach log
-        addOutreachEntry({
-          influencer: influencer.name,
-          handle: influencer.handle,
-          status: "sent",
-          sentAt: "Just now",
-          template: "Custom Message",
-          platform: selection.platform as any,
-          influencerId: influencer.id
-        });
+        // Send the outreach message via API
+        const success = await sendOutreachMessage(influencer.name, selection.platform, personalizedMessage);
+        
+        if (success) {
+          successCount++;
+          
+          // Log the outreach attempt via API
+          await logOutreachAttempt(selection.influencerId, selection.platform, 'text');
+          
+          // Add to local outreach log
+          addOutreachEntry({
+            influencer: influencer.name,
+            handle: influencer.handle,
+            status: "sent",
+            sentAt: "Just now",
+            template: "Custom Message",
+            platform: selection.platform as any,
+            influencerId: influencer.id
+          });
+        }
       }
     }
 
     // Show success toast
     toast({
       title: "Messages Sent!",
-      description: `Successfully sent ${selectedInfluencers.length} text message${selectedInfluencers.length > 1 ? 's' : ''}.`,
+      description: `Successfully sent ${successCount} out of ${selectedInfluencers.length} text message${selectedInfluencers.length > 1 ? 's' : ''}.`,
     });
 
     // Clear selected influencers after sending
@@ -101,30 +144,42 @@ const OutreachPageContent = ({
     console.log("Sending message as voice:", message);
     console.log("Selected influencers:", selectedInfluencers);
     
-    // Log API calls and add outreach entries for selected influencers
+    let successCount = 0;
+    
+    // Send messages and log API calls for selected influencers
     for (const selection of selectedInfluencers) {
       const influencer = transformedInfluencers.find(inf => inf.id === selection.influencerId);
       if (influencer) {
-        // Log the outreach attempt via API
-        await logOutreachAttempt(selection.influencerId, selection.platform, 'voice');
+        // Personalize message by replacing {name} placeholder
+        const personalizedMessage = message.replace(/{name}/g, influencer.name);
         
-        // Add to local outreach log
-        addOutreachEntry({
-          influencer: influencer.name,
-          handle: influencer.handle,
-          status: "sent",
-          sentAt: "Just now",
-          template: "Voice Message",
-          platform: selection.platform as any,
-          influencerId: influencer.id
-        });
+        // Send the outreach message via API
+        const success = await sendOutreachMessage(influencer.name, selection.platform, personalizedMessage);
+        
+        if (success) {
+          successCount++;
+          
+          // Log the outreach attempt via API
+          await logOutreachAttempt(selection.influencerId, selection.platform, 'voice');
+          
+          // Add to local outreach log
+          addOutreachEntry({
+            influencer: influencer.name,
+            handle: influencer.handle,
+            status: "sent",
+            sentAt: "Just now",
+            template: "Voice Message",
+            platform: selection.platform as any,
+            influencerId: influencer.id
+          });
+        }
       }
     }
 
     // Show success toast
     toast({
       title: "Voice Messages Sent!",
-      description: `Successfully sent ${selectedInfluencers.length} voice message${selectedInfluencers.length > 1 ? 's' : ''}.`,
+      description: `Successfully sent ${successCount} out of ${selectedInfluencers.length} voice message${selectedInfluencers.length > 1 ? 's' : ''}.`,
     });
 
     // Clear selected influencers after sending
