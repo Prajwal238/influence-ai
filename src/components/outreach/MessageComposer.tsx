@@ -1,111 +1,38 @@
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Users } from "lucide-react";
-import BulkMessagingProgress from "./BulkMessagingProgress";
-import SendButton from "./SendButton";
-import AIPersonalizationInfo from "./AIPersonalizationInfo";
+import { useState } from "react";
+import { useParams } from "react-router-dom";
+import { Card } from "@/components/ui/card";
 import MessageForm from "./MessageForm";
-import { useBulkMessaging } from "@/hooks/useBulkMessaging";
 
 interface MessageComposerProps {
-  message: string;
   onMessageChange: (message: string) => void;
-  selectedLanguage: string;
-  onLanguageChange: (language: string) => void;
+  message: string;
   selectedPlatform: string;
-  onPlatformChange: (platform: string) => void;
-  selectedInfluencersCount: number;
-  onSendAsText: () => void;
-  onSendAsVoice: () => void;
-  onSendAsVideo?: () => void;
 }
 
-const MessageComposer = ({
-  message,
-  onMessageChange,
-  selectedLanguage,
-  onLanguageChange,
-  selectedPlatform,
-  onPlatformChange,
-  selectedInfluencersCount,
-  onSendAsText,
-  onSendAsVoice,
-  onSendAsVideo
-}: MessageComposerProps) => {
-  const messageForm = MessageForm({
-    message,
-    onMessageChange,
-    selectedPlatform
-  });
-  
-  const bulkMessaging = useBulkMessaging({
-    selectedInfluencersCount,
-    sendAsVoice: messageForm.messageType === "voice",
-    onSendAsText,
-    onSendAsVoice
-  });
-
-  // Mock platform breakdown for demonstration
-  const platformBreakdown = {
-    instagram: { sent: 2, total: 3 },
-    email: { sent: 1, total: 2 },
-    whatsapp: { sent: 0, total: 1 }
-  };
-
-  const handleSend = async () => {
-    const contentToValidate = messageForm.getContentForValidation();
-    await bulkMessaging.handleSend(contentToValidate);
-  };
-
-  const isFormValid = messageForm.getContentForValidation() && selectedInfluencersCount > 0;
-
-  const getSendButtonText = () => {
-    return selectedInfluencersCount > 1 
-      ? `Send to ${selectedInfluencersCount} Influencers` 
-      : 'Send Outreach Message';
-  };
+const MessageComposer = ({ onMessageChange, message, selectedPlatform }: MessageComposerProps) => {
+  const { id: campaignId } = useParams<{ id: string }>();
 
   return (
-    <div className="space-y-6">
-      <Card className="shadow-sm">
-        <CardHeader className="pb-4">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-lg font-semibold">Message Composition</CardTitle>
-            {selectedInfluencersCount > 1 && (
-              <Badge className="bg-purple-100 text-purple-800 flex items-center space-x-1">
-                <Users className="h-3 w-3" />
-                <span>Bulk Mode</span>
-              </Badge>
-            )}
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {messageForm.renderForm()}
+    <Card className="bg-white shadow-apple rounded-2xl border-0 p-6">
+      <div className="space-y-6">
+        <div>
+          <h3 className="text-lg font-semibold text-[#1D1D1F] font-sans tracking-tight mb-2">
+            Message Composer
+          </h3>
+          <p className="text-[#6E6E73] font-sans text-sm">
+            Create and customize your outreach messages
+          </p>
+        </div>
 
-          <AIPersonalizationInfo
-            selectedInfluencersCount={selectedInfluencersCount}
-            sendAsVoice={messageForm.messageType === "voice"}
-          />
-        </CardContent>
-      </Card>
-
-      <SendButton
-        selectedInfluencersCount={selectedInfluencersCount}
-        isFormValid={isFormValid}
-        isSending={bulkMessaging.isSending}
-        onSend={handleSend}
-        customText={getSendButtonText()}
-      />
-
-      <BulkMessagingProgress
-        isActive={bulkMessaging.isBulkSending}
-        progress={bulkMessaging.bulkProgress}
-        completed={Math.floor(bulkMessaging.bulkProgress / 100 * selectedInfluencersCount)}
-        total={selectedInfluencersCount}
-        platformBreakdown={platformBreakdown}
-      />
-    </div>
+        <MessageForm
+          message={message}
+          onMessageChange={onMessageChange}
+          selectedPlatform={selectedPlatform}
+          campaignId={campaignId}
+        />
+      </div>
+    </Card>
   );
 };
 
