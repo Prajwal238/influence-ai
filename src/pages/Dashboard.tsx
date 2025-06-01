@@ -17,7 +17,7 @@ const Dashboard = ({ openCampaignAgentModal = false }: DashboardProps) => {
   const location = useLocation();
   const [isCampaignAgentOpen, setIsCampaignAgentOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const { metrics, isLoading } = useDashboardMetrics();
+  const { data: metrics, isLoading } = useDashboardMetrics();
 
   // Handle opening campaign agent modal from URL or prop
   useEffect(() => {
@@ -54,12 +54,6 @@ const Dashboard = ({ openCampaignAgentModal = false }: DashboardProps) => {
     );
   }
 
-  // Extract specific metrics for the cards
-  const campaignsMetric = metrics?.find(m => m.id === 'campaigns');
-  const budgetMetric = metrics?.find(m => m.id === 'budget');
-  const revenueMetric = metrics?.find(m => m.id === 'revenue');
-  const reachMetric = metrics?.find(m => m.id === 'reach');
-
   return (
     <div className="min-h-screen bg-[#FAFAFA]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -90,7 +84,7 @@ const Dashboard = ({ openCampaignAgentModal = false }: DashboardProps) => {
               <BarChart3 className="h-4 w-4 text-[#6E6E73]" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-[#1D1D1F]">{campaignsMetric?.value || 0}</div>
+              <div className="text-2xl font-bold text-[#1D1D1F]">{metrics?.totalCampaigns || 0}</div>
               <p className="text-xs text-[#34C759] font-medium">
                 +2 from last month
               </p>
@@ -103,7 +97,7 @@ const Dashboard = ({ openCampaignAgentModal = false }: DashboardProps) => {
               <Users className="h-4 w-4 text-[#6E6E73]" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-[#1D1D1F]">24</div>
+              <div className="text-2xl font-bold text-[#1D1D1F]">{metrics?.activeInfluencers || 0}</div>
               <p className="text-xs text-[#34C759] font-medium">
                 +12 this week
               </p>
@@ -112,11 +106,11 @@ const Dashboard = ({ openCampaignAgentModal = false }: DashboardProps) => {
 
           <Card className="bg-white shadow-apple border-0 rounded-2xl">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-[#6E6E73]">Total Budget</CardTitle>
+              <CardTitle className="text-sm font-medium text-[#6E6E73]">Total Spend</CardTitle>
               <DollarSign className="h-4 w-4 text-[#6E6E73]" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-[#1D1D1F]">{budgetMetric?.value || "₹0"}</div>
+              <div className="text-2xl font-bold text-[#1D1D1F]">${metrics?.totalSpend?.toLocaleString() || 0}</div>
               <p className="text-xs text-[#34C759] font-medium">
                 +8% from last month
               </p>
@@ -125,11 +119,11 @@ const Dashboard = ({ openCampaignAgentModal = false }: DashboardProps) => {
 
           <Card className="bg-white shadow-apple border-0 rounded-2xl">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-[#6E6E73]">Total Reach</CardTitle>
+              <CardTitle className="text-sm font-medium text-[#6E6E73]">Avg. Engagement</CardTitle>
               <TrendingUp className="h-4 w-4 text-[#6E6E73]" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-[#1D1D1F]">{reachMetric?.value || "0"}</div>
+              <div className="text-2xl font-bold text-[#1D1D1F]">{metrics?.avgEngagement || 0}%</div>
               <p className="text-xs text-[#34C759] font-medium">
                 +0.5% from last week
               </p>
