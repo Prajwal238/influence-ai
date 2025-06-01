@@ -6,12 +6,13 @@ import { Button } from "@/components/ui/button";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
 import { TrendingUp, Eye, Heart, MessageCircle, Share, DollarSign, CheckCircle } from "lucide-react";
 import { useCampaignProgress } from "@/hooks/useCampaignProgress";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 
 const Reporting = () => {
   const { id } = useParams();
   const campaignId = id || '';
+  const navigate = useNavigate();
   const { progress, markCampaignComplete } = useCampaignProgress(campaignId);
   const { toast } = useToast();
 
@@ -53,6 +54,11 @@ const Reporting = () => {
       title: "Campaign Completed!",
       description: "Your campaign has been marked as 100% complete.",
     });
+    
+    // Redirect to dashboard after a short delay
+    setTimeout(() => {
+      navigate('/dashboard');
+    }, 1500);
   };
 
   const isCampaignComplete = progress?.isFullyCompleted || false;
