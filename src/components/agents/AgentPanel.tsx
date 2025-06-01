@@ -3,7 +3,7 @@ import FloatingChatButton from "./FloatingChatButton";
 
 interface AgentPanelProps {
   agentName: string;
-  agentType: 'discovery' | 'outreach' | 'negotiation';
+  agentType: 'campaign' | 'discovery' | 'outreach' | 'negotiation';
 }
 
 const AgentPanel = ({ agentName, agentType }: AgentPanelProps) => {

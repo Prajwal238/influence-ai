@@ -7,7 +7,7 @@ import { BrainCircuit } from "lucide-react";
 
 interface FloatingChatButtonProps {
   agentName: string;
-  agentType: 'discovery' | 'outreach' | 'negotiation';
+  agentType: 'campaign' | 'discovery' | 'outreach' | 'negotiation';
 }
 
 const FloatingChatButton = ({ agentName, agentType }: FloatingChatButtonProps) => {
