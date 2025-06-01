@@ -48,18 +48,26 @@ const PipelineBar = ({ stages, currentStage, stageStatus }: PipelineBarProps) =>
 
   const activeStage = currentStage || getCurrentStageFromUrl();
 
-  // Mark current stage as completed when user visits it
+  // Only mark stages as completed when moving forward, not when navigating back
   useEffect(() => {
-    if (campaignId && activeStage) {
+    if (campaignId && activeStage && progress) {
       const currentStageIndex = defaultStages.findIndex(s => s.key === activeStage);
+      const lastCompletedStageIndex = progress.completedStages.length > 0 
+        ? Math.max(...progress.completedStages.map(stage => defaultStages.findIndex(s => s.key === stage)))
+        : -1;
+
+      console.log('Current stage index:', currentStageIndex, 'Last completed:', lastCompletedStageIndex);
       
-      // Complete all previous stages and the current stage when visiting it
-      for (let i = 0; i <= currentStageIndex; i++) {
-        const stageToComplete = defaultStages[i].key as CampaignStage;
-        completeStage(stageToComplete);
+      // Only complete stages if we're moving forward or if no progress exists yet
+      if (currentStageIndex > lastCompletedStageIndex) {
+        console.log('Moving forward - completing stages up to:', currentStageIndex);
+        for (let i = 0; i <= currentStageIndex; i++) {
+          const stageToComplete = defaultStages[i].key as CampaignStage;
+          completeStage(stageToComplete);
+        }
       }
     }
-  }, [activeStage, campaignId, completeStage]);
+  }, [activeStage, campaignId, completeStage, progress?.completedStages?.length]);
 
   // Get stage status based on progress
   const getStageStatus = (stageKey: StageKey): 'pending' | 'active' | 'complete' => {
@@ -72,17 +80,14 @@ const PipelineBar = ({ stages, currentStage, stageStatus }: PipelineBarProps) =>
       return 'complete';
     }
     
+    // Check if this is the currently active stage
+    const isCurrentlyActive = location.pathname.includes(`/${stageKey}`);
+    if (isCurrentlyActive) return 'active';
+    
     // Check if this stage is completed based on progress
     if (progress && progress.completedStages.includes(stageKey as CampaignStage)) {
-      const isCurrentlyActive = location.pathname.includes(`/${stageKey}`);
-      // If it's completed and currently active, show as active
-      // If it's completed but not currently active, show as complete
-      return isCurrentlyActive ? 'active' : 'complete';
+      return 'complete';
     }
-    
-    // Check if this is the currently active stage (and not yet completed)
-    const isActive = location.pathname.includes(`/${stageKey}`);
-    if (isActive) return 'active';
     
     return 'pending';
   };
@@ -152,6 +157,31 @@ const PipelineBar = ({ stages, currentStage, stageStatus }: PipelineBarProps) =>
       </div>
     </div>
   );
+};
+
+const getStageStyles = (stageKey: StageKey) => {
+  const status = getStageStatus(stageKey);
+  
+  switch (status) {
+    case 'complete':
+      return {
+        container: "bg-green-100 text-green-600 border border-green-200",
+        icon: "text-green-600",
+        label: "text-green-600"
+      };
+    case 'active':
+      return {
+        container: "bg-blue-600 text-white",
+        icon: "text-white",
+        label: "text-white"
+      };
+    default:
+      return {
+        container: "text-gray-400 hover:bg-gray-100 border border-transparent",
+        icon: "text-gray-400",
+        label: "text-gray-400"
+      };
+  }
 };
 
 export default PipelineBar;
