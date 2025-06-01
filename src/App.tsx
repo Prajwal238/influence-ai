@@ -22,11 +22,6 @@ const CampaignRedirect = () => {
   return <Navigate to={`/campaigns/${id}/discovery`} replace />;
 };
 
-// Component to handle dashboard with campaign agent modal
-const DashboardWithModal = () => {
-  return <Dashboard openCampaignAgentModal={true} />;
-};
-
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -37,7 +32,7 @@ const App = () => (
           {/* Top-level routes */}
           <Route path="/" element={<Dashboard />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/dashboard/campaign-agent" element={<DashboardWithModal />} />
+          <Route path="/dashboard/campaign-agent" element={<Dashboard openCampaignAgentModal={true} />} />
           <Route path="/admin" element={<Admin />} />
           
           {/* Campaign routes */}
