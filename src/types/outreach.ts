@@ -24,9 +24,12 @@ export interface OutreachEntry {
   influencerId: number;
 }
 
+export type AgentStatus = 'polling' | 'chatting' | 'waitingPhone' | 'calling' | 'complete';
+export type ControlMode = 'agent' | 'user';
+
 export interface NegotiationMessage {
   id: string;
-  from: 'agent' | 'creator';
+  from: 'agent' | 'creator' | 'user';
   content: string;
   timestamp: string;
   platform: 'instagram' | 'email' | 'voice';
@@ -41,4 +44,11 @@ export interface NegotiationThread {
   avatar?: string;
   influencerId: number;
   status: 'sent' | 'pending' | 'replied' | 'declined';
+  agentStatus: AgentStatus;
+  controlMode: ControlMode;
+  contact?: {
+    email?: string;
+    phone?: string;
+  };
+  lastActivity: string;
 }

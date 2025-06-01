@@ -5,33 +5,7 @@ import NegotiationThreadsList from "@/components/negotiation/NegotiationThreadsL
 import NegotiationChatPanel from "@/components/negotiation/NegotiationChatPanel";
 import NegotiationSidePanel from "@/components/negotiation/NegotiationSidePanel";
 import { useOutreachData } from "@/hooks/useOutreachData";
-
-export type AgentStatus = 'polling' | 'chatting' | 'waitingPhone' | 'calling' | 'complete';
-export type ControlMode = 'agent' | 'user';
-
-export interface NegotiationMessage {
-  id: string;
-  from: 'agent' | 'creator' | 'user';
-  content: string;
-  timestamp: string;
-  platform: 'instagram' | 'email' | 'voice';
-}
-
-export interface NegotiationThread {
-  creatorId: string;
-  name: string;
-  handle: string;
-  platform: 'instagram' | 'email' | 'voice';
-  messages: NegotiationMessage[];
-  avatar?: string;
-  agentStatus: AgentStatus;
-  controlMode: ControlMode;
-  contact?: {
-    email?: string;
-    phone?: string;
-  };
-  lastActivity: string;
-}
+import { NegotiationThread, NegotiationMessage, AgentStatus, ControlMode } from "@/types/outreach";
 
 const Negotiation = () => {
   const [selectedThread, setSelectedThread] = useState<NegotiationThread | undefined>();
@@ -48,6 +22,8 @@ const Negotiation = () => {
       from: msg.from as 'agent' | 'creator' | 'user'
     })),
     avatar: thread.avatar,
+    influencerId: thread.influencerId,
+    status: thread.status,
     agentStatus: thread.messages.length > 2 ? 'chatting' : 'polling' as AgentStatus,
     controlMode: 'agent' as ControlMode,
     contact: {
@@ -78,14 +54,13 @@ const Negotiation = () => {
       platform: platform as 'instagram' | 'email' | 'voice'
     };
 
-    // Fix TypeScript error by creating message without 'from' for addMessageToThread
+    // Create message for addMessageToThread (without id)
     const messageForThread = {
-      id: newMessage.id,
       content: newMessage.content,
       timestamp: newMessage.timestamp,
       platform: newMessage.platform,
-      from: newMessage.from === 'user' ? 'agent' : newMessage.from
-    } as any;
+      from: newMessage.from
+    };
 
     addMessageToThread(selectedThread.creatorId, messageForThread);
 

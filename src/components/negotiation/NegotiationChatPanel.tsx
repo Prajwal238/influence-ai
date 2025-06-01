@@ -1,11 +1,10 @@
-
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Instagram, Mail, Mic, Send, Phone, PhoneOff, Bot, User, Users } from "lucide-react";
-import { NegotiationThread, AgentStatus } from "@/pages/campaigns/Negotiation";
+import { NegotiationThread, AgentStatus } from "@/types/outreach";
 
 interface NegotiationChatPanelProps {
   selectedThread?: NegotiationThread;

@@ -1,9 +1,8 @@
-
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Instagram, Mail, Mic } from "lucide-react";
-import { NegotiationThread, AgentStatus } from "@/pages/campaigns/Negotiation";
+import { NegotiationThread, AgentStatus } from "@/types/outreach";
 
 interface NegotiationThreadsListProps {
   threads: NegotiationThread[];
