@@ -43,7 +43,26 @@ export const callCampaignAPI = async (prompt: string, sessionId: string) => {
 };
 
 export const generateAgentResponse = (userInput: string, type: string) => {
-  // Simple response generation based on agent type and user input
+  // Check if this is being used in a reporting/analytics context
+  const isAnalyticsContext = userInput.toLowerCase().includes('performance') || 
+                            userInput.toLowerCase().includes('analytics') || 
+                            userInput.toLowerCase().includes('roi') || 
+                            userInput.toLowerCase().includes('engagement') ||
+                            userInput.toLowerCase().includes('impressions') ||
+                            userInput.toLowerCase().includes('reach');
+
+  if (type === 'campaign' && isAnalyticsContext) {
+    const analyticsResponses = [
+      "Based on your campaign data, I can see that your engagement rate is 18% above industry benchmarks. Your Instagram Stories are performing particularly well with a 4.2% engagement rate.",
+      "Looking at the performance metrics, Sarah Johnson is your top performer with 560% ROI. Her content generates the highest engagement rates across all platforms.",
+      "Your campaign reached 2.4M people with 186K engagements. The peak engagement time is between 7-9 PM EST. Would you like me to analyze specific platform performance?",
+      "The ROI analysis shows impressive results - you've generated $7,200 revenue from a $1,900 investment, achieving a 279% ROI. TikTok is driving the highest engagement numbers.",
+      "Your impressions have grown steadily from 45K to 92K over the campaign period. The reach-to-impression ratio suggests good content quality and audience targeting."
+    ];
+    return analyticsResponses[Math.floor(Math.random() * analyticsResponses.length)];
+  }
+
+  // Default responses for other contexts
   const responses = {
     campaign: [
       "I can help you create that campaign! Let me gather some details. What's your target audience?",
