@@ -4,34 +4,81 @@ import CampaignLayout from "@/components/layout/CampaignLayout";
 import NegotiationThreadsList from "@/components/negotiation/NegotiationThreadsList";
 import NegotiationChatPanel from "@/components/negotiation/NegotiationChatPanel";
 import NegotiationSidePanel from "@/components/negotiation/NegotiationSidePanel";
-import { useOutreachData } from "@/hooks/useOutreachData";
+import { useInfluencerData } from "@/hooks/useInfluencerData";
 import { NegotiationThread, NegotiationMessage, AgentStatus, ControlMode } from "@/types/outreach";
 
 const Negotiation = () => {
   const [selectedThread, setSelectedThread] = useState<NegotiationThread | undefined>();
-  const { threads, addMessageToThread } = useOutreachData();
+  const { influencers } = useInfluencerData();
 
-  // Convert threads to negotiation format with mock agent data
-  const negotiationThreads: NegotiationThread[] = threads.map(thread => ({
-    creatorId: thread.creatorId,
-    name: thread.name,
-    handle: thread.handle,
-    platform: thread.platform,
-    messages: thread.messages.map(msg => ({
-      ...msg,
-      from: msg.from as 'agent' | 'creator' | 'user'
-    })),
-    avatar: thread.avatar,
-    influencerId: thread.influencerId,
-    status: thread.status,
-    agentStatus: thread.messages.length > 2 ? 'chatting' : 'polling' as AgentStatus,
-    controlMode: 'agent' as ControlMode,
-    contact: {
-      email: `${thread.handle.replace('@', '')}@email.com`,
-      phone: Math.random() > 0.5 ? '+1 (555) 123-4567' : undefined
-    },
-    lastActivity: new Date().toISOString()
-  }));
+  // Create mock negotiation threads from available influencers
+  const createMockThreads = (): NegotiationThread[] => {
+    const selectedInfluencers = influencers.slice(0, 5); // Use first 5 influencers
+    
+    return selectedInfluencers.map((influencer, index) => {
+      const platforms = ['instagram', 'email', 'voice'] as const;
+      const agentStatuses: AgentStatus[] = ['polling', 'chatting', 'waitingPhone', 'calling', 'complete'];
+      const platform = platforms[index % platforms.length];
+      const agentStatus = agentStatuses[index % agentStatuses.length];
+      
+      const baseMessages: NegotiationMessage[] = [
+        {
+          id: `${influencer.id}_1`,
+          from: "agent",
+          content: `Hi ${influencer.name}! We'd love to collaborate with you on our upcoming campaign. Your ${influencer.niches[0]?.toLowerCase() || 'content'} work is exactly what we're looking for. Would you be interested in discussing rates?`,
+          timestamp: new Date(Date.now() - (index + 1) * 2 * 60 * 60 * 1000).toISOString(),
+          platform: platform
+        },
+        {
+          id: `${influencer.id}_2`,
+          from: "creator",
+          content: "Hi! Yes, I'm definitely interested. What did you have in mind for the collaboration?",
+          timestamp: new Date(Date.now() - (index + 1) * 90 * 60 * 1000).toISOString(),
+          platform: platform
+        }
+      ];
+
+      // Add more messages for active threads
+      if (agentStatus === 'chatting') {
+        baseMessages.push(
+          {
+            id: `${influencer.id}_3`,
+            from: "agent",
+            content: `We're looking at $${500 + index * 100} for 3 posts and 5 stories. Would that work for you?`,
+            timestamp: new Date(Date.now() - (index + 1) * 60 * 60 * 1000).toISOString(),
+            platform: platform
+          },
+          {
+            id: `${influencer.id}_4`,
+            from: "creator",
+            content: "That sounds fair! Can we discuss the content requirements in more detail?",
+            timestamp: new Date(Date.now() - (index + 1) * 45 * 60 * 1000).toISOString(),
+            platform: platform
+          }
+        );
+      }
+
+      return {
+        creatorId: influencer.id.toString(),
+        name: influencer.name,
+        handle: `@${influencer.name.toLowerCase().replace(/\s+/g, '')}`,
+        platform: platform,
+        avatar: influencer.image,
+        influencerId: influencer.id,
+        status: 'replied' as const,
+        agentStatus: agentStatus,
+        controlMode: 'agent' as ControlMode,
+        contact: {
+          email: `${influencer.name.toLowerCase().replace(/\s+/g, '.')}@email.com`,
+          phone: Math.random() > 0.3 ? `+1 (555) ${Math.floor(Math.random() * 900) + 100}-${Math.floor(Math.random() * 9000) + 1000}` : undefined
+        },
+        lastActivity: new Date(Date.now() - index * 30 * 60 * 1000).toISOString(),
+        messages: baseMessages
+      };
+    });
+  };
+
+  const negotiationThreads = createMockThreads();
 
   // Auto-select first non-complete thread
   if (!selectedThread && negotiationThreads.length > 0) {
@@ -53,16 +100,6 @@ const Negotiation = () => {
       timestamp: new Date().toISOString(),
       platform: platform as 'instagram' | 'email' | 'voice'
     };
-
-    // Create message for addMessageToThread (without id)
-    const messageForThread = {
-      content: newMessage.content,
-      timestamp: newMessage.timestamp,
-      platform: newMessage.platform,
-      from: newMessage.from
-    };
-
-    addMessageToThread(selectedThread.creatorId, messageForThread);
 
     // Update selected thread
     const updatedThread: NegotiationThread = {
