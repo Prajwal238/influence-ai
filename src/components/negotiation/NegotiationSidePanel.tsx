@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Copy, Phone, Mail, Clock, Activity, HelpCircle } from "lucide-react";
-import { NegotiationThread } from "@/pages/campaigns/Negotiation";
+import { NegotiationThread } from "@/types/outreach";
 import { useToast } from "@/hooks/use-toast";
 
 interface NegotiationSidePanelProps {

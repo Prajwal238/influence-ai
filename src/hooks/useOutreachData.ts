@@ -27,6 +27,9 @@ export const useOutreachData = () => {
             avatar: "/api/placeholder/40/40",
             influencerId: entry.influencerId,
             status: entry.status,
+            agentStatus: 'polling',
+            controlMode: 'agent',
+            lastActivity: new Date().toISOString(),
             messages: [
               {
                 id: `${entry.influencerId}_initial`,
@@ -70,7 +73,7 @@ export const useOutreachData = () => {
     setThreads(prev =>
       prev.map(thread =>
         thread.creatorId === threadId
-          ? { ...thread, messages: [...thread.messages, newMessage] }
+          ? { ...thread, messages: [...thread.messages, newMessage], lastActivity: new Date().toISOString() }
           : thread
       )
     );
