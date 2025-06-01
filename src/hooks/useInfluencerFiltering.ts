@@ -40,8 +40,9 @@ export const useInfluencerFiltering = ({
       activeFilters
     });
 
-    // Choose the base set of influencers based on the toggle
-    const baseInfluencers = showCampaignInfluencers ? campaignInfluencers : influencers;
+    // The influencers parameter is already the correct base set (either all or campaign)
+    // So we just need to apply search and filter logic to this base set
+    const baseInfluencers = influencers;
     
     console.log('Using base influencers:', baseInfluencers.length);
 
@@ -109,7 +110,7 @@ export const useInfluencerFiltering = ({
   }, [influencers, campaignInfluencers, searchQuery, showCampaignInfluencers, activeFilters]);
 
   console.log('Filtered results:', {
-    baseCount: showCampaignInfluencers ? campaignInfluencers.length : influencers.length,
+    baseCount: influencers.length,
     filteredCount: filteredInfluencers.length,
     showCampaignInfluencers,
     searchQuery: searchQuery || 'none'
