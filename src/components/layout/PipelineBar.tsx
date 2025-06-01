@@ -48,17 +48,18 @@ const PipelineBar = ({ stages, currentStage, stageStatus }: PipelineBarProps) =>
 
   const activeStage = currentStage || getCurrentStageFromUrl();
 
-  // Mark current stage as completed when user visits it
+  // Mark current stage as completed when user visits it (except for the first stage)
   useEffect(() => {
     if (campaignId && activeStage) {
       const currentStageIndex = defaultStages.findIndex(s => s.key === activeStage);
-      if (currentStageIndex > 0) {
-        // Complete the previous stage when moving to next stage
-        const previousStage = defaultStages[currentStageIndex - 1].key as CampaignStage;
+      
+      // Complete all previous stages when visiting a stage
+      for (let i = 0; i < currentStageIndex; i++) {
+        const previousStage = defaultStages[i].key as CampaignStage;
         completeStage(previousStage);
       }
     }
-  }, [activeStage, campaignId]);
+  }, [activeStage, campaignId, completeStage]);
 
   // Get stage status based on progress
   const getStageStatus = (stageKey: StageKey): 'pending' | 'active' | 'complete' => {
@@ -66,13 +67,24 @@ const PipelineBar = ({ stages, currentStage, stageStatus }: PipelineBarProps) =>
       return stageStatus[stageKey];
     }
     
-    if (!progress) return 'pending';
-    
+    // Check if this is the currently active stage
     const isActive = location.pathname.includes(`/${stageKey}`);
     if (isActive) return 'active';
     
-    const isCompleted = progress.completedStages.includes(stageKey as CampaignStage);
-    return isCompleted ? 'complete' : 'pending';
+    // Check if this stage is completed based on progress
+    if (progress && progress.completedStages.includes(stageKey as CampaignStage)) {
+      return 'complete';
+    }
+    
+    // For stages that come before the current active stage, mark as complete
+    const currentStageIndex = defaultStages.findIndex(s => s.key === activeStage);
+    const thisStageIndex = defaultStages.findIndex(s => s.key === stageKey);
+    
+    if (thisStageIndex < currentStageIndex) {
+      return 'complete';
+    }
+    
+    return 'pending';
   };
 
   const getStageStyles = (stageKey: StageKey) => {
@@ -81,9 +93,9 @@ const PipelineBar = ({ stages, currentStage, stageStatus }: PipelineBarProps) =>
     switch (status) {
       case 'complete':
         return {
-          container: "bg-green-100 text-green-500",
-          icon: "text-green-500",
-          label: "text-green-500"
+          container: "bg-green-100 text-green-600 border border-green-200",
+          icon: "text-green-600",
+          label: "text-green-600"
         };
       case 'active':
         return {
@@ -93,7 +105,7 @@ const PipelineBar = ({ stages, currentStage, stageStatus }: PipelineBarProps) =>
         };
       default:
         return {
-          container: "text-gray-400 hover:bg-gray-200",
+          container: "text-gray-400 hover:bg-gray-100 border border-transparent",
           icon: "text-gray-400",
           label: "text-gray-400"
         };
@@ -114,22 +126,23 @@ const PipelineBar = ({ stages, currentStage, stageStatus }: PipelineBarProps) =>
               <div key={stage.key} className="flex items-center space-x-4 flex-1">
                 <Link
                   to={stage.path}
-                  className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-all ${styles.container}`}
+                  className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-200 ${styles.container}`}
                 >
-                  <Icon className={`h-4 w-4 ${styles.icon}`} />
+                  {isComplete ? (
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                  ) : (
+                    <Icon className={`h-4 w-4 ${styles.icon}`} />
+                  )}
                   <span className={`text-sm font-medium ${styles.label}`}>
                     {stage.name}
                   </span>
-                  {isComplete && (
-                    <CheckCircle className="h-4 w-4 text-green-500" />
-                  )}
                 </Link>
                 
                 {/* Connector line */}
                 {index < defaultStages.length - 1 && (
-                  <div className={`flex-1 h-0.5 ${
+                  <div className={`flex-1 h-0.5 transition-colors duration-200 ${
                     isComplete ? 'bg-green-500' : 
-                    status === 'active' ? 'bg-[#0071E3]' : 'bg-gray-200'
+                    status === 'active' ? 'bg-blue-600' : 'bg-gray-200'
                   }`} />
                 )}
               </div>
