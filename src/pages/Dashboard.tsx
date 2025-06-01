@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Plus, TrendingUp, Users, DollarSign, BarChart3 } from "lucide-react";
@@ -17,7 +16,7 @@ const Dashboard = ({ openCampaignAgentModal = false }: DashboardProps) => {
   const location = useLocation();
   const [isCampaignAgentOpen, setIsCampaignAgentOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const { data: metrics, isLoading } = useDashboardMetrics();
+  const { metrics, isLoading } = useDashboardMetrics();
 
   // Handle opening campaign agent modal from URL or prop
   useEffect(() => {
