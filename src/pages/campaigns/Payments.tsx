@@ -1,42 +1,41 @@
-
 import CampaignLayout from "@/components/layout/CampaignLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { DollarSign, CreditCard, CheckCircle, Clock, AlertTriangle, Wallet } from "lucide-react";
+import { useInfluencerData } from "@/hooks/useInfluencerData";
+import { useMemo } from "react";
 
 const Payments = () => {
-  const invoices = [
-    {
-      id: "INV-001",
-      influencer: "Sarah Johnson",
-      handle: "@sarahjohnson",
-      amount: "$500",
-      status: "paid",
-      dueDate: "Aug 15, 2024",
-      paidDate: "Aug 10, 2024",
-      milestone: "Content Delivered"
-    },
-    {
-      id: "INV-002",
-      influencer: "Emma Rodriguez",
-      handle: "@emmarodriguez",
-      amount: "$800", 
-      status: "pending",
-      dueDate: "Aug 20, 2024",
-      milestone: "Content Approved"
-    },
-    {
-      id: "INV-003",
-      influencer: "Mike Chen",
-      handle: "@mikechen",
-      amount: "$600",
-      status: "overdue",
-      dueDate: "Aug 5, 2024",
-      milestone: "Content Delivered"
-    },
-  ];
+  const { campaignInfluencers, loading } = useInfluencerData();
+
+  // Generate invoices from campaign influencers
+  const invoices = useMemo(() => {
+    if (!campaignInfluencers || campaignInfluencers.length === 0) return [];
+
+    return campaignInfluencers.map((influencer, index) => {
+      const statuses = ["paid", "pending", "overdue"] as const;
+      const status = statuses[index % 3];
+      
+      // Calculate amount based on follower count
+      const totalFollowers = parseInt(influencer.totalFollowers.replace(/[^\d]/g, '')) || 1000;
+      const baseRate = Math.max(200, Math.min(1000, totalFollowers / 1000));
+      const amount = `$${Math.round(baseRate)}`;
+
+      // Generate invoice data
+      return {
+        id: `INV-${String(index + 1).padStart(3, '0')}`,
+        influencer: influencer.name,
+        handle: influencer.platforms[0]?.handle || `@${influencer.name.toLowerCase().replace(' ', '')}`,
+        amount,
+        status,
+        dueDate: "Aug 20, 2024",
+        paidDate: status === "paid" ? "Aug 10, 2024" : undefined,
+        milestone: "Content Delivered"
+      };
+    });
+  }, [campaignInfluencers]);
 
   const paymentMilestones = [
     { name: "Contract Signed", completed: true },
@@ -45,6 +44,30 @@ const Payments = () => {
     { name: "Content Published", completed: false },
     { name: "Payment Released", completed: false },
   ];
+
+  // Calculate payment stats from actual invoices
+  const paymentStats = useMemo(() => {
+    const totalPaid = invoices
+      .filter(inv => inv.status === "paid")
+      .reduce((sum, inv) => sum + parseInt(inv.amount.replace(/[^\d]/g, '')), 0);
+    
+    const totalPending = invoices
+      .filter(inv => inv.status === "pending")
+      .reduce((sum, inv) => sum + parseInt(inv.amount.replace(/[^\d]/g, '')), 0);
+    
+    const totalOverdue = invoices
+      .filter(inv => inv.status === "overdue")
+      .reduce((sum, inv) => sum + parseInt(inv.amount.replace(/[^\d]/g, '')), 0);
+
+    const totalCampaignValue = totalPaid + totalPending + totalOverdue;
+
+    return {
+      totalPaid,
+      totalPending,
+      totalOverdue,
+      totalCampaignValue
+    };
+  }, [invoices]);
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -63,6 +86,29 @@ const Payments = () => {
       default: return "bg-gray-100 text-gray-800";
     }
   };
+
+  if (loading) {
+    return (
+      <CampaignLayout>
+        <div className="flex items-center justify-center py-12">
+          <p className="text-gray-500">Loading payment data...</p>
+        </div>
+      </CampaignLayout>
+    );
+  }
+
+  if (invoices.length === 0) {
+    return (
+      <CampaignLayout>
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <p className="text-gray-500 mb-4">No influencers found in this campaign</p>
+            <p className="text-sm text-gray-400">Add influencers to the campaign to generate payment invoices</p>
+          </div>
+        </div>
+      </CampaignLayout>
+    );
+  }
 
   return (
     <CampaignLayout>
@@ -198,11 +244,15 @@ const Payments = () => {
             <CardContent className="space-y-4">
               <div>
                 <p className="text-sm text-blue-700">Available Balance</p>
-                <p className="text-2xl font-semibold text-blue-900">$2,450</p>
+                <p className="text-2xl font-semibold text-blue-900">
+                  ${Math.max(2450, paymentStats.totalPending + 1000).toLocaleString()}
+                </p>
               </div>
               <div>
                 <p className="text-sm text-blue-700">Pending Payments</p>
-                <p className="text-xl font-medium text-blue-800">$1,400</p>
+                <p className="text-xl font-medium text-blue-800">
+                  ${paymentStats.totalPending.toLocaleString()}
+                </p>
               </div>
               <Button className="w-full bg-blue-600 hover:bg-blue-700">
                 <CreditCard className="h-4 w-4 mr-2" />
@@ -220,20 +270,28 @@ const Payments = () => {
             <CardContent className="space-y-4">
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Total Paid</span>
-                <span className="font-medium text-green-600">$500</span>
+                <span className="font-medium text-green-600">
+                  ${paymentStats.totalPaid.toLocaleString()}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Pending</span>
-                <span className="font-medium text-yellow-600">$800</span>
+                <span className="font-medium text-yellow-600">
+                  ${paymentStats.totalPending.toLocaleString()}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Overdue</span>
-                <span className="font-medium text-red-600">$600</span>
+                <span className="font-medium text-red-600">
+                  ${paymentStats.totalOverdue.toLocaleString()}
+                </span>
               </div>
               <hr className="my-3" />
               <div className="flex justify-between">
                 <span className="text-sm text-gray-600">Total Campaign Value</span>
-                <span className="font-medium">$1,900</span>
+                <span className="font-medium">
+                  ${paymentStats.totalCampaignValue.toLocaleString()}
+                </span>
               </div>
             </CardContent>
           </Card>
