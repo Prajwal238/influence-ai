@@ -16,7 +16,7 @@ interface SessionData {
   messages: SessionMessage[];
 }
 
-export const useMessageHandling = (agentType: string, isAnalyticsContext?: boolean) => {
+export const useMessageHandling = (agentType: string) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isTyping, setIsTyping] = useState(false);
   const [isApiLoading, setIsApiLoading] = useState(false);
@@ -37,7 +37,7 @@ export const useMessageHandling = (agentType: string, isAnalyticsContext?: boole
       } catch (error) {
         console.error('Error parsing saved messages:', error);
         // If parsing fails, start with greeting
-        const greeting = getInitialGreeting(agentType, isAnalyticsContext);
+        const greeting = getInitialGreeting(agentType);
         setMessages([{
           id: '1',
           type: 'agent',
@@ -47,7 +47,7 @@ export const useMessageHandling = (agentType: string, isAnalyticsContext?: boole
       }
     } else {
       // Initial greeting message
-      const greeting = getInitialGreeting(agentType, isAnalyticsContext);
+      const greeting = getInitialGreeting(agentType);
       setMessages([{
         id: '1',
         type: 'agent',
@@ -55,7 +55,7 @@ export const useMessageHandling = (agentType: string, isAnalyticsContext?: boole
         timestamp: new Date()
       }]);
     }
-  }, [agentType, isAnalyticsContext]);
+  }, [agentType]);
 
   useEffect(() => {
     // Save conversation history to localStorage
@@ -103,7 +103,7 @@ export const useMessageHandling = (agentType: string, isAnalyticsContext?: boole
       // Ensure we have at least one message
       if (convertedMessages.length === 0) {
         console.warn('No valid messages found in session data');
-        const greeting = getInitialGreeting(agentType, isAnalyticsContext);
+        const greeting = getInitialGreeting(agentType);
         setMessages([{
           id: '1',
           type: 'agent',
@@ -122,7 +122,7 @@ export const useMessageHandling = (agentType: string, isAnalyticsContext?: boole
       });
       
       // Fallback to greeting message
-      const greeting = getInitialGreeting(agentType, isAnalyticsContext);
+      const greeting = getInitialGreeting(agentType);
       setMessages([{
         id: '1',
         type: 'agent',
@@ -133,7 +133,7 @@ export const useMessageHandling = (agentType: string, isAnalyticsContext?: boole
   };
 
   const resetMessagesWithGreeting = () => {
-    const greeting = getInitialGreeting(agentType, isAnalyticsContext);
+    const greeting = getInitialGreeting(agentType);
     const newMessages = [{
       id: '1',
       type: 'agent' as const,
@@ -155,8 +155,8 @@ export const useMessageHandling = (agentType: string, isAnalyticsContext?: boole
 
     setMessages(prev => [...prev, userMessage]);
 
-    // For campaign agent, call the API (unless it's analytics context)
-    if (agentType === 'campaign' && !isAnalyticsContext) {
+    // For campaign agent, call the API
+    if (agentType === 'campaign') {
       setIsApiLoading(true);
       
       try {
@@ -191,13 +191,13 @@ export const useMessageHandling = (agentType: string, isAnalyticsContext?: boole
         setIsApiLoading(false);
       }
     } else {
-      // For other agent types or analytics context, use the existing simulation
+      // For other agent types, use the existing simulation
       setIsTyping(true);
       setTimeout(() => {
         const agentResponse: Message = {
           id: (Date.now() + 1).toString(),
           type: 'agent',
-          content: generateAgentResponse(inputValue, agentType, isAnalyticsContext),
+          content: generateAgentResponse(inputValue, agentType),
           timestamp: new Date()
         };
         setMessages(prev => [...prev, agentResponse]);

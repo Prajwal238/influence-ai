@@ -8,10 +8,9 @@ import { BrainCircuit } from "lucide-react";
 interface FloatingChatButtonProps {
   agentName: string;
   agentType: 'campaign' | 'discovery' | 'outreach' | 'negotiation';
-  isAnalyticsContext?: boolean;
 }
 
-const FloatingChatButton = ({ agentName, agentType, isAnalyticsContext }: FloatingChatButtonProps) => {
+const FloatingChatButton = ({ agentName, agentType }: FloatingChatButtonProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -35,7 +34,6 @@ const FloatingChatButton = ({ agentName, agentType, isAnalyticsContext }: Floati
             agentType={agentType}
             onClose={() => setIsOpen(false)}
             className="h-full"
-            isAnalyticsContext={isAnalyticsContext}
           />
         </DialogContent>
       </Dialog>
