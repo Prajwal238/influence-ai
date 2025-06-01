@@ -1,7 +1,7 @@
 
 import { useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Send, Bot, User, X, Loader2 } from "lucide-react";
@@ -147,18 +147,19 @@ const DefaultChatInterface = ({
 
           {/* Input */}
           <div className="border-t border-gray-100 p-4 flex-shrink-0">
-            <div className="flex space-x-2">
-              <Input
+            <div className="flex space-x-2 items-end">
+              <Textarea
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                onKeyPress={handleKeyPress}
-                placeholder="Type your message..."
-                className="flex-1"
+                onEnterPress={handleSendMessage}
+                placeholder="Type your message... (Shift+Enter for new line)"
+                className="flex-1 min-h-[40px] max-h-[120px] resize-none"
                 disabled={isApiLoading}
+                rows={1}
               />
               <Button 
                 onClick={handleSendMessage} 
-                className="bg-blue-600 hover:bg-blue-700"
+                className="bg-blue-600 hover:bg-blue-700 shrink-0"
                 disabled={!inputValue.trim() || isApiLoading}
               >
                 {isApiLoading ? (
@@ -168,6 +169,9 @@ const DefaultChatInterface = ({
                 )}
               </Button>
             </div>
+            <p className="text-xs text-gray-500 mt-2">
+              Press Enter to send, Shift+Enter for new line
+            </p>
           </div>
         </CardContent>
       </Card>
