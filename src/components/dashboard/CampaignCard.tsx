@@ -1,15 +1,45 @@
+
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Eye } from "lucide-react";
 import { Campaign } from "@/types/campaign";
 import { getCampaignProgressForDashboard } from "@/hooks/useCampaignProgress";
+import { useState, useEffect } from "react";
 
 interface CampaignCardProps {
   campaign: Campaign;
 }
 
 const CampaignCard = ({ campaign }: CampaignCardProps) => {
+  const [progress, setProgress] = useState(0);
+
+  // Update progress when component mounts or when localStorage changes
+  useEffect(() => {
+    const updateProgress = () => {
+      const { percentage } = getCampaignProgressForDashboard(campaign._id);
+      setProgress(percentage);
+    };
+
+    // Initial load
+    updateProgress();
+
+    // Listen for localStorage changes (when user returns from other pages)
+    const handleStorageChange = () => {
+      updateProgress();
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Also listen for focus events (when user returns to tab)
+    window.addEventListener('focus', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('focus', handleStorageChange);
+    };
+  }, [campaign._id]);
+
   const getStageColor = (stage: string) => {
     switch (stage.toLowerCase()) {
       case "discovery": return "bg-blue-100 text-blue-800";
@@ -49,8 +79,6 @@ const CampaignCard = ({ campaign }: CampaignCardProps) => {
     return `₹${budget.toLocaleString('en-IN')}`;
   };
 
-  // Get real campaign progress from localStorage
-  const { percentage: progress } = getCampaignProgressForDashboard(campaign._id);
   const objective = campaign.objective;
 
   // Get campaign redirect URL based on progress - follows the new routing structure
