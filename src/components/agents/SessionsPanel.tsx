@@ -5,6 +5,7 @@ import { History, Plus } from "lucide-react";
 import { startNewSession } from './sessionUtils';
 import SessionsPanelHeader from './SessionsPanelHeader';
 import SessionsList from './SessionsList';
+import { apiConfig } from '@/config/api';
 
 interface SessionsPanelProps {
   agentType: string;
@@ -25,7 +26,7 @@ const SessionsPanel = ({ agentType, currentSessionId, onSessionChange, onNewSess
   const loadPastSessions = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/api/campaigns/user_123/sessions', {
+      const response = await fetch(apiConfig.endpoints.sessions, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

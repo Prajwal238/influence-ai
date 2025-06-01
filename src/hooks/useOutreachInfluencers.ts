@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { transformApiDataToOutreachInfluencer } from "@/utils/outreachTransforms";
 import { InfluencerSelection } from "@/types/outreach";
+import { buildApiUrl } from "@/config/api";
 
 export const useOutreachInfluencers = (campaignId: string | undefined) => {
   const [selectedInfluencers, setSelectedInfluencers] = useState<InfluencerSelection[]>([]);
@@ -14,7 +15,7 @@ export const useOutreachInfluencers = (campaignId: string | undefined) => {
     const fetchInfluencers = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`http://localhost:5000/api/user_123/campaigns/${campaignId}/outreach_seed`);
+        const response = await fetch(buildApiUrl(`/api/user_123/campaigns/${campaignId}/outreach_seed`));
         
         if (!response.ok) {
           throw new Error('Failed to fetch influencers');

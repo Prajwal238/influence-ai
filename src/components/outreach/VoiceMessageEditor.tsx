@@ -5,6 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Volume2, Sparkles, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
+import { buildApiUrl } from "@/config/api";
 
 interface VoiceMessageEditorProps {
   voiceMessage: string;
@@ -61,7 +62,7 @@ const VoiceMessageEditor = ({
         description: "Converting your message to voice...",
       });
 
-      const response = await fetch('http://localhost:5000/api/user_123/voice_preview', {
+      const response = await fetch(buildApiUrl('/api/user_123/voice_preview'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
