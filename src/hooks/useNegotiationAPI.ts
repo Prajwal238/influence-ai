@@ -22,6 +22,11 @@ interface PollMessageResponse {
   message: string;
 }
 
+interface SendMessageRequest {
+  role: string;
+  message: string;
+}
+
 export const useNegotiationAPI = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -116,9 +121,43 @@ export const useNegotiationAPI = () => {
     }
   }, []);
 
+  const sendMessage = useCallback(async (campaignId: string, platform: string, influencerName: string, message: string): Promise<void> => {
+    try {
+      console.log('Sending message:', { campaignId, platform, influencerName, message });
+      
+      const requestBody: SendMessageRequest = {
+        role: 'negotiator',
+        message: message
+      };
+
+      const response = await fetch(
+        buildApiUrl(`/api/campaigns/${campaignId}/platform/${platform}/updateConversation/${encodeURIComponent(influencerName)}`),
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(requestBody)
+        }
+      );
+      
+      if (!response.ok) {
+        throw new Error('Failed to send message');
+      }
+      
+      console.log('Message sent successfully');
+    } catch (err) {
+      console.error('Error sending message:', err);
+      const errorMessage = err instanceof Error ? err.message : 'Failed to send message';
+      setError(errorMessage);
+      throw err;
+    }
+  }, []);
+
   return {
     fetchAllInfluencerConversations,
     pollConversation,
+    sendMessage,
     loading,
     error
   };

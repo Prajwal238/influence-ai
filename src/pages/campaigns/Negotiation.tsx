@@ -9,7 +9,7 @@ import { NegotiationThread, NegotiationMessage, AgentStatus } from "@/types/outr
 const Negotiation = () => {
   const [selectedThread, setSelectedThread] = useState<NegotiationThread | undefined>();
   const [negotiationThreads, setNegotiationThreads] = useState<NegotiationThread[]>([]);
-  const { fetchAllInfluencerConversations, pollConversation, loading, error } = useNegotiationAPI();
+  const { fetchAllInfluencerConversations, pollConversation, sendMessage, loading, error } = useNegotiationAPI();
 
   // Fetch conversations when component mounts
   useEffect(() => {
@@ -35,7 +35,7 @@ const Negotiation = () => {
     setSelectedThread(thread);
   };
 
-  const handleSendMessage = (content: string, platform: string) => {
+  const handleSendMessage = async (content: string, platform: string) => {
     if (!selectedThread) return;
 
     const newMessage: NegotiationMessage = {
@@ -46,7 +46,7 @@ const Negotiation = () => {
       platform: platform as 'instagram' | 'email' | 'voice'
     };
 
-    // Update selected thread
+    // Update selected thread immediately for UI responsiveness
     const updatedThread: NegotiationThread = {
       ...selectedThread,
       messages: [...selectedThread.messages, newMessage],
@@ -60,6 +60,16 @@ const Negotiation = () => {
         thread.creatorId === selectedThread.creatorId ? updatedThread : thread
       )
     );
+
+    // Call API to send message
+    try {
+      const campaignId = 'summer_fashion_2024'; // Extract from route if needed
+      await sendMessage(campaignId, selectedThread.platform, selectedThread.name, content);
+      console.log('Message sent to API successfully');
+    } catch (err) {
+      console.error('Failed to send message to API:', err);
+      // Optionally show error to user or revert UI changes
+    }
   };
 
   const handleStatusChange = (newStatus: AgentStatus) => {
