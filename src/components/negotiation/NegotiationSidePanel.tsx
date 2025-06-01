@@ -1,184 +1,267 @@
 
-import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ChevronDown, Send, MessageSquare, Mail, Phone, CheckSquare } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Copy, Phone, Mail, Clock, Activity, HelpCircle } from "lucide-react";
+import { NegotiationThread } from "@/pages/campaigns/Negotiation";
+import { useToast } from "@/hooks/use-toast";
 
-const NegotiationSidePanel = () => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  const [chatInput, setChatInput] = useState("");
+interface NegotiationSidePanelProps {
+  selectedThread?: NegotiationThread;
+}
 
-  const chatHistory = [
-    {
-      id: '1',
-      type: 'user',
-      content: "What's a good counter-offer for Sarah's $500 rate?",
-      timestamp: new Date('2024-01-15T17:30:00')
-    },
-    {
-      id: '2',
-      type: 'agent',
-      content: "Based on her engagement rate of 4.2% and 50K followers, $500 is actually fair market rate. I'd suggest accepting or asking for usage rights instead.",
-      timestamp: new Date('2024-01-15T17:31:00')
-    }
-  ];
+const NegotiationSidePanel = ({ selectedThread }: NegotiationSidePanelProps) => {
+  const { toast } = useToast();
 
-  const quickActions = [
-    { label: "Resend DM", action: () => {} },
-    { label: "Send Email", action: () => {} },
-    { label: "Place Call", action: () => {} }
-  ];
+  const handleCopy = (text: string, label: string) => {
+    navigator.clipboard.writeText(text);
+    toast({
+      title: "Copied to clipboard",
+      description: `${label} copied successfully`,
+    });
+  };
 
-  if (isCollapsed) {
+  const getStatusBadge = (status: string) => {
+    const configs = {
+      polling: { bg: 'bg-gray-200', text: 'text-gray-600', label: 'Polling' },
+      chatting: { bg: 'bg-blue-100', text: 'text-blue-700', label: 'Chatting' },
+      waitingPhone: { bg: 'bg-yellow-100', text: 'text-yellow-700', label: 'Waiting Phone' },
+      calling: { bg: 'bg-purple-100', text: 'text-purple-700', label: 'Calling' },
+      complete: { bg: 'bg-green-100', text: 'text-green-700', label: 'Complete' }
+    };
+
+    const config = configs[status as keyof typeof configs] || configs.polling;
     return (
-      <div className="fixed right-6 top-1/2 transform -translate-y-1/2 z-40">
-        <Button
-          onClick={() => setIsCollapsed(false)}
-          className="h-12 w-12 rounded-full bg-[#0071E3] hover:bg-[#005BB5] shadow-lg"
-          size="icon"
-        >
-          <MessageSquare className="h-6 w-6 text-white" />
-        </Button>
-      </div>
+      <Badge className={`${config.bg} ${config.text} rounded-full px-2 py-1 text-xs border-0`}>
+        {config.label}
+      </Badge>
+    );
+  };
+
+  const mockAgentLogs = [
+    { time: '14:32', action: 'Started polling for replies', type: 'info' },
+    { time: '14:35', action: 'Received DM reply from creator', type: 'success' },
+    { time: '14:36', action: 'Generated response using LLM', type: 'info' },
+    { time: '14:37', action: 'Sent negotiation counter-offer', type: 'success' },
+    { time: '14:40', action: 'Waiting for creator response...', type: 'pending' }
+  ];
+
+  if (!selectedThread) {
+    return (
+      <Card className="h-full bg-white shadow-[0_0_10px_rgba(0,0,0,0.05)] rounded-2xl flex items-center justify-center">
+        <div className="text-center p-6">
+          <Activity className="h-12 w-12 text-[#6E6E73] mx-auto mb-3" />
+          <p className="text-[#6E6E73] font-['SF_Pro_Text']">
+            Select a thread to view details
+          </p>
+        </div>
+      </Card>
     );
   }
 
   return (
-    <Card className="bg-[#FAFAFA] shadow-[0_0_10px_rgba(0,0,0,0.05)] rounded-2xl h-fit sticky top-6">
+    <Card className="h-full bg-white shadow-[0_0_10px_rgba(0,0,0,0.05)] rounded-2xl">
       <CardHeader className="border-b border-[#F2F2F7] pb-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <Avatar className="h-8 w-8">
-              <AvatarFallback className="bg-[#0071E3] text-white text-xs">NA</AvatarFallback>
-            </Avatar>
-            <CardTitle className="text-lg font-semibold text-[#1D1D1F] font-['SF_Pro_Display']">
-              Negotiation Agent
-            </CardTitle>
-          </div>
-          <Button
-            onClick={() => setIsCollapsed(true)}
-            variant="ghost"
-            size="icon"
-            className="h-6 w-6 text-[#6E6E73] hover:bg-[#F2F2F7]"
-          >
-            <ChevronDown className="h-4 w-4" />
-          </Button>
-        </div>
+        <CardTitle className="text-lg font-semibold text-[#1D1D1F] font-['SF_Pro_Display']">
+          Thread Details
+        </CardTitle>
       </CardHeader>
       
-      <CardContent className="p-0">
-        <Tabs defaultValue="dms" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 bg-transparent border-b border-[#F2F2F7] rounded-none">
+      <CardContent className="p-0 h-full">
+        <Tabs defaultValue="overview" className="h-full flex flex-col">
+          <TabsList className="grid w-full grid-cols-3 bg-[#F2F2F7] m-4 rounded-lg p-1">
             <TabsTrigger 
-              value="dms" 
-              className="data-[state=active]:border-b-2 data-[state=active]:border-[#0071E3] data-[state=active]:bg-transparent rounded-none text-xs"
+              value="overview" 
+              className="text-xs data-[state=active]:bg-white data-[state=active]:text-[#1D1D1F] data-[state=active]:shadow-sm rounded-md font-['SF_Pro_Text']"
             >
-              DMs
+              Overview
             </TabsTrigger>
             <TabsTrigger 
-              value="emails"
-              className="data-[state=active]:border-b-2 data-[state=active]:border-[#0071E3] data-[state=active]:bg-transparent rounded-none text-xs"
+              value="contact" 
+              className="text-xs data-[state=active]:bg-white data-[state=active]:text-[#1D1D1F] data-[state=active]:shadow-sm rounded-md font-['SF_Pro_Text']"
             >
-              Emails
+              Contact
             </TabsTrigger>
             <TabsTrigger 
-              value="calls"
-              className="data-[state=active]:border-b-2 data-[state=active]:border-[#0071E3] data-[state=active]:bg-transparent rounded-none text-xs"
+              value="logs" 
+              className="text-xs data-[state=active]:bg-white data-[state=active]:text-[#1D1D1F] data-[state=active]:shadow-sm rounded-md font-['SF_Pro_Text']"
             >
-              Calls
-            </TabsTrigger>
-            <TabsTrigger 
-              value="tasks"
-              className="data-[state=active]:border-b-2 data-[state=active]:border-[#0071E3] data-[state=active]:bg-transparent rounded-none text-xs"
-            >
-              Tasks
+              Agent Logs
             </TabsTrigger>
           </TabsList>
-          
-          <TabsContent value="dms" className="p-4 space-y-3">
-            <div className="space-y-2">
-              <div className="text-xs text-[#6E6E73] font-['SF_Pro_Text']">Recent DMs</div>
-              <div className="bg-white rounded-lg p-3 border border-[#F2F2F7]">
-                <div className="text-sm text-[#1D1D1F] font-['SF_Pro_Text']">Last sent: "We're looking for 1 Instagram post..."</div>
-                <div className="text-xs text-[#6E6E73] mt-1">2 hours ago</div>
+
+          <div className="flex-1 overflow-hidden">
+            <TabsContent value="overview" className="px-4 h-full overflow-y-auto">
+              <div className="space-y-4">
+                <div>
+                  <h4 className="text-sm font-medium text-[#1D1D1F] font-['SF_Pro_Display'] mb-2">
+                    Current Status
+                  </h4>
+                  {getStatusBadge(selectedThread.agentStatus)}
+                </div>
+
+                <div>
+                  <h4 className="text-sm font-medium text-[#1D1D1F] font-['SF_Pro_Display'] mb-2">
+                    Control Mode
+                  </h4>
+                  <Badge className={`${
+                    selectedThread.controlMode === 'agent' 
+                      ? 'bg-blue-100 text-blue-700' 
+                      : 'bg-green-100 text-green-700'
+                  } rounded-full px-2 py-1 text-xs border-0`}>
+                    {selectedThread.controlMode === 'agent' ? 'AI Agent' : 'Manual'}
+                  </Badge>
+                </div>
+
+                <div>
+                  <h4 className="text-sm font-medium text-[#1D1D1F] font-['SF_Pro_Display'] mb-2">
+                    Last Activity
+                  </h4>
+                  <div className="flex items-center space-x-2">
+                    <Clock className="h-3 w-3 text-[#6E6E73]" />
+                    <span className="text-xs text-[#6E6E73] font-['SF_Pro_Text']">
+                      {new Date(selectedThread.lastActivity).toLocaleString()}
+                    </span>
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="text-sm font-medium text-[#1D1D1F] font-['SF_Pro_Display'] mb-2">
+                    Messages
+                  </h4>
+                  <p className="text-xs text-[#6E6E73] font-['SF_Pro_Text']">
+                    {selectedThread.messages.length} total messages
+                  </p>
+                </div>
+
+                <div>
+                  <h4 className="text-sm font-medium text-[#1D1D1F] font-['SF_Pro_Display'] mb-2">
+                    Next Steps
+                  </h4>
+                  <p className="text-xs text-[#6E6E73] font-['SF_Pro_Text']">
+                    {selectedThread.agentStatus === 'polling' && 'Waiting for creator response'}
+                    {selectedThread.agentStatus === 'chatting' && 'Actively negotiating terms'}
+                    {selectedThread.agentStatus === 'waitingPhone' && 'Requesting phone number for call'}
+                    {selectedThread.agentStatus === 'calling' && 'On active voice call'}
+                    {selectedThread.agentStatus === 'complete' && 'Negotiation finished'}
+                  </p>
+                </div>
               </div>
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="emails" className="p-4 space-y-3">
-            <div className="text-xs text-[#6E6E73] font-['SF_Pro_Text']">No emails sent yet</div>
-          </TabsContent>
-          
-          <TabsContent value="calls" className="p-4 space-y-3">
-            <div className="text-xs text-[#6E6E73] font-['SF_Pro_Text']">No calls placed yet</div>
-          </TabsContent>
-          
-          <TabsContent value="tasks" className="p-4 space-y-3">
-            <div className="space-y-2">
-              <div className="text-xs text-[#6E6E73] font-['SF_Pro_Text']">Contact Details</div>
-              <div className="bg-white rounded-lg p-3 border border-[#F2F2F7]">
-                <div className="text-sm text-[#1D1D1F] font-['SF_Pro_Text']">Sarah Johnson</div>
-                <div className="text-xs text-[#6E6E73]">@sarahjohnson • 50K followers</div>
-                <div className="text-xs text-[#6E6E73]">4.2% engagement rate</div>
+            </TabsContent>
+
+            <TabsContent value="contact" className="px-4 h-full overflow-y-auto">
+              <div className="space-y-4">
+                <div>
+                  <h4 className="text-sm font-medium text-[#1D1D1F] font-['SF_Pro_Display'] mb-2">
+                    Creator Info
+                  </h4>
+                  <div className="bg-[#F2F2F7] rounded-lg p-3">
+                    <p className="text-sm font-medium text-[#1D1D1F] font-['SF_Pro_Text']">
+                      {selectedThread.name}
+                    </p>
+                    <p className="text-xs text-[#6E6E73] font-['SF_Pro_Text']">
+                      {selectedThread.handle}
+                    </p>
+                  </div>
+                </div>
+
+                {selectedThread.contact?.email && (
+                  <div>
+                    <h4 className="text-sm font-medium text-[#1D1D1F] font-['SF_Pro_Display'] mb-2">
+                      Email
+                    </h4>
+                    <div className="flex items-center space-x-2">
+                      <div className="flex-1 bg-[#F2F2F7] rounded-lg p-2">
+                        <div className="flex items-center space-x-2">
+                          <Mail className="h-3 w-3 text-[#6E6E73]" />
+                          <span className="text-xs text-[#1D1D1F] font-['SF_Pro_Text']">
+                            {selectedThread.contact.email}
+                          </span>
+                        </div>
+                      </div>
+                      <Button
+                        onClick={() => handleCopy(selectedThread.contact!.email!, 'Email')}
+                        variant="outline"
+                        size="sm"
+                        className="p-2"
+                      >
+                        <Copy className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
+                {selectedThread.contact?.phone && (
+                  <div>
+                    <h4 className="text-sm font-medium text-[#1D1D1F] font-['SF_Pro_Display'] mb-2">
+                      Phone
+                    </h4>
+                    <div className="flex items-center space-x-2">
+                      <div className="flex-1 bg-[#F2F2F7] rounded-lg p-2">
+                        <div className="flex items-center space-x-2">
+                          <Phone className="h-3 w-3 text-[#6E6E73]" />
+                          <span className="text-xs text-[#1D1D1F] font-['SF_Pro_Text']">
+                            {selectedThread.contact.phone}
+                          </span>
+                        </div>
+                      </div>
+                      <Button
+                        onClick={() => handleCopy(selectedThread.contact!.phone!, 'Phone')}
+                        variant="outline"
+                        size="sm"
+                        className="p-2"
+                      >
+                        <Copy className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </div>
-            </div>
-          </TabsContent>
+            </TabsContent>
+
+            <TabsContent value="logs" className="px-4 h-full overflow-y-auto">
+              <div className="space-y-2">
+                <h4 className="text-sm font-medium text-[#1D1D1F] font-['SF_Pro_Display'] mb-2">
+                  Agent Activity
+                </h4>
+                {mockAgentLogs.map((log, index) => (
+                  <div key={index} className="bg-[#F2F2F7] rounded-lg p-3">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <p className="text-xs text-[#1D1D1F] font-['SF_Pro_Text']">
+                          {log.action}
+                        </p>
+                        <p className="text-xs text-[#8E8E93] font-['SF_Pro_Text'] mt-1">
+                          {log.time}
+                        </p>
+                      </div>
+                      <div className={`w-2 h-2 rounded-full ${
+                        log.type === 'success' ? 'bg-green-500' :
+                        log.type === 'pending' ? 'bg-yellow-500' :
+                        'bg-blue-500'
+                      }`} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </TabsContent>
+          </div>
         </Tabs>
 
-        {/* Chat History */}
-        <div className="p-4 border-t border-[#F2F2F7]">
-          <div className="text-xs text-[#6E6E73] font-['SF_Pro_Text'] mb-3">Chat History</div>
-          <div className="space-y-3 max-h-48 overflow-y-auto">
-            {chatHistory.map((message) => (
-              <div key={message.id} className="space-y-1">
-                <div className={`text-xs px-3 py-2 rounded-lg ${
-                  message.type === 'user' 
-                    ? 'bg-white border border-[#F2F2F7] ml-4' 
-                    : 'bg-[#F2F2F7] mr-4'
-                }`}>
-                  {message.content}
-                </div>
-                <div className="text-xs text-[#6E6E73] px-3">
-                  {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Footer Input */}
-        <div className="p-4 border-t border-[#F2F2F7]">
-          <div className="flex space-x-2 mb-3">
-            <Input
-              placeholder="Ask the Negotiation Agent..."
-              value={chatInput}
-              onChange={(e) => setChatInput(e.target.value)}
-              className="flex-1 rounded-lg border-[#E0E0E0] focus:border-[#0071E3] text-sm"
-            />
-            <Button 
-              size="icon"
-              className="bg-[#0071E3] hover:bg-[#005BB5] rounded-lg"
-            >
-              <Send className="h-4 w-4" />
-            </Button>
-          </div>
-          
-          {/* Quick Action Chips */}
-          <div className="flex flex-wrap gap-2">
-            {quickActions.map((action, index) => (
-              <Button
-                key={index}
-                onClick={action.action}
-                variant="outline"
-                size="sm"
-                className="text-xs rounded-full border-[#E0E0E0] text-[#6E6E73] hover:bg-[#F2F2F7]"
-              >
-                {action.label}
-              </Button>
-            ))}
+        {/* Help Footer */}
+        <div className="p-4 border-t border-[#F2F2F7] bg-[#FAFAFA] rounded-b-2xl">
+          <div className="flex items-start space-x-2">
+            <HelpCircle className="h-4 w-4 text-[#0071E3] mt-0.5 flex-shrink-0" />
+            <div>
+              <p className="text-xs font-medium text-[#1D1D1F] font-['SF_Pro_Text'] mb-1">
+                Quick Help
+              </p>
+              <p className="text-xs text-[#6E6E73] font-['SF_Pro_Text'] leading-relaxed">
+                <strong>Take Over:</strong> Your manual messages pause the agent.<br />
+                <strong>Return to Agent:</strong> Agent resumes automatically.
+              </p>
+            </div>
           </div>
         </div>
       </CardContent>
