@@ -68,39 +68,13 @@ const OutreachPageContent = ({
     }
   };
 
-  const logOutreachAttempt = async (influencerId: number, platform: string, messageType: string) => {
-    try {
-      const response = await fetch(buildApiUrl('/api/outreach/log'), {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          host: `${platform}.platform.com`,
-          platform: platform,
-          influencerId: influencerId,
-          messageType: messageType,
-          timestamp: new Date().toISOString()
-        }),
-      });
-
-      if (!response.ok) {
-        console.error('Failed to log outreach attempt:', response.statusText);
-      } else {
-        console.log('Outreach attempt logged successfully for influencer:', influencerId);
-      }
-    } catch (error) {
-      console.error('Error logging outreach attempt:', error);
-    }
-  };
-
   const handleSendAsText = async () => {
     console.log("Sending message as text:", message);
     console.log("Selected influencers:", selectedInfluencers);
     
     let successCount = 0;
     
-    // Send messages and log API calls for selected influencers
+    // Send messages for selected influencers
     for (const selection of selectedInfluencers) {
       const influencer = transformedInfluencers.find(inf => inf.id === selection.influencerId);
       if (influencer) {
@@ -112,9 +86,6 @@ const OutreachPageContent = ({
         
         if (success) {
           successCount++;
-          
-          // Log the outreach attempt via API
-          await logOutreachAttempt(selection.influencerId, selection.platform, 'text');
           
           // Add to local outreach log
           addOutreachEntry({
@@ -146,7 +117,7 @@ const OutreachPageContent = ({
     
     let successCount = 0;
     
-    // Send messages and log API calls for selected influencers
+    // Send messages for selected influencers
     for (const selection of selectedInfluencers) {
       const influencer = transformedInfluencers.find(inf => inf.id === selection.influencerId);
       if (influencer) {
@@ -158,9 +129,6 @@ const OutreachPageContent = ({
         
         if (success) {
           successCount++;
-          
-          // Log the outreach attempt via API
-          await logOutreachAttempt(selection.influencerId, selection.platform, 'voice');
           
           // Add to local outreach log
           addOutreachEntry({
