@@ -1,90 +1,36 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CampaignLayout from "@/components/layout/CampaignLayout";
 import NegotiationThreadsList from "@/components/negotiation/NegotiationThreadsList";
 import NegotiationChatPanel from "@/components/negotiation/NegotiationChatPanel";
 import NegotiationSidePanel from "@/components/negotiation/NegotiationSidePanel";
-import { useInfluencerData } from "@/hooks/useInfluencerData";
+import { useNegotiationAPI } from "@/hooks/useNegotiationAPI";
 import { NegotiationThread, NegotiationMessage, AgentStatus } from "@/types/outreach";
 
 const Negotiation = () => {
   const [selectedThread, setSelectedThread] = useState<NegotiationThread | undefined>();
-  const { influencers } = useInfluencerData();
+  const [negotiationThreads, setNegotiationThreads] = useState<NegotiationThread[]>([]);
+  const { fetchAllInfluencerConversations, loading, error } = useNegotiationAPI();
 
-  // Create mock negotiation threads from available influencers
-  const createMockThreads = (): NegotiationThread[] => {
-    const selectedInfluencers = influencers.slice(0, 5); // Use first 5 influencers
-    
-    return selectedInfluencers.map((influencer, index) => {
-      const platforms = ['instagram', 'email', 'voice'] as const;
-      const agentStatuses: AgentStatus[] = ['polling', 'chatting', 'waitingPhone', 'calling', 'complete'];
-      const platform = platforms[index % platforms.length];
-      const agentStatus = agentStatuses[index % agentStatuses.length];
-      
-      const baseMessages: NegotiationMessage[] = [
-        {
-          id: `${influencer.id}_1`,
-          from: "agent",
-          content: `Hi ${influencer.name}! We'd love to collaborate with you on our upcoming campaign. Your ${influencer.niches[0]?.toLowerCase() || 'content'} work is exactly what we're looking for. Would you be interested in discussing rates?`,
-          timestamp: new Date(Date.now() - (index + 1) * 2 * 60 * 60 * 1000).toISOString(),
-          platform: platform
-        },
-        {
-          id: `${influencer.id}_2`,
-          from: "creator",
-          content: "Hi! Yes, I'm definitely interested. What did you have in mind for the collaboration?",
-          timestamp: new Date(Date.now() - (index + 1) * 90 * 60 * 1000).toISOString(),
-          platform: platform
+  // Fetch conversations when component mounts
+  useEffect(() => {
+    const loadConversations = async () => {
+      try {
+        const threads = await fetchAllInfluencerConversations();
+        setNegotiationThreads(threads);
+        
+        // Auto-select first non-complete thread
+        if (threads.length > 0) {
+          const firstActiveThread = threads.find(t => t.agentStatus !== 'complete') || threads[0];
+          setSelectedThread(firstActiveThread);
         }
-      ];
-
-      // Add more messages for active threads
-      if (agentStatus === 'chatting') {
-        baseMessages.push(
-          {
-            id: `${influencer.id}_3`,
-            from: "agent",
-            content: `We're looking at $${500 + index * 100} for 3 posts and 5 stories. Would that work for you?`,
-            timestamp: new Date(Date.now() - (index + 1) * 60 * 60 * 1000).toISOString(),
-            platform: platform
-          },
-          {
-            id: `${influencer.id}_4`,
-            from: "creator",
-            content: "That sounds fair! Can we discuss the content requirements in more detail?",
-            timestamp: new Date(Date.now() - (index + 1) * 45 * 60 * 1000).toISOString(),
-            platform: platform
-          }
-        );
+      } catch (err) {
+        console.error('Failed to load conversations:', err);
       }
+    };
 
-      return {
-        creatorId: influencer.id.toString(),
-        name: influencer.name,
-        handle: `@${influencer.name.toLowerCase().replace(/\s+/g, '')}`,
-        platform: platform,
-        avatar: influencer.image,
-        influencerId: influencer.id,
-        status: 'replied' as const,
-        agentStatus: agentStatus,
-        controlMode: 'agent' as const,
-        contact: {
-          email: `${influencer.name.toLowerCase().replace(/\s+/g, '.')}@email.com`,
-          phone: Math.random() > 0.3 ? `+1 (555) ${Math.floor(Math.random() * 900) + 100}-${Math.floor(Math.random() * 9000) + 1000}` : undefined
-        },
-        lastActivity: new Date(Date.now() - index * 30 * 60 * 1000).toISOString(),
-        messages: baseMessages
-      };
-    });
-  };
-
-  const negotiationThreads = createMockThreads();
-
-  // Auto-select first non-complete thread
-  if (!selectedThread && negotiationThreads.length > 0) {
-    const firstActiveThread = negotiationThreads.find(t => t.agentStatus !== 'complete') || negotiationThreads[0];
-    setSelectedThread(firstActiveThread);
-  }
+    loadConversations();
+  }, [fetchAllInfluencerConversations]);
 
   const handleSelectThread = (thread: NegotiationThread) => {
     setSelectedThread(thread);
@@ -108,6 +54,13 @@ const Negotiation = () => {
       lastActivity: new Date().toISOString()
     };
     setSelectedThread(updatedThread);
+
+    // Update threads list
+    setNegotiationThreads(prev => 
+      prev.map(thread => 
+        thread.creatorId === selectedThread.creatorId ? updatedThread : thread
+      )
+    );
   };
 
   const handleStatusChange = (newStatus: AgentStatus) => {
@@ -118,6 +71,13 @@ const Negotiation = () => {
       agentStatus: newStatus
     };
     setSelectedThread(updatedThread);
+
+    // Update threads list
+    setNegotiationThreads(prev => 
+      prev.map(thread => 
+        thread.creatorId === selectedThread.creatorId ? updatedThread : thread
+      )
+    );
   };
 
   const handleAIResponse = () => {
@@ -129,6 +89,37 @@ const Negotiation = () => {
     console.log('Poll clicked - API integration coming soon');
     // TODO: Integrate with poll API when provided
   };
+
+  if (loading) {
+    return (
+      <CampaignLayout>
+        <div className="min-h-screen bg-[#FAFAFA] flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0071E3] mx-auto mb-4"></div>
+            <p className="text-[#6E6E73] font-sans">Loading negotiations...</p>
+          </div>
+        </div>
+      </CampaignLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <CampaignLayout>
+        <div className="min-h-screen bg-[#FAFAFA] flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-red-600 font-sans mb-4">Error loading negotiations: {error}</p>
+            <button 
+              onClick={() => window.location.reload()} 
+              className="bg-[#0071E3] text-white px-4 py-2 rounded-xl"
+            >
+              Retry
+            </button>
+          </div>
+        </div>
+      </CampaignLayout>
+    );
+  }
 
   return (
     <CampaignLayout>

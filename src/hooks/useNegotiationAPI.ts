@@ -1,0 +1,88 @@
+
+import { useState, useCallback } from 'react';
+import { buildApiUrl } from '@/config/api';
+import { NegotiationThread, NegotiationMessage } from '@/types/outreach';
+
+interface ApiNegotiationResponse {
+  _id: string;
+  campaignId: string;
+  influencerName: string;
+  platform: string;
+  __v: number;
+  createdAt: string;
+  messages: Array<{
+    role: string;
+    message: string;
+  }>;
+  updatedAt: string;
+}
+
+export const useNegotiationAPI = () => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchAllInfluencerConversations = useCallback(async (): Promise<NegotiationThread[]> => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      console.log('Fetching all influencer conversations...');
+      const response = await fetch(buildApiUrl('/api/user_123/getAllInfluencerConversations'));
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch influencer conversations');
+      }
+      
+      const data: ApiNegotiationResponse[] = await response.json();
+      console.log('Fetched conversations:', data);
+      
+      // Transform API data to NegotiationThread format
+      const threads: NegotiationThread[] = data.map((conv, index) => {
+        // Transform messages from API format
+        const messages: NegotiationMessage[] = conv.messages.map((msg, msgIndex) => ({
+          id: `${conv._id}_${msgIndex}`,
+          from: msg.role === 'negotiator' ? 'agent' : 'creator',
+          content: msg.message,
+          timestamp: conv.createdAt,
+          platform: conv.platform as 'instagram' | 'email' | 'voice'
+        }));
+
+        // Determine agent status based on message activity
+        const agentStatus = messages.length > 0 ? 'chatting' : 'polling';
+        
+        return {
+          creatorId: conv._id,
+          name: conv.influencerName,
+          handle: `@${conv.influencerName.toLowerCase().replace(/\s+/g, '')}`,
+          platform: conv.platform as 'instagram' | 'email' | 'voice',
+          avatar: "/api/placeholder/40/40", // Default avatar
+          influencerId: index + 1, // Use index as fallback ID
+          status: messages.length > 0 ? 'replied' : 'sent',
+          agentStatus: agentStatus as any,
+          controlMode: 'agent' as const,
+          contact: {
+            email: `${conv.influencerName.toLowerCase().replace(/\s+/g, '.')}@email.com`,
+            phone: Math.random() > 0.3 ? `+1 (555) ${Math.floor(Math.random() * 900) + 100}-${Math.floor(Math.random() * 9000) + 1000}` : undefined
+          },
+          lastActivity: conv.updatedAt,
+          messages: messages
+        };
+      });
+      
+      return threads;
+    } catch (err) {
+      console.error('Error fetching influencer conversations:', err);
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred';
+      setError(errorMessage);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  return {
+    fetchAllInfluencerConversations,
+    loading,
+    error
+  };
+};
