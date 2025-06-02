@@ -1,56 +1,50 @@
-# Welcome to your Lovable project
+# 🎨 Influencer Campaign Platform – UI
 
-## Project info
+This is the frontend for the Influencer Marketing Campaign Platform. It allows brands and marketers to discover influencers, manage outreach, negotiate deals, finalize contracts, handle payments, and monitor campaign analytics in a simple, intuitive interface.
 
-**URL**: https://lovable.dev/projects/b28afa0e-2dc1-41e7-a17c-69207020aea8
+---
 
-## How can I edit this code?
+**URL**: https://influence-ai-umber.vercel.app/
 
-There are several ways of editing your application.
+## 🚀 Features
 
-**Use Lovable**
+- 🏠 **Dashboard**
+  - Overview of all active campaigns
+  - Metrics like Total Budget, Total Revenue, Total Reach
+  - Quick insights on engagement and conversions
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/b28afa0e-2dc1-41e7-a17c-69207020aea8) and start prompting.
+- 📦 **Campaign Flow**
+  - Create new influencer marketing campaigns using Campaign Agent
+  - Track stages: Discovery → Outreach → Negotiation → Contracts → Payments → Reporting
+  - Toggle AI Agent to handle campaign stages automatically
 
-Changes made via Lovable will be committed automatically to this repo.
+- 🔍 **Influencer Discovery**
+  - Filter influencers by category, location, language, and platform
+  - Find influencers using Discovery Agent
+  - View influencer cards with aggregated follower and engagement stats
+  - Add influencers to campaigns with one click
 
-**Use your preferred IDE**
+- 📩 **Outreach**
+  - Message influencers through chat or ask AI to generate messages.
+  - send Voice messages with the help of Eleven labs
+  - Monitor message status
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+- 🤝 **Negotiation**
+  - Live chat negotiation powered by a Negotiation agent
+  - This is a human in loop stlye, user can ask agent to negotiate on behalf of them at any given point.
+  - Future Scope: Using eleven labs convert the same into Agent call.
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+- 📜 **Contracts & Payments**
+  - Generate contracts per influencer using the conversation during Negotiation.
+  - Mock payment and invoice flows
 
-Follow these steps:
+- 📊 **Reporting**
+  - View campaign KPIs: Impressions, CTR, Conversions, ROI
+  - Compare performance across influencers/platforms
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+---
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
+## 🧰 Tech Stack
 
 This project is built with:
 
@@ -59,15 +53,4 @@ This project is built with:
 - React
 - shadcn-ui
 - Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/b28afa0e-2dc1-41e7-a17c-69207020aea8) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+---
