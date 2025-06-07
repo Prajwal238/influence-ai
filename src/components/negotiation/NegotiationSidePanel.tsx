@@ -1,4 +1,5 @@
 
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Activity, HelpCircle } from "lucide-react";
@@ -9,9 +10,10 @@ import NegotiationAgentLogsTab from "./NegotiationAgentLogsTab";
 
 interface NegotiationSidePanelProps {
   selectedThread?: NegotiationThread;
+  onCall?: () => void;
 }
 
-const NegotiationSidePanel = ({ selectedThread }: NegotiationSidePanelProps) => {
+const NegotiationSidePanel = ({ selectedThread, onCall }: NegotiationSidePanelProps) => {
   if (!selectedThread) {
     return (
       <Card className="h-full bg-white shadow-apple rounded-2xl border-0 flex items-center justify-center">
@@ -62,7 +64,7 @@ const NegotiationSidePanel = ({ selectedThread }: NegotiationSidePanelProps) => 
             </TabsContent>
 
             <TabsContent value="contact" className="h-full m-0 overflow-y-auto">
-              <NegotiationContactTab selectedThread={selectedThread} />
+              <NegotiationContactTab selectedThread={selectedThread} onCall={onCall} />
             </TabsContent>
 
             <TabsContent value="logs" className="h-full m-0 overflow-y-auto">
@@ -92,3 +94,4 @@ const NegotiationSidePanel = ({ selectedThread }: NegotiationSidePanelProps) => 
 };
 
 export default NegotiationSidePanel;
+
