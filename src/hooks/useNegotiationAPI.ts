@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from 'react';
 import { buildApiUrl } from '@/config/api';
 import { NegotiationThread, NegotiationMessage } from '@/types/outreach';
@@ -90,8 +89,7 @@ export const useNegotiationAPI = () => {
           agentStatus: agentStatus as any,
           controlMode: 'agent' as const,
           contact: {
-            email: `${conv.influencerName.toLowerCase().replace(/\s+/g, '.')}@email.com`,
-            phone: Math.random() > 0.3 ? `+1 (555) ${Math.floor(Math.random() * 900) + 100}-${Math.floor(Math.random() * 9000) + 1000}` : undefined
+            // Start with undefined contact info - will be extracted from messages
           },
           lastActivity: conv.updatedAt,
           messages: messages

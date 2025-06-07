@@ -2,12 +2,45 @@
 import { useState, useEffect } from "react";
 import { NegotiationThread, NegotiationMessage, AgentStatus } from "@/types/outreach";
 import { useNegotiationAPI } from "@/hooks/useNegotiationAPI";
+import { useContactExtraction } from "@/hooks/useContactExtraction";
 
 export const useNegotiationState = (campaignId?: string) => {
   const [selectedThread, setSelectedThread] = useState<NegotiationThread | undefined>();
   const [negotiationThreads, setNegotiationThreads] = useState<NegotiationThread[]>([]);
   const [aiResponseInput, setAiResponseInput] = useState<string>('');
   const { fetchAllInfluencerConversations, pollConversation, sendMessage, getAIResponse, loading, error } = useNegotiationAPI();
+
+  // Extract contact info from selected thread messages
+  const extractedContact = useContactExtraction(selectedThread?.messages || []);
+
+  // Update selected thread with extracted contact information
+  useEffect(() => {
+    if (selectedThread && (extractedContact.email || extractedContact.phone)) {
+      const updatedThread: NegotiationThread = {
+        ...selectedThread,
+        contact: {
+          ...selectedThread.contact,
+          ...(extractedContact.email && { email: extractedContact.email }),
+          ...(extractedContact.phone && { phone: extractedContact.phone })
+        }
+      };
+      
+      // Only update if there's actually a change
+      if (
+        updatedThread.contact?.email !== selectedThread.contact?.email ||
+        updatedThread.contact?.phone !== selectedThread.contact?.phone
+      ) {
+        setSelectedThread(updatedThread);
+        
+        // Update the thread in the list as well
+        setNegotiationThreads(prev => 
+          prev.map(thread => 
+            thread.creatorId === selectedThread.creatorId ? updatedThread : thread
+          )
+        );
+      }
+    }
+  }, [extractedContact, selectedThread]);
 
   // Fetch conversations when component mounts
   useEffect(() => {

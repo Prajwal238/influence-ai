@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { Copy, Phone, Mail } from "lucide-react";
+import { Copy, Phone, Mail, PhoneCall } from "lucide-react";
 import { NegotiationThread } from "@/types/outreach";
 import { useToast } from "@/hooks/use-toast";
 
@@ -16,6 +16,14 @@ const NegotiationContactTab = ({ selectedThread }: NegotiationContactTabProps) =
     toast({
       title: "Copied to clipboard",
       description: `${label} copied successfully`,
+    });
+  };
+
+  const handleCall = () => {
+    // TODO: API implementation will be provided later
+    toast({
+      title: "Call initiated",
+      description: "Call functionality will be implemented soon",
     });
   };
 
@@ -36,20 +44,20 @@ const NegotiationContactTab = ({ selectedThread }: NegotiationContactTabProps) =
           </div>
         </div>
 
-        {selectedThread.contact?.email && (
-          <div>
-            <h4 className="text-sm font-semibold text-[#1D1D1F] font-sans mb-3">
-              Email
-            </h4>
-            <div className="flex items-center space-x-3">
-              <div className="flex-1 bg-[#F2F2F7] rounded-xl p-3">
-                <div className="flex items-center space-x-2">
-                  <Mail className="h-4 w-4 text-[#6E6E73]" />
-                  <span className="text-sm text-[#1D1D1F] font-sans">
-                    {selectedThread.contact.email}
-                  </span>
-                </div>
+        <div>
+          <h4 className="text-sm font-semibold text-[#1D1D1F] font-sans mb-3">
+            Email
+          </h4>
+          <div className="flex items-center space-x-3">
+            <div className="flex-1 bg-[#F2F2F7] rounded-xl p-3">
+              <div className="flex items-center space-x-2">
+                <Mail className="h-4 w-4 text-[#6E6E73]" />
+                <span className="text-sm text-[#1D1D1F] font-sans">
+                  {selectedThread.contact?.email || "Not Available"}
+                </span>
               </div>
+            </div>
+            {selectedThread.contact?.email && (
               <Button
                 onClick={() => handleCopy(selectedThread.contact!.email!, 'Email')}
                 variant="outline"
@@ -58,35 +66,45 @@ const NegotiationContactTab = ({ selectedThread }: NegotiationContactTabProps) =
               >
                 <Copy className="h-4 w-4" />
               </Button>
-            </div>
+            )}
           </div>
-        )}
+        </div>
 
-        {selectedThread.contact?.phone && (
-          <div>
-            <h4 className="text-sm font-semibold text-[#1D1D1F] font-sans mb-3">
-              Phone
-            </h4>
-            <div className="flex items-center space-x-3">
-              <div className="flex-1 bg-[#F2F2F7] rounded-xl p-3">
-                <div className="flex items-center space-x-2">
-                  <Phone className="h-4 w-4 text-[#6E6E73]" />
-                  <span className="text-sm text-[#1D1D1F] font-sans">
-                    {selectedThread.contact.phone}
-                  </span>
-                </div>
+        <div>
+          <h4 className="text-sm font-semibold text-[#1D1D1F] font-sans mb-3">
+            Phone
+          </h4>
+          <div className="flex items-center space-x-3">
+            <div className="flex-1 bg-[#F2F2F7] rounded-xl p-3">
+              <div className="flex items-center space-x-2">
+                <Phone className="h-4 w-4 text-[#6E6E73]" />
+                <span className="text-sm text-[#1D1D1F] font-sans">
+                  {selectedThread.contact?.phone || "Not Available"}
+                </span>
               </div>
-              <Button
-                onClick={() => handleCopy(selectedThread.contact!.phone!, 'Phone')}
-                variant="outline"
-                size="sm"
-                className="p-2 border-[#E0E0E0] hover:border-[#0071E3] hover:bg-[#F8F9FA]"
-              >
-                <Copy className="h-4 w-4" />
-              </Button>
             </div>
+            {selectedThread.contact?.phone && (
+              <div className="flex space-x-2">
+                <Button
+                  onClick={() => handleCopy(selectedThread.contact!.phone!, 'Phone')}
+                  variant="outline"
+                  size="sm"
+                  className="p-2 border-[#E0E0E0] hover:border-[#0071E3] hover:bg-[#F8F9FA]"
+                >
+                  <Copy className="h-4 w-4" />
+                </Button>
+                <Button
+                  onClick={handleCall}
+                  variant="default"
+                  size="sm"
+                  className="p-2 bg-[#0071E3] hover:bg-[#005CBB] text-white"
+                >
+                  <PhoneCall className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
