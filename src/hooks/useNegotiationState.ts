@@ -1,4 +1,3 @@
-
 import { AgentStatus } from "@/types/outreach";
 import { useThreadSelection } from "@/hooks/useThreadSelection";
 import { useThreadsManagement } from "@/hooks/useThreadsManagement";
@@ -6,6 +5,7 @@ import { useMessageHandling } from "@/hooks/useMessageHandling";
 import { useAIResponseHandling } from "@/hooks/useAIResponseHandling";
 import { usePollingHandling } from "@/hooks/usePollingHandling";
 import { useStatusHandling } from "@/hooks/useStatusHandling";
+import { useCallHandling } from "@/hooks/useCallHandling";
 
 export const useNegotiationState = (campaignId?: string) => {
   const {
@@ -27,6 +27,7 @@ export const useNegotiationState = (campaignId?: string) => {
   const { handleAIResponse } = useAIResponseHandling();
   const { handlePoll } = usePollingHandling();
   const { handleStatusChange } = useStatusHandling();
+  const { handleCall } = useCallHandling();
 
   // Wrapper functions to maintain the same API
   const wrappedHandleSendMessage = async (content: string, platform: string) => {
@@ -45,6 +46,10 @@ export const useNegotiationState = (campaignId?: string) => {
     await handlePoll(selectedThread, campaignId, updateThread);
   };
 
+  const wrappedHandleCall = async () => {
+    await handleCall(selectedThread, campaignId);
+  };
+
   return {
     selectedThread,
     negotiationThreads,
@@ -56,6 +61,7 @@ export const useNegotiationState = (campaignId?: string) => {
     handleSendMessage: wrappedHandleSendMessage,
     handleStatusChange: wrappedHandleStatusChange,
     handleAIResponse: wrappedHandleAIResponse,
-    handlePoll: wrappedHandlePoll
+    handlePoll: wrappedHandlePoll,
+    handleCall: wrappedHandleCall
   };
 };

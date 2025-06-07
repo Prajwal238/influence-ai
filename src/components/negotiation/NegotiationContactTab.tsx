@@ -6,9 +6,10 @@ import { useToast } from "@/hooks/use-toast";
 
 interface NegotiationContactTabProps {
   selectedThread: NegotiationThread;
+  onCall?: () => void;
 }
 
-const NegotiationContactTab = ({ selectedThread }: NegotiationContactTabProps) => {
+const NegotiationContactTab = ({ selectedThread, onCall }: NegotiationContactTabProps) => {
   const { toast } = useToast();
 
   const handleCopy = (text: string, label: string) => {
@@ -20,11 +21,15 @@ const NegotiationContactTab = ({ selectedThread }: NegotiationContactTabProps) =
   };
 
   const handleCall = () => {
-    // TODO: API implementation will be provided later
-    toast({
-      title: "Call initiated",
-      description: "Call functionality will be implemented soon",
-    });
+    if (onCall) {
+      onCall();
+    } else {
+      toast({
+        title: "Call functionality unavailable",
+        description: "Call feature is not available at the moment",
+        variant: "destructive"
+      });
+    }
   };
 
   return (

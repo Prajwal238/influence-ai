@@ -1,11 +1,11 @@
-
 import { useState, useCallback } from 'react';
 import { NegotiationThread, NegotiationMessage } from '@/types/outreach';
 import { 
   fetchAllInfluencerConversationsAPI,
   pollConversationAPI,
   sendMessageAPI,
-  getAIResponseAPI
+  getAIResponseAPI,
+  makeOutboundCallAPI
 } from '@/services/negotiationAPI';
 import { transformApiResponseToThread, transformMessagesToApiFormat } from '@/utils/negotiationTransforms';
 
@@ -71,11 +71,24 @@ export const useNegotiationAPI = () => {
     }
   }, []);
 
+  const makeCall = useCallback(async (campaignId: string, phoneNumber: string, influencerName: string) => {
+    try {
+      const response = await makeOutboundCallAPI(campaignId, phoneNumber, influencerName);
+      return response;
+    } catch (err) {
+      console.error('Error making call:', err);
+      const errorMessage = err instanceof Error ? err.message : 'Failed to make call';
+      setError(errorMessage);
+      throw err;
+    }
+  }, []);
+
   return {
     fetchAllInfluencerConversations,
     pollConversation,
     sendMessage,
     getAIResponse,
+    makeCall,
     loading,
     error
   };

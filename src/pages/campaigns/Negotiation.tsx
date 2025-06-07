@@ -20,7 +20,8 @@ const Negotiation = () => {
     handleSendMessage,
     handleStatusChange,
     handleAIResponse,
-    handlePoll
+    handlePoll,
+    handleCall
   } = useNegotiationState(campaignId);
 
   if (loading) {
@@ -41,6 +42,7 @@ const Negotiation = () => {
         onStatusChange={handleStatusChange}
         onAIResponse={handleAIResponse}
         onPoll={handlePoll}
+        onCall={handleCall}
         aiResponseInput={aiResponseInput}
         onAiResponseInputChange={setAiResponseInput}
       />

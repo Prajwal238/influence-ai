@@ -12,6 +12,7 @@ interface NegotiationContentProps {
   onStatusChange: (status: AgentStatus) => void;
   onAIResponse: () => void;
   onPoll: () => void;
+  onCall?: () => void;
   aiResponseInput?: string;
   onAiResponseInputChange?: (value: string) => void;
 }
@@ -24,6 +25,7 @@ const NegotiationContent = ({
   onStatusChange,
   onAIResponse,
   onPoll,
+  onCall,
   aiResponseInput,
   onAiResponseInputChange
 }: NegotiationContentProps) => {
@@ -66,6 +68,7 @@ const NegotiationContent = ({
           <div className="col-span-12 lg:col-span-4">
             <NegotiationSidePanel
               selectedThread={selectedThread}
+              onCall={onCall}
             />
           </div>
         </div>
