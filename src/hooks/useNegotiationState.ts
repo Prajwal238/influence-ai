@@ -1,186 +1,48 @@
 
-import { useState, useEffect } from "react";
-import { NegotiationThread, NegotiationMessage, AgentStatus } from "@/types/outreach";
-import { useNegotiationAPI } from "@/hooks/useNegotiationAPI";
-import { useContactExtraction } from "@/hooks/useContactExtraction";
+import { AgentStatus } from "@/types/outreach";
+import { useThreadSelection } from "@/hooks/useThreadSelection";
+import { useThreadsManagement } from "@/hooks/useThreadsManagement";
+import { useMessageHandling } from "@/hooks/useMessageHandling";
+import { useAIResponseHandling } from "@/hooks/useAIResponseHandling";
+import { usePollingHandling } from "@/hooks/usePollingHandling";
+import { useStatusHandling } from "@/hooks/useStatusHandling";
 
 export const useNegotiationState = (campaignId?: string) => {
-  const [selectedThread, setSelectedThread] = useState<NegotiationThread | undefined>();
-  const [negotiationThreads, setNegotiationThreads] = useState<NegotiationThread[]>([]);
-  const [aiResponseInput, setAiResponseInput] = useState<string>('');
-  const { fetchAllInfluencerConversations, pollConversation, sendMessage, getAIResponse, loading, error } = useNegotiationAPI();
+  const {
+    selectedThread,
+    setSelectedThread,
+    aiResponseInput,
+    setAiResponseInput,
+    handleSelectThread
+  } = useThreadSelection();
 
-  // Extract contact info from selected thread messages
-  const extractedContact = useContactExtraction(selectedThread?.messages || []);
+  const {
+    negotiationThreads,
+    updateThread,
+    loading,
+    error
+  } = useThreadsManagement(selectedThread, setSelectedThread);
 
-  // Update selected thread with extracted contact information
-  useEffect(() => {
-    if (selectedThread && (extractedContact.email || extractedContact.phone)) {
-      const updatedThread: NegotiationThread = {
-        ...selectedThread,
-        contact: {
-          ...selectedThread.contact,
-          ...(extractedContact.email && { email: extractedContact.email }),
-          ...(extractedContact.phone && { phone: extractedContact.phone })
-        }
-      };
-      
-      // Only update if there's actually a change
-      if (
-        updatedThread.contact?.email !== selectedThread.contact?.email ||
-        updatedThread.contact?.phone !== selectedThread.contact?.phone
-      ) {
-        setSelectedThread(updatedThread);
-        
-        // Update the thread in the list as well
-        setNegotiationThreads(prev => 
-          prev.map(thread => 
-            thread.creatorId === selectedThread.creatorId ? updatedThread : thread
-          )
-        );
-      }
-    }
-  }, [extractedContact, selectedThread]);
+  const { handleSendMessage } = useMessageHandling();
+  const { handleAIResponse } = useAIResponseHandling();
+  const { handlePoll } = usePollingHandling();
+  const { handleStatusChange } = useStatusHandling();
 
-  // Fetch conversations when component mounts
-  useEffect(() => {
-    const loadConversations = async () => {
-      try {
-        const threads = await fetchAllInfluencerConversations();
-        setNegotiationThreads(threads);
-        
-        // Auto-select first non-complete thread
-        if (threads.length > 0) {
-          const firstActiveThread = threads.find(t => t.agentStatus !== 'complete') || threads[0];
-          setSelectedThread(firstActiveThread);
-        }
-      } catch (err) {
-        console.error('Failed to load conversations:', err);
-      }
-    };
-
-    loadConversations();
-  }, [fetchAllInfluencerConversations]);
-
-  const handleSelectThread = (thread: NegotiationThread) => {
-    setSelectedThread(thread);
-    setAiResponseInput(''); // Clear AI response input when switching threads
+  // Wrapper functions to maintain the same API
+  const wrappedHandleSendMessage = async (content: string, platform: string) => {
+    await handleSendMessage(selectedThread, campaignId, content, platform, updateThread);
   };
 
-  const handleSendMessage = async (content: string, platform: string) => {
-    if (!selectedThread || !campaignId) return;
-
-    const newMessage: NegotiationMessage = {
-      id: `msg-${Date.now()}`,
-      from: 'user',
-      content,
-      timestamp: new Date().toISOString(),
-      platform: platform as 'instagram' | 'email' | 'voice'
-    };
-
-    // Update selected thread immediately for UI responsiveness
-    const updatedThread: NegotiationThread = {
-      ...selectedThread,
-      messages: [...selectedThread.messages, newMessage],
-      lastActivity: new Date().toISOString()
-    };
-    setSelectedThread(updatedThread);
-
-    // Update threads list
-    setNegotiationThreads(prev => 
-      prev.map(thread => 
-        thread.creatorId === selectedThread.creatorId ? updatedThread : thread
-      )
-    );
-
-    // Call API to send message using the actual campaign ID
-    try {
-      await sendMessage(campaignId, selectedThread.platform, selectedThread.name, content);
-      console.log('Message sent to API successfully');
-    } catch (err) {
-      console.error('Failed to send message to API:', err);
-      // Optionally show error to user or revert UI changes
-    }
+  const wrappedHandleStatusChange = (newStatus: AgentStatus) => {
+    handleStatusChange(selectedThread, newStatus, updateThread);
   };
 
-  const handleStatusChange = (newStatus: AgentStatus) => {
-    if (!selectedThread) return;
-
-    const updatedThread: NegotiationThread = {
-      ...selectedThread,
-      agentStatus: newStatus
-    };
-    setSelectedThread(updatedThread);
-
-    // Update threads list
-    setNegotiationThreads(prev => 
-      prev.map(thread => 
-        thread.creatorId === selectedThread.creatorId ? updatedThread : thread
-      )
-    );
+  const wrappedHandleAIResponse = async () => {
+    await handleAIResponse(selectedThread, setAiResponseInput);
   };
 
-  const handleAIResponse = async () => {
-    if (!selectedThread) return;
-
-    try {
-      console.log('Getting AI response for conversation...');
-      const aiMessage = await getAIResponse(selectedThread.messages);
-      setAiResponseInput(aiMessage);
-      console.log('AI response received and set in input:', aiMessage);
-    } catch (err) {
-      console.error('Failed to get AI response:', err);
-    }
-  };
-
-  const handlePoll = async () => {
-    if (!selectedThread || !campaignId) return;
-
-    try {
-      console.log('Polling for latest conversation updates...');
-      
-      const pollResults = await pollConversation(
-        campaignId, // Use the actual campaign ID instead of hardcoded value
-        selectedThread.platform,
-        selectedThread.name
-      );
-
-      // Transform poll results to messages and check for duplicates
-      const existingMessageContents = new Set(selectedThread.messages.map(msg => msg.content));
-      
-      const newMessages: NegotiationMessage[] = pollResults
-        .filter(pollMsg => !existingMessageContents.has(pollMsg.message))
-        .map((pollMsg, index) => ({
-          id: `poll-${Date.now()}-${index}`,
-          from: pollMsg.role === 'negotiator' ? 'agent' : 'creator',
-          content: pollMsg.message,
-          timestamp: new Date().toISOString(),
-          platform: selectedThread.platform
-        }));
-
-      if (newMessages.length > 0) {
-        console.log(`Adding ${newMessages.length} new messages from poll`);
-        
-        // Update selected thread with new messages
-        const updatedThread: NegotiationThread = {
-          ...selectedThread,
-          messages: [...selectedThread.messages, ...newMessages],
-          lastActivity: new Date().toISOString()
-        };
-        setSelectedThread(updatedThread);
-
-        // Update threads list
-        setNegotiationThreads(prev => 
-          prev.map(thread => 
-            thread.creatorId === selectedThread.creatorId ? updatedThread : thread
-          )
-        );
-      } else {
-        console.log('No new messages found in poll');
-      }
-    } catch (err) {
-      console.error('Failed to poll conversation:', err);
-    }
+  const wrappedHandlePoll = async () => {
+    await handlePoll(selectedThread, campaignId, updateThread);
   };
 
   return {
@@ -191,9 +53,9 @@ export const useNegotiationState = (campaignId?: string) => {
     loading,
     error,
     handleSelectThread,
-    handleSendMessage,
-    handleStatusChange,
-    handleAIResponse,
-    handlePoll
+    handleSendMessage: wrappedHandleSendMessage,
+    handleStatusChange: wrappedHandleStatusChange,
+    handleAIResponse: wrappedHandleAIResponse,
+    handlePoll: wrappedHandlePoll
   };
 };
