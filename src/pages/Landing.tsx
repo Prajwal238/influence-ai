@@ -1,9 +1,11 @@
 
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { ArrowRight, Zap, Target, Users, BarChart3 } from "lucide-react";
+import { ArrowRight, Zap, Target, Users, BarChart3, MessageSquare, Handshake, ChefHat, Calendar, Cpu, Play } from "lucide-react";
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -33,24 +35,74 @@ const Landing = () => {
 
   const features = [
     {
-      icon: <Zap className="h-6 w-6 text-blue-600" />,
+      icon: <Zap className="h-8 w-8 text-blue-600" />,
       title: "AI-Powered Discovery",
-      description: "Find the perfect influencers with our intelligent matching system"
+      description: "Leverage machine learning to find the most relevant influencers based on your audience, goals, and category."
     },
     {
-      icon: <Target className="h-6 w-6 text-blue-600" />,
+      icon: <MessageSquare className="h-8 w-8 text-blue-600" />,
       title: "Automated Outreach",
-      description: "Personalized messaging at scale with AI-generated content"
+      description: "Send personalized messages at scale and track responses — no manual DMing required."
     },
     {
-      icon: <Users className="h-6 w-6 text-blue-600" />,
+      icon: <Handshake className="h-8 w-8 text-blue-600" />,
       title: "Smart Negotiation",
-      description: "AI agents handle negotiations and contract management"
+      description: "Let our AI negotiator handle pricing discussions with influencers or take over whenever you wish."
     },
     {
-      icon: <BarChart3 className="h-6 w-6 text-blue-600" />,
+      icon: <BarChart3 className="h-8 w-8 text-blue-600" />,
       title: "Real-time Analytics",
-      description: "Track performance and ROI with comprehensive reporting"
+      description: "Get instant campaign insights — impressions, engagement, conversions, ROI, and more."
+    },
+    {
+      icon: <Target className="h-8 w-8 text-blue-600" />,
+      title: "End-to-End Workflow",
+      description: "From finding to paying influencers — our full-stack solution handles everything."
+    }
+  ];
+
+  const testimonials = [
+    {
+      name: "Sarah Chen",
+      role: "Owner, Urban Bites Café",
+      quote: "This tool helped us reach 5x more customers through nano influencers!",
+      avatar: "/placeholder.svg"
+    },
+    {
+      name: "Mike Rodriguez",
+      role: "Marketing Director, TechFlow",
+      quote: "Inflowencer saved us 20 hours per week on campaign management.",
+      avatar: "/placeholder.svg"
+    },
+    {
+      name: "Emma Thompson",
+      role: "Founder, Green Beauty Co",
+      quote: "The AI negotiation feature got us better rates than we could manually.",
+      avatar: "/placeholder.svg"
+    },
+    {
+      name: "David Park",
+      role: "Events Manager, City Sports",
+      quote: "Our event attendance doubled thanks to targeted micro-influencer campaigns.",
+      avatar: "/placeholder.svg"
+    }
+  ];
+
+  const useCases = [
+    {
+      icon: <ChefHat className="h-8 w-8 text-blue-600" />,
+      title: "Restaurants & Cafes",
+      description: "Partner with local foodies and vloggers to attract foot traffic and boost orders."
+    },
+    {
+      icon: <Calendar className="h-8 w-8 text-blue-600" />,
+      title: "Event Organizers",
+      description: "Promote fitness events, community meetups, or concerts through micro-influencers."
+    },
+    {
+      icon: <Cpu className="h-8 w-8 text-blue-600" />,
+      title: "Tech & Gadget Companies",
+      description: "Get early adopters and product reviewers talking about your launch."
     }
   ];
 
@@ -89,12 +141,11 @@ const Landing = () => {
       <section className="relative py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto text-center">
           <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 mb-8 tracking-tight">
-            Run influencer campaigns
-            <span className="block text-blue-600">on autopilot.</span>
+            Run Influencer Campaigns
+            <span className="block text-blue-600">on Autopilot 🚀</span>
           </h1>
           <p className="text-xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
-            Automate your entire influencer marketing workflow with AI. From discovery to payment, 
-            let our intelligent agents handle everything while you focus on strategy.
+            Discover, message, negotiate, and measure — all in one AI-powered dashboard.
           </p>
           <Button 
             size="lg" 
@@ -107,7 +158,7 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Features Section */}
+      {/* Core Features Section */}
       <section id="features" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
@@ -116,43 +167,130 @@ const Landing = () => {
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
               Our AI-powered platform handles every aspect of influencer marketing, 
-              from finding creators to managing payments.
+              from finding creators to managing campaigns.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature, index) => (
-              <div 
+              <Card 
                 key={index} 
                 className="p-6 rounded-2xl bg-gradient-to-br from-gray-50 to-white border border-gray-200 hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
               >
-                <div className="mb-4">
-                  {feature.icon}
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  {feature.title}
-                </h3>
-                <p className="text-gray-600 text-sm leading-relaxed">
-                  {feature.description}
-                </p>
-              </div>
+                <CardContent className="p-0">
+                  <div className="mb-4">
+                    {feature.icon}
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    {feature.title}
+                  </h3>
+                  <p className="text-gray-600 text-sm leading-relaxed">
+                    {feature.description}
+                  </p>
+                </CardContent>
+              </Card>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* Reviews Section */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              See what people think of this idea
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {testimonials.map((testimonial, index) => (
+              <Card key={index} className="p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                <CardContent className="p-0">
+                  <div className="flex items-center mb-4">
+                    <Avatar className="h-12 w-12 mr-3">
+                      <AvatarImage src={testimonial.avatar} alt={testimonial.name} />
+                      <AvatarFallback>{testimonial.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <h4 className="font-semibold text-gray-900">{testimonial.name}</h4>
+                      <p className="text-sm text-gray-600">{testimonial.role}</p>
+                    </div>
+                  </div>
+                  <p className="text-gray-700 italic">"{testimonial.quote}"</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Use Cases Section */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Built for Every Business Size
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+            {useCases.map((useCase, index) => (
+              <Card key={index} className="p-8 text-center rounded-2xl hover:shadow-lg transition-all duration-300">
+                <CardContent className="p-0">
+                  <div className="mb-6 flex justify-center">
+                    {useCase.icon}
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                    {useCase.title}
+                  </h3>
+                  <p className="text-gray-600 leading-relaxed">
+                    {useCase.description}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          <div className="text-center">
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              No matter your industry — if your audience is online, Inflowencer works for you.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Demo Video Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-blue-600 to-purple-600">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-bold text-white mb-4">
+          <h2 className="text-4xl font-bold text-white mb-8">
+            Watch how it works in under 60 seconds
+          </h2>
+          <div className="relative bg-black rounded-2xl overflow-hidden shadow-2xl">
+            <div className="aspect-video flex items-center justify-center">
+              <Button 
+                size="lg"
+                variant="outline"
+                className="bg-white/10 border-white/20 text-white hover:bg-white/20"
+                onClick={() => window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank')}
+              >
+                <Play className="mr-2 h-6 w-6" />
+                Watch Demo
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-4xl font-bold text-gray-900 mb-4">
             Ready to transform your influencer marketing?
           </h2>
-          <p className="text-xl text-blue-100 mb-8">
+          <p className="text-xl text-gray-600 mb-8">
             Join thousands of brands already using AI to scale their campaigns.
           </p>
           <Button 
             size="lg" 
             onClick={() => navigate('/login')}
-            className="bg-white text-blue-600 hover:bg-gray-50 px-8 py-4 text-lg rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 text-lg rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300"
           >
             Get Started Today
             <ArrowRight className="ml-2 h-5 w-5" />
