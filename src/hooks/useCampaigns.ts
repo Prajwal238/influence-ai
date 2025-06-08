@@ -1,13 +1,18 @@
-
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Campaign } from '@/types/campaign';
 import { apiConfig } from '@/config/api';
+
+// Utility to get auth token from localStorage
+const getAuthToken = () => {
+  return localStorage.getItem('jwt_token') || '';
+};
 
 const fetchCampaigns = async (): Promise<Campaign[]> => {
   const response = await fetch(apiConfig.endpoints.campaigns, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
+      'Authorization': `${getAuthToken()}`,
     },
   });
 

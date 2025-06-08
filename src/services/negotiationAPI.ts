@@ -7,9 +7,18 @@ import {
   AIResponseResponse 
 } from '@/types/negotiationAPI';
 
+// Utility to get auth token from localStorage
+const getAuthToken = () => {
+  return localStorage.getItem('jwt_token') || '';
+};
+
 export const fetchAllInfluencerConversationsAPI = async (): Promise<ApiNegotiationResponse[]> => {
   console.log('Fetching all influencer conversations...');
-  const response = await fetch(buildApiUrl('/api/user_123/getAllInfluencerConversations'));
+  const response = await fetch(buildApiUrl('/api/getAllInfluencerConversations'), {
+    headers: {
+      'Authorization': `${getAuthToken()}`,
+    },
+  });
   
   if (!response.ok) {
     throw new Error('Failed to fetch influencer conversations');
@@ -28,7 +37,12 @@ export const pollConversationAPI = async (
   console.log('Polling conversation for:', { campaignId, platform, influencerName });
   
   const response = await fetch(
-    buildApiUrl(`/api/campaigns/${campaignId}/platform/${platform}/getConversation/${encodeURIComponent(influencerName)}`)
+    buildApiUrl(`/api/campaigns/${campaignId}/platform/${platform}/getConversation/${encodeURIComponent(influencerName)}`),
+    {
+      headers: {
+        'Authorization': `${getAuthToken()}`,
+      },
+    }
   );
   
   if (!response.ok) {
@@ -60,6 +74,7 @@ export const sendMessageAPI = async (
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `${getAuthToken()}`,
       },
       body: JSON.stringify(requestBody)
     }
@@ -80,11 +95,12 @@ export const getAIResponseAPI = async (apiMessages: Array<{ role: string; messag
   };
 
   const response = await fetch(
-    buildApiUrl('/api/user_123/getAIResponse'),
+    buildApiUrl('/api/getAIResponse'),
     {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `${getAuthToken()}`,
       },
       body: JSON.stringify(requestBody)
     }
@@ -113,11 +129,12 @@ export const makeOutboundCallAPI = async (
   console.log('Making outbound call:', { campaignId, phoneNumber, influencerName });
   
   const response = await fetch(
-    buildApiUrl(`/api/user_123/campaigns/${campaignId}/makeOutBoundCall`),
+    buildApiUrl(`/api/campaigns/${campaignId}/makeOutBoundCall`),
     {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `${getAuthToken()}`,
       },
       body: JSON.stringify({
         phoneNumber,

@@ -7,6 +7,11 @@ import SessionsPanelHeader from './SessionsPanelHeader';
 import SessionsList from './SessionsList';
 import { apiConfig } from '@/config/api';
 
+// Utility to get auth token from localStorage
+const getAuthToken = () => {
+  return localStorage.getItem('jwt_token') || '';
+};
+
 interface SessionsPanelProps {
   agentType: string;
   currentSessionId: string;
@@ -30,6 +35,7 @@ const SessionsPanel = ({ agentType, currentSessionId, onSessionChange, onNewSess
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `${getAuthToken()}`,
         },
       });
       

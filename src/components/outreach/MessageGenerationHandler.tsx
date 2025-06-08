@@ -4,6 +4,11 @@ import { useToast } from "@/hooks/use-toast";
 import { MessageType } from "./MessageTypeToggle";
 import { buildApiUrl } from "@/config/api";
 
+// Utility to get auth token from localStorage
+const getAuthToken = () => {
+  return localStorage.getItem('jwt_token') || '';
+};
+
 interface MessageGenerationHandlerProps {
   campaignId?: string;
   messageType: MessageType;
@@ -46,10 +51,11 @@ export const useMessageGeneration = ({
         description: "AI is creating your personalized message...",
       });
 
-      const response = await fetch(buildApiUrl(`/api/user_123/campaigns/${campaignId}/ai_message`), {
+      const response = await fetch(buildApiUrl(`/api/campaigns/${campaignId}/ai_message`), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `${getAuthToken()}`,
         },
         body: JSON.stringify({
           language: selectedTargetLanguage,

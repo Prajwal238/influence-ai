@@ -4,6 +4,11 @@ import { transformApiDataToOutreachInfluencer } from "@/utils/outreachTransforms
 import { InfluencerSelection } from "@/types/outreach";
 import { buildApiUrl } from "@/config/api";
 
+// Utility to get auth token from localStorage
+const getAuthToken = () => {
+  return localStorage.getItem('jwt_token') || '';
+};
+
 export const useOutreachInfluencers = (campaignId: string | undefined) => {
   const [selectedInfluencers, setSelectedInfluencers] = useState<InfluencerSelection[]>([]);
   const [apiInfluencers, setApiInfluencers] = useState<any[]>([]);
@@ -15,7 +20,11 @@ export const useOutreachInfluencers = (campaignId: string | undefined) => {
     const fetchInfluencers = async () => {
       try {
         setLoading(true);
-        const response = await fetch(buildApiUrl(`/api/user_123/campaigns/${campaignId}/outreach_seed`));
+        const response = await fetch(buildApiUrl(`/api/campaigns/${campaignId}/outreach_seed`), {
+          headers: {
+            'Authorization': `${getAuthToken()}`,
+          },
+        });
         
         if (!response.ok) {
           throw new Error('Failed to fetch influencers');

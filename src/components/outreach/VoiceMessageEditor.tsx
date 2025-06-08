@@ -7,6 +7,11 @@ import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { buildApiUrl } from "@/config/api";
 
+// Utility to get auth token from localStorage
+const getAuthToken = () => {
+  return localStorage.getItem('jwt_token') || '';
+};
+
 interface VoiceMessageEditorProps {
   voiceMessage: string;
   onVoiceMessageChange: (message: string) => void;
@@ -62,10 +67,11 @@ const VoiceMessageEditor = ({
         description: "Converting your message to voice...",
       });
 
-      const response = await fetch(buildApiUrl('/api/user_123/voice_preview'), {
+      const response = await fetch(buildApiUrl('/api/voice_preview'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `${getAuthToken()}`,
         },
         body: JSON.stringify({
           language: languageCode,

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { getCurrentSessionId, startNewSession } from '../sessionUtils';
@@ -15,6 +14,11 @@ interface SessionData {
   messages: SessionMessage[];
 }
 
+// Utility to get auth token from localStorage
+const getAuthToken = () => {
+  return localStorage.getItem('jwt_token') || '';
+};
+
 export const useSessionManagement = (agentType: string) => {
   const [currentSessionId, setCurrentSessionId] = useState<string>("");
   const { toast } = useToast();
@@ -26,10 +30,11 @@ export const useSessionManagement = (agentType: string) => {
 
   const loadSessionData = async (sessionId: string) => {
     try {
-      const response = await fetch(buildApiUrl(`/api/campaigns/user_123/sessions/${sessionId}`), {
+      const response = await fetch(buildApiUrl(`/api/campaigns/sessions/${sessionId}`), {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `${getAuthToken()}`,
         },
       });
       

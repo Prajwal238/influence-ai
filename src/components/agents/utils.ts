@@ -2,6 +2,11 @@
 import { Message } from './types';
 import { buildApiUrl } from '@/config/api';
 
+// Utility to get auth token from localStorage
+const getAuthToken = () => {
+  return localStorage.getItem('jwt_token') || '';
+};
+
 export const getInitialGreeting = (type: string) => {
   switch (type) {
     case 'campaign':
@@ -23,9 +28,9 @@ export const callCampaignAPI = async (prompt: string, sessionId: string) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `${getAuthToken()}`,
       },
       body: JSON.stringify({
-        userId: "user_123", // This should come from actual user context
         prompt: prompt,
         sessionId: sessionId
       })

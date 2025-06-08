@@ -6,6 +6,11 @@ import { useOutreachData } from "@/hooks/useOutreachData";
 import { buildApiUrl } from "@/config/api";
 import { useToast } from "@/hooks/use-toast";
 
+// Utility to get auth token from localStorage
+const getAuthToken = () => {
+  return localStorage.getItem('jwt_token') || '';
+};
+
 interface OutreachInfluencer {
   id: number;
   name: string;
@@ -38,6 +43,7 @@ export const useOutreachMessageHandlers = ({
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': `${getAuthToken()}`,
           },
           body: JSON.stringify({
             role: 'negotiator',
