@@ -1,10 +1,35 @@
 
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 import { ArrowRight, Zap, Target, Users, BarChart3 } from "lucide-react";
 
 const Landing = () => {
   const navigate = useNavigate();
+  const { isAuthenticated, isLoading } = useAuth();
+
+  // Redirect to dashboard if user is already authenticated
+  useEffect(() => {
+    if (!isLoading && isAuthenticated) {
+      console.log('User is already authenticated, redirecting to dashboard');
+      navigate('/dashboard');
+    }
+  }, [isAuthenticated, isLoading, navigate]);
+
+  // Show loading state while checking authentication
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  // Don't render landing page if user is authenticated (will redirect)
+  if (isAuthenticated) {
+    return null;
+  }
 
   const features = [
     {

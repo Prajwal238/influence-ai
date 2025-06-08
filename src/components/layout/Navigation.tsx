@@ -9,7 +9,7 @@ const Navigation = () => {
   const { logout, isAuthenticated } = useAuth();
 
   const navItems = [
-    { name: "Dashboard", path: "/" },
+    { name: "Dashboard", path: "/dashboard" },
     { name: "Admin", path: "/admin" },
   ];
 
