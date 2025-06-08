@@ -1,4 +1,6 @@
 
+import { apiClient } from '@/utils/apiClient';
+
 // API configuration using Vite environment variables
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -16,3 +18,6 @@ export const apiConfig = {
 export const buildApiUrl = (path: string) => {
   return `${API_BASE_URL}${path}`;
 };
+
+// Export the JWT-enabled API client for protected requests
+export { apiClient };
