@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
-import { buildApiUrl } from '@/config/api';
+import { apiClient } from '@/config/api';
 
 export const useCampaignInfluencers = () => {
   const [loading, setLoading] = useState(false);
@@ -21,14 +21,8 @@ export const useCampaignInfluencers = () => {
 
     setLoading(true);
     try {
-      const response = await fetch(buildApiUrl(`/api/campaigns/${campaignId}/influencers`), {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          influencerId: influencerId
-        }),
+      const response = await apiClient.post(`/api/campaigns/${campaignId}/influencers`, {
+        influencerId: influencerId
       });
 
       if (!response.ok) {

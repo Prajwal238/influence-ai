@@ -1,7 +1,7 @@
 
 import { useState, useCallback } from 'react';
 import { ApiInfluencer } from '@/types/influencer';
-import { buildApiUrl } from '@/config/api';
+import { apiClient } from '@/config/api';
 
 export const useInfluencerAPI = () => {
   const [loading, setLoading] = useState(false);
@@ -9,7 +9,7 @@ export const useInfluencerAPI = () => {
 
   const fetchAllInfluencers = async (): Promise<ApiInfluencer[]> => {
     console.log('Fetching all influencers...');
-    const response = await fetch(buildApiUrl('/api/influencers'));
+    const response = await apiClient.get('/api/influencers');
     if (!response.ok) {
       throw new Error('Failed to fetch all influencers');
     }
@@ -19,10 +19,10 @@ export const useInfluencerAPI = () => {
   };
 
   const fetchCampaignInfluencers = async (campaignId: string): Promise<ApiInfluencer[]> => {
-    const campaignUrl = buildApiUrl(`/api/campaigns/${campaignId}/influencers`);
-    console.log('Fetching campaign influencers from:', campaignUrl);
+    const campaignEndpoint = `/api/campaigns/${campaignId}/influencers`;
+    console.log('Fetching campaign influencers from:', campaignEndpoint);
     
-    const response = await fetch(campaignUrl);
+    const response = await apiClient.get(campaignEndpoint);
     
     if (response.ok) {
       const data: ApiInfluencer[] = await response.json();
@@ -62,7 +62,7 @@ export const useInfluencerAPI = () => {
     } finally {
       setLoading(false);
     }
-  }, []); // Empty dependency array since the function doesn't depend on any external values
+  }, []);
 
   return {
     fetchInfluencers,

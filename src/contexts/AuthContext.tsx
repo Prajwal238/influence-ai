@@ -42,6 +42,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   useEffect(() => {
     // Check for existing token on app load
     const savedToken = localStorage.getItem('jwt_token');
+    console.log('Checking for saved token on app load:', savedToken ? 'Found' : 'Not found');
     if (savedToken) {
       setToken(savedToken);
       // You could validate the token here by making an API call
@@ -51,6 +52,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
+      console.log('Attempting login for:', email);
       const response = await fetch(buildApiUrl('/api/login'), {
         method: 'POST',
         headers: {
@@ -60,8 +62,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       });
 
       const data = await response.json();
+      console.log('Login response:', { status: response.status, hasToken: !!data.token });
 
       if (response.ok && data.token) {
+        console.log('Login successful, storing token');
         setToken(data.token);
         localStorage.setItem('jwt_token', data.token);
         setUser({ username: '', email }); // You might want to get user info from token
@@ -72,6 +76,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         navigate('/dashboard');
         return true;
       } else {
+        console.log('Login failed:', data.message);
         toast({
           title: "Login failed",
           description: data.message || "Invalid credentials",
@@ -129,6 +134,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const logout = () => {
+    console.log('Logging out user');
     setToken(null);
     setUser(null);
     localStorage.removeItem('jwt_token');

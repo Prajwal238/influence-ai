@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { Influencer, ApiInfluencer } from '@/types/influencer';
 import { transformApiDataToInfluencer } from '@/utils/influencerTransforms';
-import { buildApiUrl } from '@/config/api';
+import { apiClient } from '@/config/api';
 
 export const useAISearch = () => {
   const [loading, setLoading] = useState(false);
@@ -16,29 +16,19 @@ export const useAISearch = () => {
     try {
       console.log('Calling AI search API for campaign:', campaignId, 'with prompt:', prompt);
       
-      const url = buildApiUrl(`/api/campaigns/${campaignId}/influencers/llm`);
+      const endpoint = `/api/campaigns/${campaignId}/influencers/llm`;
       
-      let requestOptions: RequestInit;
+      let response;
       
       if (prompt) {
         // Custom prompt search - use POST with prompt in body
-        requestOptions = {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            userPrompt: prompt
-          })
-        };
+        response = await apiClient.post(endpoint, {
+          userPrompt: prompt
+        });
       } else {
         // Default recommendations - use GET
-        requestOptions = {
-          method: 'GET'
-        };
+        response = await apiClient.get(endpoint);
       }
-      
-      const response = await fetch(url, requestOptions);
       
       if (!response.ok) {
         throw new Error('Failed to fetch AI recommendations');

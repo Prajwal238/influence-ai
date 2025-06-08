@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import { Influencer } from '@/types/influencer';
 import { transformApiDataToInfluencer } from '@/utils/influencerTransforms';
 import { useInfluencerAPI } from '@/hooks/useInfluencerAPI';
-import { buildApiUrl } from '@/config/api';
+import { apiClient } from '@/config/api';
 
 export const useInfluencerTabs = () => {
   const [allInfluencers, setAllInfluencers] = useState<Influencer[]>([]);
@@ -72,10 +72,8 @@ export const useInfluencerTabs = () => {
     if (!campaignId) return false;
 
     try {
-      const response = await fetch(buildApiUrl(`/api/campaigns/${campaignId}/influencers`), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ influencerId: influencer.apiId })
+      const response = await apiClient.post(`/api/campaigns/${campaignId}/influencers`, {
+        influencerId: influencer.apiId
       });
 
       if (!response.ok) throw new Error('Failed to add influencer');
@@ -128,10 +126,8 @@ export const useInfluencerTabs = () => {
     if (!campaignId) return false;
 
     try {
-      const response = await fetch(buildApiUrl(`/api/campaigns/${campaignId}/influencers`), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ removeInfluencerId: influencer.apiId })
+      const response = await apiClient.post(`/api/campaigns/${campaignId}/influencers`, {
+        removeInfluencerId: influencer.apiId
       });
 
       if (!response.ok) throw new Error('Failed to remove influencer');
