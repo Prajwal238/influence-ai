@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
+import { buildApiUrl } from '@/config/api';
 
 interface User {
   username: string;
@@ -50,7 +51,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
-      const response = await fetch('/api/login', {
+      const response = await fetch(buildApiUrl('/api/login'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -91,7 +92,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const signup = async (username: string, email: string, password: string): Promise<boolean> => {
     try {
-      const response = await fetch('/api/signup', {
+      const response = await fetch(buildApiUrl('/api/signup'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -21,7 +21,7 @@ export const useCampaignInfluencers = () => {
 
     setLoading(true);
     try {
-      const response = await fetch(buildApiUrl(`/api/user_123/campaigns/${campaignId}/influencers`), {
+      const response = await fetch(buildApiUrl(`/api/campaigns/${campaignId}/influencers`), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -9,7 +9,7 @@ export const useInfluencerAPI = () => {
 
   const fetchAllInfluencers = async (): Promise<ApiInfluencer[]> => {
     console.log('Fetching all influencers...');
-    const response = await fetch(buildApiUrl('/api/user_123/influencers'));
+    const response = await fetch(buildApiUrl('/api/influencers'));
     if (!response.ok) {
       throw new Error('Failed to fetch all influencers');
     }
@@ -19,7 +19,7 @@ export const useInfluencerAPI = () => {
   };
 
   const fetchCampaignInfluencers = async (campaignId: string): Promise<ApiInfluencer[]> => {
-    const campaignUrl = buildApiUrl(`/api/user_123/campaigns/${campaignId}/influencers`);
+    const campaignUrl = buildApiUrl(`/api/campaigns/${campaignId}/influencers`);
     console.log('Fetching campaign influencers from:', campaignUrl);
     
     const response = await fetch(campaignUrl);

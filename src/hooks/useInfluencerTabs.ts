@@ -72,7 +72,7 @@ export const useInfluencerTabs = () => {
     if (!campaignId) return false;
 
     try {
-      const response = await fetch(buildApiUrl(`/api/user_123/campaigns/${campaignId}/influencers`), {
+      const response = await fetch(buildApiUrl(`/api/campaigns/${campaignId}/influencers`), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ influencerId: influencer.apiId })
@@ -128,7 +128,7 @@ export const useInfluencerTabs = () => {
     if (!campaignId) return false;
 
     try {
-      const response = await fetch(buildApiUrl(`/api/user_123/campaigns/${campaignId}/influencers`), {
+      const response = await fetch(buildApiUrl(`/api/campaigns/${campaignId}/influencers`), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ removeInfluencerId: influencer.apiId })

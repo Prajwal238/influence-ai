@@ -16,7 +16,7 @@ export const useAISearch = () => {
     try {
       console.log('Calling AI search API for campaign:', campaignId, 'with prompt:', prompt);
       
-      const url = buildApiUrl(`/api/user_123/campaigns/${campaignId}/influencers/llm`);
+      const url = buildApiUrl(`/api/campaigns/${campaignId}/influencers/llm`);
       
       let requestOptions: RequestInit;
       
