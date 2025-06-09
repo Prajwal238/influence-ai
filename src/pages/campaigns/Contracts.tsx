@@ -8,7 +8,7 @@ import { ContractLegalCompliance } from "@/components/contracts/ContractLegalCom
 import { useContractData } from "@/hooks/useContractData";
 
 const Contracts = () => {
-  const { contracts, selectedContract, loading, handleViewContract } = useContractData();
+  const { contracts, selectedContract, loading, error, handleViewContract } = useContractData();
 
   if (loading) {
     return (
@@ -20,13 +20,26 @@ const Contracts = () => {
     );
   }
 
+  if (error) {
+    return (
+      <CampaignLayout>
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <p className="text-red-500 mb-4">Error loading contracts: {error}</p>
+            <p className="text-sm text-gray-400">Please try refreshing the page</p>
+          </div>
+        </div>
+      </CampaignLayout>
+    );
+  }
+
   if (contracts.length === 0) {
     return (
       <CampaignLayout>
         <div className="flex items-center justify-center py-12">
           <div className="text-center">
-            <p className="text-gray-500 mb-4">No influencers found in this campaign</p>
-            <p className="text-sm text-gray-400">Add influencers to the campaign to generate contracts</p>
+            <p className="text-gray-500 mb-4">No contracts found for this campaign</p>
+            <p className="text-sm text-gray-400">Contracts will appear here once negotiations are completed</p>
           </div>
         </div>
       </CampaignLayout>

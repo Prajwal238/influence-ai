@@ -53,10 +53,17 @@ export const ContractPreview = ({ contract }: ContractPreviewProps) => {
             </div>
 
             <div>
-              <h4 className="font-medium text-gray-900 mb-2">4. COMPENSATION</h4>
-              <p className="text-gray-700">
-                Total compensation: {contract.value} USD, to be paid within 30 days of content delivery.
+              <h4 className="font-medium text-gray-900 mb-2">4. COMPENSATION & TERMS</h4>
+              <p className="text-gray-700 mb-2">
+                Total compensation: {contract.value}, to be paid within 30 days of content delivery.
               </p>
+              {contract.negotiationTerms && (
+                <div className="bg-blue-50 border-l-4 border-blue-400 p-3 mt-2">
+                  <p className="text-blue-800 text-sm">
+                    <strong>Negotiated Terms:</strong> {contract.negotiationTerms}
+                  </p>
+                </div>
+              )}
             </div>
 
             <div>
@@ -74,11 +81,17 @@ export const ContractPreview = ({ contract }: ContractPreviewProps) => {
             <div className="grid grid-cols-2 gap-8">
               <div>
                 <p className="text-sm text-gray-600 mb-2">Company Signature</p>
-                <div className="border-b border-gray-400 h-8"></div>
+                <div className="border-b border-gray-400 h-8 relative">
+                  <div className="absolute bottom-2 left-0 text-gray-500 italic font-signature text-lg">
+                    FlowAI Brand Ltd.
+                  </div>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">Authorized Signatory</p>
               </div>
               <div>
                 <p className="text-sm text-gray-600 mb-2">Influencer Signature</p>
                 <div className="border-b border-gray-400 h-8"></div>
+                <p className="text-xs text-gray-500 mt-1">{contract.influencer.name}</p>
               </div>
             </div>
           </div>

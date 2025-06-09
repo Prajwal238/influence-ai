@@ -10,6 +10,7 @@ export interface ContractData {
   deadline: string;
   signedDate?: string;
   sentDate?: string;
+  negotiationTerms?: string;
 }
 
 export type ContractStatus = "signed" | "pending" | "draft";
