@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { NegotiationThread } from '@/types/outreach';
 import { useNegotiationAPI } from '@/hooks/useNegotiationAPI';
-import { useContactExtraction } from '@/hooks/useContactExtraction';
+import { useContactExtractionForThreads } from '@/hooks/useContactExtractionForThreads';
 
 export const useThreadsManagement = (
   selectedThread: NegotiationThread | undefined,
@@ -14,6 +14,9 @@ export const useThreadsManagement = (
   const [error, setError] = useState<string | null>(null);
   
   const { fetchAllInfluencerConversations } = useNegotiationAPI();
+
+  // Extract contact information for all threads
+  const threadsWithContacts = useContactExtractionForThreads(negotiationThreads);
 
   const loadThreads = useCallback(async () => {
     try {
@@ -52,7 +55,7 @@ export const useThreadsManagement = (
   }, [selectedThread, setSelectedThread]);
 
   return {
-    negotiationThreads,
+    negotiationThreads: threadsWithContacts,
     updateThread,
     loading,
     error
