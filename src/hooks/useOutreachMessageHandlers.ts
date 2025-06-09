@@ -38,7 +38,7 @@ export const useOutreachMessageHandlers = ({
   const sendOutreachMessage = async (influencerName: string, platform: string, messageContent: string) => {
     try {
       const response = await fetch(
-        buildApiUrl(`/api/campaigns/${campaignId}/platform/${platform}/updateConversation/${encodeURIComponent(influencerName)}`),
+        buildApiUrl(`/api/outreach/${campaignId}/platform/${platform}/updateConversation/${encodeURIComponent(influencerName)}`),
         {
           method: 'POST',
           headers: {

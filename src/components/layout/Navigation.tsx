@@ -13,7 +13,7 @@ const Navigation = () => {
 
   const navItems = [
     { name: "Dashboard", path: "/dashboard" },
-    { name: "Admin", path: "/admin" },
+    // { name: "Admin", path: "/admin" },
   ];
 
   const handleLogout = () => {
