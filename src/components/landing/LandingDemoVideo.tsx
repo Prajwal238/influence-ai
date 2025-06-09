@@ -15,7 +15,7 @@ const LandingDemoVideo = () => {
               size="lg"
               variant="outline"
               className="bg-white/10 border-white/20 text-white hover:bg-white/20"
-              onClick={() => window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank')}
+              onClick={() => window.open('https://youtu.be/C0tUlGmNxIg', '_blank')}
             >
               <Play className="mr-2 h-6 w-6" />
               Watch Demo
