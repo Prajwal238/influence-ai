@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ContractData } from "@/types/contract";
 
@@ -27,7 +26,7 @@ export const ContractPreview = ({ contract }: ContractPreviewProps) => {
             <div>
               <h4 className="font-medium text-gray-900 mb-2">1. PARTIES</h4>
               <p className="text-gray-700">
-                This agreement is between FlowAI Brand ("Company") and {contract.influencer.name} ("Influencer").
+                This agreement is between ABC ("Company") and {contract.influencer.name} ("Influencer").
               </p>
             </div>
 
@@ -83,7 +82,7 @@ export const ContractPreview = ({ contract }: ContractPreviewProps) => {
                 <p className="text-sm text-gray-600 mb-2">Company Signature</p>
                 <div className="border-b border-gray-400 h-8 relative">
                   <div className="absolute bottom-2 left-0 text-gray-500 italic font-signature text-lg">
-                    FlowAI Brand Ltd.
+                    ABC
                   </div>
                 </div>
                 <p className="text-xs text-gray-500 mt-1">Authorized Signatory</p>
