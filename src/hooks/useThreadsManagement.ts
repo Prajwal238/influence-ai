@@ -1,82 +1,58 @@
 
-import { useState, useEffect } from "react";
-import { NegotiationThread } from "@/types/outreach";
-import { useNegotiationAPI } from "@/hooks/useNegotiationAPI";
-import { useContactExtraction } from "@/hooks/useContactExtraction";
+import { useState, useEffect, useCallback } from 'react';
+import { NegotiationThread } from '@/types/outreach';
+import { useNegotiationAPI } from '@/hooks/useNegotiationAPI';
+import { useContactExtraction } from '@/hooks/useContactExtraction';
 
 export const useThreadsManagement = (
   selectedThread: NegotiationThread | undefined,
-  setSelectedThread: (thread: NegotiationThread) => void
+  setSelectedThread: (thread: NegotiationThread | undefined) => void,
+  campaignId?: string
 ) => {
   const [negotiationThreads, setNegotiationThreads] = useState<NegotiationThread[]>([]);
-  const { fetchAllInfluencerConversations, loading, error } = useNegotiationAPI();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
+  const { fetchAllInfluencerConversations } = useNegotiationAPI();
 
-  // Extract contact info from selected thread messages
-  const extractedContact = useContactExtraction(selectedThread?.messages || []);
-
-  // Update selected thread with extracted contact information
-  useEffect(() => {
-    if (selectedThread && (extractedContact.email || extractedContact.phone)) {
-      const updatedThread: NegotiationThread = {
-        ...selectedThread,
-        contact: {
-          ...selectedThread.contact,
-          ...(extractedContact.email && { email: extractedContact.email }),
-          ...(extractedContact.phone && { phone: extractedContact.phone })
-        }
-      };
+  const loadThreads = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const threads = await fetchAllInfluencerConversations(campaignId);
+      setNegotiationThreads(threads);
       
-      // Only update if there's actually a change
-      if (
-        updatedThread.contact?.email !== selectedThread.contact?.email ||
-        updatedThread.contact?.phone !== selectedThread.contact?.phone
-      ) {
-        setSelectedThread(updatedThread);
-        
-        // Update the thread in the list as well
-        setNegotiationThreads(prev => 
-          prev.map(thread => 
-            thread.creatorId === selectedThread.creatorId ? updatedThread : thread
-          )
-        );
+      // If no thread is selected and we have threads, select the first one
+      if (!selectedThread && threads.length > 0) {
+        setSelectedThread(threads[0]);
       }
+    } catch (err) {
+      console.error('Failed to load threads:', err);
+      setError(err instanceof Error ? err.message : 'Failed to load conversations');
+    } finally {
+      setLoading(false);
     }
-  }, [extractedContact, selectedThread, setSelectedThread]);
+  }, [fetchAllInfluencerConversations, campaignId, selectedThread, setSelectedThread]);
 
-  // Fetch conversations when component mounts
   useEffect(() => {
-    const loadConversations = async () => {
-      try {
-        const threads = await fetchAllInfluencerConversations();
-        setNegotiationThreads(threads);
-        
-        // Auto-select first non-complete thread
-        if (threads.length > 0) {
-          const firstActiveThread = threads.find(t => t.agentStatus !== 'complete') || threads[0];
-          setSelectedThread(firstActiveThread);
-        }
-      } catch (err) {
-        console.error('Failed to load conversations:', err);
-      }
-    };
+    loadThreads();
+  }, [loadThreads]);
 
-    loadConversations();
-  }, [fetchAllInfluencerConversations, setSelectedThread]);
-
-  const updateThread = (updatedThread: NegotiationThread) => {
-    setSelectedThread(updatedThread);
-
-    // Update threads list
+  const updateThread = useCallback((updatedThread: NegotiationThread) => {
     setNegotiationThreads(prev => 
       prev.map(thread => 
         thread.creatorId === updatedThread.creatorId ? updatedThread : thread
       )
     );
-  };
+    
+    // Update selected thread if it's the one being updated
+    if (selectedThread?.creatorId === updatedThread.creatorId) {
+      setSelectedThread(updatedThread);
+    }
+  }, [selectedThread, setSelectedThread]);
 
   return {
     negotiationThreads,
-    setNegotiationThreads,
     updateThread,
     loading,
     error

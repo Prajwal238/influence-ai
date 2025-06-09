@@ -21,7 +21,7 @@ export const useNegotiationState = (campaignId?: string) => {
     updateThread,
     loading,
     error
-  } = useThreadsManagement(selectedThread, setSelectedThread);
+  } = useThreadsManagement(selectedThread, setSelectedThread, campaignId);
 
   const { handleSendMessage } = useMessageHandling();
   const { handleAIResponse } = useAIResponseHandling();

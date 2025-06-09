@@ -1,3 +1,4 @@
+
 import { useState, useCallback } from 'react';
 import { NegotiationThread, NegotiationMessage } from '@/types/outreach';
 import { 
@@ -13,12 +14,12 @@ export const useNegotiationAPI = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchAllInfluencerConversations = useCallback(async (): Promise<NegotiationThread[]> => {
+  const fetchAllInfluencerConversations = useCallback(async (campaignId?: string): Promise<NegotiationThread[]> => {
     try {
       setLoading(true);
       setError(null);
       
-      const data = await fetchAllInfluencerConversationsAPI();
+      const data = await fetchAllInfluencerConversationsAPI(campaignId);
       
       // Transform API data to NegotiationThread format
       const threads: NegotiationThread[] = data.map(transformApiResponseToThread);

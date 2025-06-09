@@ -1,3 +1,4 @@
+
 import { buildApiUrl } from '@/config/api';
 import { 
   ApiNegotiationResponse, 
@@ -12,9 +13,14 @@ const getAuthToken = () => {
   return localStorage.getItem('jwt_token') || '';
 };
 
-export const fetchAllInfluencerConversationsAPI = async (): Promise<ApiNegotiationResponse[]> => {
+export const fetchAllInfluencerConversationsAPI = async (campaignId?: string): Promise<ApiNegotiationResponse[]> => {
   console.log('Fetching all influencer conversations...');
-  const response = await fetch(buildApiUrl('/api/getAllInfluencerConversations'), {
+  
+  const url = campaignId 
+    ? `${buildApiUrl('/api/getAllInfluencerConversations')}?campaignId=${encodeURIComponent(campaignId)}`
+    : buildApiUrl('/api/getAllInfluencerConversations');
+    
+  const response = await fetch(url, {
     headers: {
       'Authorization': `${getAuthToken()}`,
     },
