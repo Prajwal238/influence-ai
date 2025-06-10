@@ -24,6 +24,9 @@ const NegotiationContactTab = ({ selectedThread, onCall }: NegotiationContactTab
 
   const handleExtractedPhoneCall = () => {
     console.log('Extracted phone call button clicked');
+    console.log('onCall function exists:', !!onCall);
+    console.log('selectedThread contact phone:', selectedThread.contact?.phone);
+    
     if (onCall) {
       console.log('Calling onCall function for extracted phone');
       onCall();
@@ -38,6 +41,7 @@ const NegotiationContactTab = ({ selectedThread, onCall }: NegotiationContactTab
   };
 
   const handleManualCall = (phoneNumber: string) => {
+    console.log('Manual call initiated for:', phoneNumber);
     // For prototype stage, we'll just show a toast
     // In production, this would integrate with the actual calling system
     toast({
