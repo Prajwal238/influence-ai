@@ -22,7 +22,7 @@ const NegotiationContactTab = ({ selectedThread, onCall }: NegotiationContactTab
     });
   };
 
-  const handleCall = () => {
+  const handleExtractedPhoneCall = () => {
     if (onCall) {
       onCall();
     } else {
@@ -113,7 +113,7 @@ const NegotiationContactTab = ({ selectedThread, onCall }: NegotiationContactTab
                   <Copy className="h-4 w-4" />
                 </Button>
                 <Button
-                  onClick={handleCall}
+                  onClick={handleExtractedPhoneCall}
                   variant="default"
                   size="sm"
                   className="p-2 bg-[#0071E3] hover:bg-[#005CBB] text-white"
