@@ -23,9 +23,12 @@ const NegotiationContactTab = ({ selectedThread, onCall }: NegotiationContactTab
   };
 
   const handleExtractedPhoneCall = () => {
+    console.log('Extracted phone call button clicked');
     if (onCall) {
+      console.log('Calling onCall function for extracted phone');
       onCall();
     } else {
+      console.log('No onCall function provided');
       toast({
         title: "Call functionality unavailable",
         description: "Call feature is not available at the moment",
