@@ -74,9 +74,7 @@ export const useNegotiationAPI = () => {
 
   const makeCall = useCallback(async (campaignId: string, phoneNumber: string, influencerName: string) => {
     try {
-      console.log('useNegotiationAPI - makeCall called with:', { campaignId, phoneNumber, influencerName });
       const response = await makeOutboundCallAPI(campaignId, phoneNumber, influencerName);
-      console.log('useNegotiationAPI - makeCall response:', response);
       return response;
     } catch (err) {
       console.error('Error making call:', err);
