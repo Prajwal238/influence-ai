@@ -12,11 +12,12 @@ const LandingTestimonials = ({ onWaitlistOpen }: LandingTestimonialsProps) => {
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-20">
           <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
-            Real results from real customers
+            Real Results: 5X More Campaigns,
+            <span className="block text-blue-600">Half the Time</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             See how businesses like yours are scaling their influencer marketing 
-            and achieving measurable growth with our platform.
+            and achieving 400% average ROI with our AI-powered platform.
           </p>
         </div>
         <TestimonialsGrid />
