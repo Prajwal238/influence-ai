@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Copy, Phone, Mail, PhoneCall } from "lucide-react";
 import { NegotiationThread } from "@/types/outreach";
 import { useToast } from "@/hooks/use-toast";
+import ManualPhoneInput from "./ManualPhoneInput";
+import PrototypeBanner from "./PrototypeBanner";
 
 interface NegotiationContactTabProps {
   selectedThread: NegotiationThread;
@@ -20,10 +22,16 @@ const NegotiationContactTab = ({ selectedThread, onCall }: NegotiationContactTab
     });
   };
 
-  const handleCall = () => {
+  const handleExtractedPhoneCall = () => {
+    console.log('Extracted phone call button clicked');
+    console.log('onCall function exists:', !!onCall);
+    console.log('selectedThread contact phone:', selectedThread.contact?.phone);
+    
     if (onCall) {
+      console.log('Calling onCall function for extracted phone');
       onCall();
     } else {
+      console.log('No onCall function provided');
       toast({
         title: "Call functionality unavailable",
         description: "Call feature is not available at the moment",
@@ -32,9 +40,22 @@ const NegotiationContactTab = ({ selectedThread, onCall }: NegotiationContactTab
     }
   };
 
+  const handleManualCall = (phoneNumber: string) => {
+    console.log('Manual call initiated for:', phoneNumber);
+    // For prototype stage, we'll just show a toast
+    // In production, this would integrate with the actual calling system
+    toast({
+      title: "Call initiated",
+      description: `Initiating call to ${phoneNumber}...`,
+    });
+  };
+
   return (
     <div className="px-6 h-full overflow-y-auto">
       <div className="space-y-6">
+        {/* Prototype Banner */}
+        <PrototypeBanner />
+
         <div>
           <h4 className="text-sm font-semibold text-[#1D1D1F] font-sans mb-3">
             Creator Info
@@ -77,7 +98,7 @@ const NegotiationContactTab = ({ selectedThread, onCall }: NegotiationContactTab
 
         <div>
           <h4 className="text-sm font-semibold text-[#1D1D1F] font-sans mb-3">
-            Phone
+            Extracted Phone
           </h4>
           <div className="flex items-center space-x-3">
             <div className="flex-1 bg-[#F2F2F7] rounded-xl p-3">
@@ -99,7 +120,7 @@ const NegotiationContactTab = ({ selectedThread, onCall }: NegotiationContactTab
                   <Copy className="h-4 w-4" />
                 </Button>
                 <Button
-                  onClick={handleCall}
+                  onClick={handleExtractedPhoneCall}
                   variant="default"
                   size="sm"
                   className="p-2 bg-[#0071E3] hover:bg-[#005CBB] text-white"
@@ -110,6 +131,9 @@ const NegotiationContactTab = ({ selectedThread, onCall }: NegotiationContactTab
             )}
           </div>
         </div>
+
+        {/* Manual Phone Input */}
+        <ManualPhoneInput onCall={handleManualCall} />
       </div>
     </div>
   );

@@ -11,7 +11,13 @@ export const useCallHandling = () => {
     selectedThread: NegotiationThread | undefined,
     campaignId: string | undefined
   ) => {
+    console.log('useCallHandling - handleCall called');
+    console.log('selectedThread:', selectedThread?.name);
+    console.log('campaignId:', campaignId);
+    console.log('phone number:', selectedThread?.contact?.phone);
+
     if (!selectedThread || !campaignId || !selectedThread.contact?.phone) {
+      console.log('Missing required data for call');
       toast({
         title: "Call failed",
         description: "Missing phone number or campaign information",
