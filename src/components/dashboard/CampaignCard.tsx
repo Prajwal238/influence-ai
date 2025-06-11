@@ -1,10 +1,11 @@
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Eye } from "lucide-react";
+import { Eye, UserPlus } from "lucide-react";
 import { Campaign } from "@/types/campaign";
 import { getCampaignProgressForDashboard } from "@/hooks/useCampaignProgress";
 import { useState, useEffect } from "react";
+import ManageUsersModal from "./ManageUsersModal";
 
 interface CampaignCardProps {
   campaign: Campaign;
@@ -12,6 +13,7 @@ interface CampaignCardProps {
 
 const CampaignCard = ({ campaign }: CampaignCardProps) => {
   const [progress, setProgress] = useState(0);
+  const [isManageUsersModalOpen, setIsManageUsersModalOpen] = useState(false);
 
   // Update progress when component mounts or when localStorage changes
   useEffect(() => {
@@ -139,37 +141,53 @@ const CampaignCard = ({ campaign }: CampaignCardProps) => {
   };
 
   return (
-    <div className="flex items-center justify-between p-4 rounded-lg border border-gray-100 hover:bg-gray-50 transition-colors">
-      <div className="flex-1">
-        <div className="flex items-center space-x-3 mb-2">
-          <h3 className="font-medium text-gray-900">{campaign.campaignName}</h3>
-          <Badge className={getStageColor(objective)}>
-            {objective}
-          </Badge>
+    <>
+      <div className="flex items-center justify-between p-4 rounded-lg border border-gray-100 hover:bg-gray-50 transition-colors">
+        <div className="flex-1">
+          <div className="flex items-center space-x-3 mb-2">
+            <h3 className="font-medium text-gray-900">{campaign.campaignName}</h3>
+            <Badge className={getStageColor(objective)}>
+              {objective}
+            </Badge>
+          </div>
+          <div className="flex items-center space-x-4 text-sm text-gray-600">
+            <span>{progress}% Complete</span>
+            <span>•</span>
+            <span>Created {formatTimeAgo(campaign.lastModifiedAt)}</span>
+            <span>•</span>
+            <span>Budget: {formatBudgetInINR(campaign.totalBudget)}</span>
+          </div>
         </div>
-        <div className="flex items-center space-x-4 text-sm text-gray-600">
-          <span>{progress}% Complete</span>
-          <span>•</span>
-          <span>Created {formatTimeAgo(campaign.lastModifiedAt)}</span>
-          <span>•</span>
-          <span>Budget: {formatBudgetInINR(campaign.totalBudget)}</span>
-        </div>
-      </div>
-      <div className="flex items-center space-x-3">
-        <div className="w-24 bg-gray-200 rounded-full h-2">
-          <div 
-            className="bg-blue-600 h-2 rounded-full transition-all duration-300" 
-            style={{ width: `${progress}%` }}
-          ></div>
-        </div>
-        <Link to={getCampaignRedirectUrl(campaign._id)}>
-          <Button variant="outline" size="sm">
-            <Eye className="h-4 w-4 mr-2" />
-            View
+        <div className="flex items-center space-x-3">
+          <div className="w-24 bg-gray-200 rounded-full h-2">
+            <div 
+              className="bg-blue-600 h-2 rounded-full transition-all duration-300" 
+              style={{ width: `${progress}%` }}
+            ></div>
+          </div>
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => setIsManageUsersModalOpen(true)}
+          >
+            <UserPlus className="h-4 w-4 mr-2" />
+            Users
           </Button>
-        </Link>
+          <Link to={getCampaignRedirectUrl(campaign._id)}>
+            <Button variant="outline" size="sm">
+              <Eye className="h-4 w-4 mr-2" />
+              View
+            </Button>
+          </Link>
+        </div>
       </div>
-    </div>
+
+      <ManageUsersModal
+        isOpen={isManageUsersModalOpen}
+        onClose={() => setIsManageUsersModalOpen(false)}
+        campaignName={campaign.campaignName}
+      />
+    </>
   );
 };
 
