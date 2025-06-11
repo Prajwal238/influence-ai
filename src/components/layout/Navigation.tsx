@@ -1,7 +1,7 @@
 
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Search, Bell, User, LogOut, Users } from "lucide-react";
+import { Bell, User, LogOut, Users } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
 import WaitlistModal from "@/components/modals/WaitlistModal";
@@ -55,9 +55,6 @@ const Navigation = () => {
             <div className="flex items-center space-x-4">
               {isAuthenticated ? (
                 <>
-                  <Button variant="ghost" size="sm">
-                    <Search className="h-4 w-4" />
-                  </Button>
                   <Button variant="ghost" size="sm">
                     <Bell className="h-4 w-4" />
                   </Button>
