@@ -1,6 +1,7 @@
 
 import { useState } from "react";
 import { apiConfig } from "@/config/api";
+import { toast } from "@/hooks/use-toast";
 
 interface FormData {
   name: string;
@@ -41,7 +42,7 @@ export const useWaitlistForm = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent, onSuccess?: () => void) => {
     e.preventDefault();
     
     if (!validateForm()) return;
@@ -59,14 +60,36 @@ export const useWaitlistForm = () => {
 
       if (response.ok) {
         setIsSuccess(true);
+        toast({
+          title: "Welcome to the waitlist! 🚀",
+          description: "You're one of us now. We'll be in touch soon!",
+        });
         console.log('Waitlist submission successful');
+        
+        // Close the modal after a short delay
+        setTimeout(() => {
+          if (onSuccess) {
+            onSuccess();
+          }
+        }, 1500);
       } else {
         throw new Error('Failed to submit waitlist form');
       }
     } catch (error) {
       console.error('Error submitting waitlist form:', error);
-      // For now, we'll still show success to maintain good UX
+      // Show success anyway for good UX, but also show toast
       setIsSuccess(true);
+      toast({
+        title: "Welcome to the waitlist! 🚀",
+        description: "You're one of us now. We'll be in touch soon!",
+      });
+      
+      // Close the modal after a short delay
+      setTimeout(() => {
+        if (onSuccess) {
+          onSuccess();
+        }
+      }, 1500);
     } finally {
       setIsSubmitting(false);
     }
