@@ -21,18 +21,13 @@ const WaitlistModal = ({ isOpen, onClose }: WaitlistModalProps) => {
     onClose();
   };
 
-  const handleSuccess = () => {
-    resetForm();
-    onClose();
-  };
-
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
         {isSuccess ? (
           <WaitlistSuccessView onClose={handleClose} />
         ) : (
-          <WaitlistForm onClose={handleClose} onSuccess={handleSuccess} />
+          <WaitlistForm onClose={handleClose} />
         )}
       </DialogContent>
     </Dialog>

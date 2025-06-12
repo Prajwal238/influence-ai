@@ -11,10 +11,9 @@ import { useWaitlistForm } from "./hooks/useWaitlistForm";
 
 interface WaitlistFormProps {
   onClose: () => void;
-  onSuccess?: () => void;
 }
 
-export const WaitlistForm = ({ onClose, onSuccess }: WaitlistFormProps) => {
+export const WaitlistForm = ({ onClose }: WaitlistFormProps) => {
   const {
     formData,
     isSubmitting,
@@ -22,10 +21,6 @@ export const WaitlistForm = ({ onClose, onSuccess }: WaitlistFormProps) => {
     handleSubmit,
     handleInputChange,
   } = useWaitlistForm();
-
-  const onSubmit = (e: React.FormEvent) => {
-    handleSubmit(e, onSuccess);
-  };
 
   return (
     <>
@@ -44,7 +39,7 @@ export const WaitlistForm = ({ onClose, onSuccess }: WaitlistFormProps) => {
         </DialogDescription>
       </DialogHeader>
 
-      <form onSubmit={onSubmit} className="space-y-4 mt-4">
+      <form onSubmit={handleSubmit} className="space-y-4 mt-4">
         <WaitlistFormFields
           formData={formData}
           errors={errors}
