@@ -7,33 +7,35 @@ const LandingHero = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="relative pt-16 pb-12 px-4 sm:px-6 lg:px-8 overflow-hidden">
+    <section className="relative pt-12 pb-8 px-4 sm:px-6 lg:px-8 overflow-hidden">
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-purple-50 opacity-60"></div>
       
       <div className="relative max-w-6xl mx-auto">
         <div className="text-center">
           {/* Badge */}
-          <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-100 text-blue-700 text-sm font-medium mb-6">
+          <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-100 text-blue-700 text-sm font-medium mb-4">
             🚀 AI-Powered Influencer Marketing Platform
           </div>
           
           {/* Main headline */}
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight tracking-tight">
-            Scale Your Influencer
-            <span className="block text-blue-600 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Marketing with AI
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 leading-tight tracking-tight">
+            Scale Your
+            <span className="block">
+              <span className="text-blue-600">Influencer Marketing</span>
+              <span className="text-gray-900"> with </span>
+              <span className="text-blue-600">AI</span>
             </span>
           </h1>
           
           {/* Subheading */}
-          <p className="text-lg sm:text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-lg sm:text-xl text-gray-600 mb-6 max-w-3xl mx-auto leading-relaxed">
             From discovery to payment — automate your entire influencer workflow. 
             Find creators, negotiate deals, and track performance all in one intelligent platform.
           </p>
           
           {/* CTA buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
             <Button 
               size="lg" 
               onClick={() => navigate('/login')}
@@ -55,7 +57,7 @@ const LandingHero = () => {
           
           {/* Social proof */}
           <div className="text-center">
-            <p className="text-sm text-gray-500 mb-4">Trusted by 500+ growing businesses</p>
+            <p className="text-sm text-gray-500 mb-3">Trusted by 500+ growing businesses</p>
             <div className="flex justify-center items-center space-x-8 opacity-60">
               <div className="bg-gray-200 h-8 w-20 rounded"></div>
               <div className="bg-gray-200 h-8 w-24 rounded"></div>
