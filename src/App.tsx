@@ -45,7 +45,7 @@ const App = () => (
             <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
-            <Route path="/api/auth/google" element={<GoogleAuthCallback />} />
+            <Route path="/api/auth/" element={<GoogleAuthCallback />} />
             
             {/* Protected routes */}
             <Route path="/dashboard" element={
