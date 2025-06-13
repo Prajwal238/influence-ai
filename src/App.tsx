@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -10,7 +9,6 @@ import Landing from "@/pages/Landing";
 import Login from "@/pages/Login";
 import Signup from "@/pages/Signup";
 import GoogleAuthCallback from "@/pages/GoogleAuthCallback";
-import ApiAuth from "@/pages/ApiAuth";
 import Dashboard from "./pages/Dashboard";
 import CampaignDiscovery from "./pages/campaigns/Discovery";
 import CampaignOutreach from "./pages/campaigns/Outreach";
@@ -48,7 +46,6 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/api/auth/google" element={<GoogleAuthCallback />} />
-            <Route path="/api/auth/" element={<ApiAuth />} />
             
             {/* Protected routes */}
             <Route path="/dashboard" element={
