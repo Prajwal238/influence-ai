@@ -1,12 +1,14 @@
 
 import { useState, useRef, useCallback } from 'react';
 import { apiClient } from '@/utils/apiClient';
+import { generateSessionId } from '@/components/agents/sessionUtils';
 
 interface UseVoiceRecordingProps {
   sessionId?: string;
+  agentType?: string;
 }
 
-export const useVoiceRecording = ({ sessionId }: UseVoiceRecordingProps = {}) => {
+export const useVoiceRecording = ({ sessionId, agentType = 'campaign' }: UseVoiceRecordingProps = {}) => {
   const [isRecording, setIsRecording] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -68,10 +70,19 @@ export const useVoiceRecording = ({ sessionId }: UseVoiceRecordingProps = {}) =>
       const formData = new FormData();
       formData.append('audio', audioBlob, 'voice-message.webm');
 
-      const endpoint = sessionId 
-        ? `/api/campaigns/voiceMessage?sessionId=${sessionId}`
-        : '/api/campaigns/voiceMessage';
+      // Ensure we always have a sessionId
+      let currentSessionId = sessionId;
+      
+      // If no sessionId is provided, generate a new one and store it
+      if (!currentSessionId) {
+        currentSessionId = generateSessionId();
+        localStorage.setItem(`current-session-${agentType}`, currentSessionId);
+        console.log('Generated new sessionId for voice message:', currentSessionId);
+      }
 
+      console.log('Sending voice message with sessionId:', currentSessionId);
+
+      const endpoint = `/api/campaigns/voiceMessage?sessionId=${currentSessionId}`;
       await apiClient.post(endpoint, formData);
       console.log('Voice message sent successfully');
     } catch (error) {
