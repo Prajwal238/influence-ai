@@ -6,17 +6,17 @@ import { toast } from '@/hooks/use-toast';
 
 const GoogleAuthCallback = () => {
   const navigate = useNavigate();
-  const { setToken, setUser } = useAuth();
+  const { token, user } = useAuth();
 
   useEffect(() => {
     const handleGoogleAuth = () => {
       const urlParams = new URLSearchParams(window.location.search);
-      const token = urlParams.get('token');
+      const receivedToken = urlParams.get('token');
 
-      if (token) {
+      if (receivedToken) {
         console.log('Google OAuth token received, storing and redirecting');
-        localStorage.setItem('jwt_token', token);
-        // You might want to decode the token to get user info
+        localStorage.setItem('jwt_token', receivedToken);
+        
         toast({
           title: "Login successful",
           description: "Welcome back!",
