@@ -54,7 +54,7 @@ const LandingHero = () => {
         </h1>
         
         {/* Enhanced subheading */}
-        <p className="text-xl sm:text-2xl text-gray-600 mb-10 max-w-3xl mx-auto leading-relaxed font-light">
+        <p className="text-xl sm:text-2xl text-gray-600 mb-10 max-w-3xl mx-auto leading-relaxed">
           From discovery to payment — automate your entire influencer workflow. 
           Find creators, negotiate deals, and track performance all in one intelligent platform.
         </p>
