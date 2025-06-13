@@ -5,32 +5,36 @@ const TestimonialsGrid = () => {
   const testimonials = [
     {
       name: "Sarah Chen",
-      role: "Owner, Urban Bites Café",
-      quote: "This tool helped us reach 5x more customers through nano influencers!",
-      avatar: "/placeholder.svg"
+      role: "Marketing Director, Urban Bites",
+      quote: "Increased our local foot traffic by 400% through micro-influencer campaigns. ROI was 8:1 in the first quarter.",
+      avatar: "/placeholder.svg",
+      metrics: "400% increase in foot traffic"
     },
     {
       name: "Mike Rodriguez",
-      role: "Marketing Director, TechFlow",
-      quote: "Inflowencer saved us 20 hours per week on campaign management.",
-      avatar: "/placeholder.svg"
+      role: "CEO, TechFlow",
+      quote: "Reduced campaign management time from 40 hours to 5 hours per week. The AI negotiation saved us 30% on costs.",
+      avatar: "/placeholder.svg",
+      metrics: "87% time saved"
     },
     {
       name: "Emma Thompson",
       role: "Founder, Green Beauty Co",
-      quote: "The AI negotiation feature got us better rates than we could manually.",
-      avatar: "/placeholder.svg"
+      quote: "Our influencer partnerships generated $2M in revenue last year. The platform's analytics helped optimize everything.",
+      avatar: "/placeholder.svg",
+      metrics: "$2M revenue generated"
     },
     {
       name: "David Park",
       role: "Events Manager, City Sports",
-      quote: "Our event attendance doubled thanks to targeted micro-influencer campaigns.",
-      avatar: "/placeholder.svg"
+      quote: "Event attendance doubled and ticket sales increased 150% thanks to targeted nano-influencer campaigns.",
+      avatar: "/placeholder.svg",
+      metrics: "150% ticket sales boost"
     }
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
       {testimonials.map((testimonial, index) => (
         <TestimonialCard
           key={index}
@@ -38,6 +42,7 @@ const TestimonialsGrid = () => {
           role={testimonial.role}
           quote={testimonial.quote}
           avatar={testimonial.avatar}
+          metrics={testimonial.metrics}
         />
       ))}
     </div>
