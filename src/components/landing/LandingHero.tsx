@@ -1,67 +1,61 @@
 
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Play, ChevronDown } from "lucide-react";
+import { ArrowRight, Play } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const LandingHero = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="relative min-h-screen flex flex-col justify-center items-center px-4 sm:px-6 lg:px-8 overflow-hidden">
-      {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-blue-50"></div>
+    <section className="relative min-h-screen flex items-center justify-center px-6 overflow-hidden bg-gradient-to-b from-white via-gray-50/30 to-white">
+      {/* Subtle background element */}
+      <div className="absolute top-1/4 right-1/3 w-96 h-96 bg-blue-500/[0.03] rounded-full blur-3xl"></div>
+      <div className="absolute bottom-1/3 left-1/4 w-80 h-80 bg-purple-500/[0.02] rounded-full blur-3xl"></div>
       
-      <div className="relative max-w-4xl mx-auto text-center flex-1 flex flex-col justify-center">
-        {/* Badge */}
-        <div className="inline-flex items-center justify-center px-6 py-3 rounded-full bg-blue-100 text-blue-700 text-sm font-medium mb-8 mx-auto">
-          🚀 AI-Powered Influencer Marketing Platform
+      <div className="relative w-full max-w-4xl mx-auto text-center">
+        {/* Main headline - applying Gestalt principles for visual grouping */}
+        <div className="mb-8">
+          <h1 className="text-6xl sm:text-7xl lg:text-8xl font-semibold text-gray-900 leading-[0.9] tracking-tight mb-6">
+            Scale your
+            <br />
+            <span className="text-blue-600">influence</span>
+          </h1>
+          
+          {/* Concise subheading */}
+          <p className="text-xl sm:text-2xl text-gray-600 font-normal max-w-2xl mx-auto leading-relaxed">
+            AI-powered influencer marketing from discovery to payment
+          </p>
         </div>
         
-        {/* Main headline */}
-        <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 mb-8 leading-tight tracking-tight">
-          Scale Your
-          <span className="block mt-2">
-            <span className="text-blue-600">Influencer Marketing</span>
-          </span>
-          <span className="block mt-2">
-            <span className="text-gray-900">with </span>
-            <span className="text-blue-600">AI</span>
-          </span>
-        </h1>
-        
-        {/* Subheading */}
-        <p className="text-xl sm:text-2xl text-gray-600 mb-10 max-w-3xl mx-auto leading-relaxed">
-          From discovery to payment — automate your entire influencer workflow. 
-          Find creators, negotiate deals, and track performance all in one intelligent platform.
-        </p>
-        
-        {/* CTA buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
+        {/* CTA section - applying Hick's Law with single primary action */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mt-12">
+          {/* Primary CTA - applying Fitts's Law with large, easily tappable button */}
           <Button 
             size="lg" 
             onClick={() => navigate('/login')}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-5 text-lg rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-12 py-6 text-lg font-medium rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-0 min-w-[200px] h-14"
           >
             Start Free Trial
-            <ArrowRight className="ml-2 h-5 w-5" />
+            <ArrowRight className="ml-3 h-5 w-5 transition-transform group-hover:translate-x-1" />
           </Button>
-          <Button 
-            variant="outline" 
-            size="lg"
+          
+          {/* Secondary action - minimalist link */}
+          <button 
             onClick={() => window.open('https://youtu.be/C0tUlGmNxIg', '_blank')}
-            className="border-2 border-gray-300 text-gray-700 hover:bg-gray-50 px-10 py-5 text-lg rounded-2xl font-semibold"
+            className="flex items-center text-gray-700 hover:text-gray-900 font-medium transition-colors duration-200 group"
           >
-            <Play className="mr-2 h-5 w-5" />
+            <div className="flex items-center justify-center w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full mr-3 transition-colors duration-200">
+              <Play className="h-4 w-4 ml-0.5" />
+            </div>
             Watch Demo
-          </Button>
+          </button>
         </div>
-      </div>
-
-      {/* Scroll indicator */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center">
-        <p className="text-sm text-gray-500 mb-2">Scroll to explore</p>
-        <div className="animate-bounce">
-          <ChevronDown className="h-6 w-6 text-gray-400" />
+        
+        {/* Trust indicator */}
+        <div className="mt-16 pt-8 border-t border-gray-100">
+          <p className="text-sm text-gray-500 font-medium">
+            Trusted by 500+ businesses worldwide
+          </p>
         </div>
       </div>
     </section>
