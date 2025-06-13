@@ -2,7 +2,11 @@
 import { useState, useRef, useCallback } from 'react';
 import { apiClient } from '@/utils/apiClient';
 
-export const useVoiceRecording = () => {
+interface UseVoiceRecordingProps {
+  sessionId?: string;
+}
+
+export const useVoiceRecording = ({ sessionId }: UseVoiceRecordingProps = {}) => {
   const [isRecording, setIsRecording] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -64,7 +68,11 @@ export const useVoiceRecording = () => {
       const formData = new FormData();
       formData.append('audio', audioBlob, 'voice-message.webm');
 
-      await apiClient.post('/api/campaigns/voiceMessage', formData);
+      const endpoint = sessionId 
+        ? `/api/campaigns/voiceMessage?sessionId=${sessionId}`
+        : '/api/campaigns/voiceMessage';
+
+      await apiClient.post(endpoint, formData);
       console.log('Voice message sent successfully');
     } catch (error) {
       console.error('Error sending voice message:', error);

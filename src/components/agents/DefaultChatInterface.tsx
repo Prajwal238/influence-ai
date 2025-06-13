@@ -1,4 +1,3 @@
-
 import { useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -40,7 +39,9 @@ const DefaultChatInterface = ({
   onNewSession
 }: DefaultChatInterfaceProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const { isRecording, isProcessing, toggleRecording } = useVoiceRecording();
+  const { isRecording, isProcessing, toggleRecording } = useVoiceRecording({ 
+    sessionId: currentSessionId 
+  });
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
