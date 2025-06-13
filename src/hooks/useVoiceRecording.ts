@@ -70,17 +70,17 @@ export const useVoiceRecording = ({ sessionId, agentType = 'campaign' }: UseVoic
       const formData = new FormData();
       formData.append('audio', audioBlob, 'voice-message.webm');
 
-      // Ensure we always have a sessionId
+      // Use the provided sessionId, or generate a new one if none exists
       let currentSessionId = sessionId;
       
-      // If no sessionId is provided, generate a new one and store it
+      // Only generate a new sessionId if none is provided at all
       if (!currentSessionId) {
         currentSessionId = generateSessionId();
         localStorage.setItem(`current-session-${agentType}`, currentSessionId);
         console.log('Generated new sessionId for voice message:', currentSessionId);
+      } else {
+        console.log('Using existing sessionId for voice message:', currentSessionId);
       }
-
-      console.log('Sending voice message with sessionId:', currentSessionId);
 
       const endpoint = `/api/campaigns/voiceMessage?sessionId=${currentSessionId}`;
       await apiClient.post(endpoint, formData);
