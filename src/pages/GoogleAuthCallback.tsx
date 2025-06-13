@@ -21,7 +21,7 @@ const GoogleAuthCallback = () => {
           title: "Login successful",
           description: "Welcome back!",
         });
-        navigate('/dashboard');
+        navigate('/campaigns');
       } else {
         console.log('No token found in Google OAuth callback');
         toast({
