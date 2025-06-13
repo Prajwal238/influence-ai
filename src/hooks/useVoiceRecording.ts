@@ -64,7 +64,7 @@ export const useVoiceRecording = () => {
       const formData = new FormData();
       formData.append('audio', audioBlob, 'voice-message.webm');
 
-      await apiClient.post('/campaigns/voiceMessage', formData);
+      await apiClient.post('/api/campaigns/voiceMessage', formData);
       console.log('Voice message sent successfully');
     } catch (error) {
       console.error('Error sending voice message:', error);
