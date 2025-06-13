@@ -30,13 +30,19 @@ export const apiClient = {
     const token = localStorage.getItem('jwt_token');
     console.log('Making POST request to:', endpoint, 'with token:', token ? 'Present' : 'Missing');
     
+    const headers: HeadersInit = {
+      'Authorization': token,
+    };
+
+    // Only set Content-Type for JSON data, let browser set it for FormData
+    if (!(data instanceof FormData)) {
+      headers['Content-Type'] = 'application/json';
+    }
+
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method: 'POST',
-      headers: {
-        'Authorization': token,
-        'Content-Type': 'application/json',
-      },
-      body: data ? JSON.stringify(data) : undefined,
+      headers,
+      body: data instanceof FormData ? data : (data ? JSON.stringify(data) : undefined),
     });
 
     console.log('POST response status:', response.status);

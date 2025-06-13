@@ -6,6 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Send, Bot, User, X, Loader2 } from "lucide-react";
 import { Message, AgentChatProps } from './types';
+import { useVoiceRecording } from '@/hooks/useVoiceRecording';
+import VoiceButton from './VoiceButton';
 import SessionsPanel from './SessionsPanel';
 
 interface DefaultChatInterfaceProps extends AgentChatProps {
@@ -38,6 +40,7 @@ const DefaultChatInterface = ({
   onNewSession
 }: DefaultChatInterfaceProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { isRecording, isProcessing, toggleRecording } = useVoiceRecording();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -46,6 +49,8 @@ const DefaultChatInterface = ({
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  const isInputDisabled = isApiLoading || isRecording || isProcessing;
 
   return (
     <div className="h-full w-full relative">
@@ -140,6 +145,29 @@ const DefaultChatInterface = ({
                     </div>
                   </div>
                 )}
+
+                {isRecording && (
+                  <div className="flex justify-center">
+                    <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                      <div className="flex items-center space-x-2 text-red-600">
+                        <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                        <span className="text-sm font-medium">Recording... Click to stop</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {isProcessing && (
+                  <div className="flex justify-center">
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                      <div className="flex items-center space-x-2 text-blue-600">
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <span className="text-sm font-medium">Processing voice message...</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 <div ref={messagesEndRef} />
               </div>
             </div>
@@ -152,15 +180,29 @@ const DefaultChatInterface = ({
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onEnterPress={handleSendMessage}
-                placeholder="Type your message... (Shift+Enter for new line)"
+                placeholder={
+                  isRecording 
+                    ? "Recording... Click voice button to stop" 
+                    : isProcessing 
+                    ? "Processing voice message..." 
+                    : "Type your message... (Shift+Enter for new line)"
+                }
                 className="flex-1 min-h-[40px] max-h-[120px] resize-none"
-                disabled={isApiLoading}
+                disabled={isInputDisabled}
                 rows={1}
               />
+              
+              <VoiceButton
+                isRecording={isRecording}
+                isProcessing={isProcessing}
+                onToggleRecording={toggleRecording}
+                disabled={isApiLoading}
+              />
+              
               <Button 
                 onClick={handleSendMessage} 
                 className="bg-blue-600 hover:bg-blue-700 shrink-0"
-                disabled={!inputValue.trim() || isApiLoading}
+                disabled={!inputValue.trim() || isInputDisabled}
               >
                 {isApiLoading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -170,7 +212,10 @@ const DefaultChatInterface = ({
               </Button>
             </div>
             <p className="text-xs text-gray-500 mt-2">
-              Press Enter to send, Shift+Enter for new line
+              {isRecording 
+                ? "Recording voice message (max 45 seconds)" 
+                : "Press Enter to send, Shift+Enter for new line, or use voice button to record"
+              }
             </p>
           </div>
         </CardContent>
