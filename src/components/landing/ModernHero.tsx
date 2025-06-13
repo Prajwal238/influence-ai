@@ -2,7 +2,7 @@
 import { ChevronDown } from "lucide-react";
 import { useEffect, useState } from "react";
 
-const LandingHero = () => {
+const ModernHero = () => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -64,4 +64,4 @@ const LandingHero = () => {
   );
 };
 
-export default LandingHero;
+export default ModernHero;
