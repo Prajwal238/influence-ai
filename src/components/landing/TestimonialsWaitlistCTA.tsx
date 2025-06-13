@@ -18,7 +18,7 @@ const TestimonialsWaitlistCTA = ({ onWaitlistOpen }: TestimonialsWaitlistCTAProp
         </div>
         
         <h3 className="text-2xl font-bold text-gray-900 mb-3">
-          Join other businesses on our waitlist
+          Join 2,000+ businesses on our waitlist
         </h3>
         <p className="text-gray-600 mb-6 max-w-md mx-auto">
           Get early access to advanced features and priority onboarding when we launch new capabilities.
