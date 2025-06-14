@@ -60,7 +60,7 @@ const LandingHero = () => {
         </p>
         
         {/* Enhanced CTA buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
+        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-4">
           <Button 
             size="lg" 
             onClick={() => navigate('/login')}
@@ -79,6 +79,14 @@ const LandingHero = () => {
             Watch Demo
           </Button>
         </div>
+
+        {/* Privacy policy link */}
+        <p className="text-xs text-gray-500 mb-12">
+          By signing up, you agree to our{" "}
+          <a href="/privacy-policy" className="text-blue-600 hover:text-blue-500 underline">
+            Privacy Policy
+          </a>
+        </p>
       </div>
 
       {/* Enhanced scroll indicator */}
