@@ -15,3 +15,4 @@ const PrototypeBanner = () => {
 };
 
 export default PrototypeBanner;
+
