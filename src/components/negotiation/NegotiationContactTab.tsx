@@ -1,10 +1,8 @@
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Copy, Phone, Mail, PhoneCall } from "lucide-react";
 import { NegotiationThread } from "@/types/outreach";
 import { useToast } from "@/hooks/use-toast";
-import { useState } from "react";
 import PrototypeBanner from "./PrototypeBanner";
 
 interface NegotiationContactTabProps {
@@ -14,7 +12,6 @@ interface NegotiationContactTabProps {
 
 const NegotiationContactTab = ({ selectedThread, onCall }: NegotiationContactTabProps) => {
   const { toast } = useToast();
-  const [editablePhone, setEditablePhone] = useState(selectedThread.contact?.phone || "");
 
   const handleCopy = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
@@ -27,17 +24,11 @@ const NegotiationContactTab = ({ selectedThread, onCall }: NegotiationContactTab
   const handleExtractedPhoneCall = () => {
     console.log('Extracted phone call button clicked');
     console.log('onCall function exists:', !!onCall);
-    console.log('editable phone number:', editablePhone);
+    console.log('selectedThread contact phone:', selectedThread.contact?.phone);
     
-    if (onCall && editablePhone.trim()) {
+    if (onCall) {
       console.log('Calling onCall function for extracted phone');
       onCall();
-    } else if (!editablePhone.trim()) {
-      toast({
-        title: "Phone number required",
-        description: "Please enter a phone number before initiating the call",
-        variant: "destructive"
-      });
     } else {
       console.log('No onCall function provided');
       toast({
@@ -102,34 +93,31 @@ const NegotiationContactTab = ({ selectedThread, onCall }: NegotiationContactTab
             <div className="flex-1 bg-[#F2F2F7] rounded-xl p-3">
               <div className="flex items-center space-x-2">
                 <Phone className="h-4 w-4 text-[#6E6E73]" />
-                <Input
-                  value={editablePhone}
-                  onChange={(e) => setEditablePhone(e.target.value)}
-                  placeholder="Enter phone number"
-                  className="text-sm text-[#1D1D1F] font-sans bg-transparent border-none p-0 h-auto focus-visible:ring-0 focus-visible:ring-offset-0"
-                />
+                <span className="text-sm text-[#1D1D1F] font-sans">
+                  {selectedThread.contact?.phone || "Not Available"}
+                </span>
               </div>
             </div>
-            <div className="flex space-x-2">
-              <Button
-                onClick={() => handleCopy(editablePhone, 'Phone')}
-                variant="outline"
-                size="sm"
-                className="p-2 border-[#E0E0E0] hover:border-[#0071E3] hover:bg-[#F8F9FA]"
-                disabled={!editablePhone.trim()}
-              >
-                <Copy className="h-4 w-4" />
-              </Button>
-              <Button
-                onClick={handleExtractedPhoneCall}
-                variant="default"
-                size="sm"
-                className="p-2 bg-[#0071E3] hover:bg-[#005CBB] text-white"
-                disabled={!editablePhone.trim()}
-              >
-                <PhoneCall className="h-4 w-4" />
-              </Button>
-            </div>
+            {selectedThread.contact?.phone && (
+              <div className="flex space-x-2">
+                <Button
+                  onClick={() => handleCopy(selectedThread.contact!.phone!, 'Phone')}
+                  variant="outline"
+                  size="sm"
+                  className="p-2 border-[#E0E0E0] hover:border-[#0071E3] hover:bg-[#F8F9FA]"
+                >
+                  <Copy className="h-4 w-4" />
+                </Button>
+                <Button
+                  onClick={handleExtractedPhoneCall}
+                  variant="default"
+                  size="sm"
+                  className="p-2 bg-[#0071E3] hover:bg-[#005CBB] text-white"
+                >
+                  <PhoneCall className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </div>
