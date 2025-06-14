@@ -42,8 +42,8 @@ const NegotiationContent = ({
         </div>
 
         <div className="grid grid-cols-12 gap-6 h-[calc(100vh-200px)]">
-          {/* Threads List - 3 columns */}
-          <div className="col-span-12 lg:col-span-3">
+          {/* Threads List - 3 columns on large screens, 4 on extra large */}
+          <div className="col-span-12 lg:col-span-3 xl:col-span-4">
             <NegotiationThreadsList
               threads={negotiationThreads}
               selectedThreadId={selectedThread?.creatorId}
@@ -51,8 +51,8 @@ const NegotiationContent = ({
             />
           </div>
 
-          {/* Chat & Control Panel - 5 columns */}
-          <div className="col-span-12 lg:col-span-5">
+          {/* Chat & Control Panel - 4 columns on large screens, 4 on extra large */}
+          <div className="col-span-12 lg:col-span-5 xl:col-span-4">
             <NegotiationChatPanel
               selectedThread={selectedThread}
               onSendMessage={onSendMessage}
@@ -64,8 +64,8 @@ const NegotiationContent = ({
             />
           </div>
 
-          {/* Side Panel - 4 columns */}
-          <div className="col-span-12 lg:col-span-4">
+          {/* Side Panel - 4 columns on large screens, 4 on extra large */}
+          <div className="col-span-12 lg:col-span-4 xl:col-span-4">
             <NegotiationSidePanel
               selectedThread={selectedThread}
               onCall={onCall}
