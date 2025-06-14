@@ -8,7 +8,7 @@ interface LandingTestimonialsProps {
 
 const LandingTestimonials = ({ onWaitlistOpen }: LandingTestimonialsProps) => {
   return (
-    <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
+    <section id="testimonials" className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
       <div className="max-w-6xl mx-auto">
         {/* Section header */}
         <div className="text-center mb-12">

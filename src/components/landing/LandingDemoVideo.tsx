@@ -10,7 +10,7 @@ const LandingDemoVideo = () => {
   ];
 
   return (
-    <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-900 to-gray-800">
+    <section id="demo" className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-900 to-gray-800">
       <div className="max-w-5xl mx-auto">
         {/* Section header */}
         <div className="text-center mb-12">
