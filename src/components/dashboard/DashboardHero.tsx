@@ -8,21 +8,21 @@ interface DashboardHeroProps {
 
 const DashboardHero = ({ onNewCampaign }: DashboardHeroProps) => {
   return (
-    <div className="relative mb-8">
+    <div className="relative mb-4">
       {/* Background Gradient */}
       <div className="absolute inset-0 bg-gradient-to-r from-blue-600/3 via-purple-600/3 to-cyan-600/3 rounded-2xl -z-10" />
       
-      <div className="relative px-6 py-6 flex items-center justify-between">
+      <div className="relative px-6 py-4 flex items-center justify-between">
         {/* Left side - Welcome text */}
         <div className="text-left">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/70 backdrop-blur-sm rounded-full border border-gray-200/40 text-xs text-gray-600 mb-3 shadow-sm">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/70 backdrop-blur-sm rounded-full border border-gray-200/40 text-xs text-gray-600 mb-2 shadow-sm">
             <Sparkles className="h-3 w-3 text-blue-500" />
             AI-Powered Dashboard
           </div>
           
           {/* Main Heading */}
-          <h1 className="text-2xl font-semibold text-gray-900 mb-2 tracking-tight">
+          <h1 className="text-2xl font-semibold text-gray-900 mb-1 tracking-tight">
             Welcome Back
           </h1>
           

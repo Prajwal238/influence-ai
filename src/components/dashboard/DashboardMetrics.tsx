@@ -61,7 +61,7 @@ const DashboardMetrics = ({ metrics, isLoading, onMetricClick }: DashboardMetric
   };
 
   return (
-    <div className="mb-8">
+    <div className="mb-4">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {metrics.map((metric) => {
           const colors = getMetricColors(metric.id);

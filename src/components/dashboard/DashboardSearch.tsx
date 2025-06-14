@@ -10,8 +10,8 @@ interface DashboardSearchProps {
 
 const DashboardSearch = ({ searchQuery, setSearchQuery }: DashboardSearchProps) => {
   return (
-    <div className="mb-8">
-      <div className="bg-white rounded-2xl border border-gray-200/60 p-6 shadow-sm">
+    <div className="mb-4">
+      <div className="bg-white rounded-2xl border border-gray-200/60 p-4 shadow-sm">
         <div className="flex items-center gap-4">
           {/* Search Input */}
           <div className="relative flex-1">
