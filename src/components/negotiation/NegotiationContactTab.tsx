@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Copy, Phone, Mail, PhoneCall } from "lucide-react";
 import { NegotiationThread } from "@/types/outreach";
 import { useToast } from "@/hooks/use-toast";
-import ManualPhoneInput from "./ManualPhoneInput";
 import PrototypeBanner from "./PrototypeBanner";
 
 interface NegotiationContactTabProps {
@@ -38,16 +37,6 @@ const NegotiationContactTab = ({ selectedThread, onCall }: NegotiationContactTab
         variant: "destructive"
       });
     }
-  };
-
-  const handleManualCall = (phoneNumber: string) => {
-    console.log('Manual call initiated for:', phoneNumber);
-    // For prototype stage, we'll just show a toast
-    // In production, this would integrate with the actual calling system
-    toast({
-      title: "Call initiated",
-      description: `Initiating call to ${phoneNumber}...`,
-    });
   };
 
   return (
@@ -131,9 +120,6 @@ const NegotiationContactTab = ({ selectedThread, onCall }: NegotiationContactTab
             )}
           </div>
         </div>
-
-        {/* Manual Phone Input */}
-        <ManualPhoneInput onCall={handleManualCall} />
       </div>
     </div>
   );
