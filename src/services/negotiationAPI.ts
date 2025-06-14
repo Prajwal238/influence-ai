@@ -43,7 +43,7 @@ export const pollConversationAPI = async (
   console.log('Polling conversation for:', { campaignId, platform, influencerName });
   
   const response = await fetch(
-    buildApiUrl(`/api/campaigns/${campaignId}/platform/${platform}/getConversation/${encodeURIComponent(influencerName)}`),
+    buildApiUrl(`/api/campaigns/${campaignId}/platform/${platform}/getConversation/${encodeURIComponent(influencerName)}?poll=true`),
     {
       headers: {
         'Authorization': `${getAuthToken()}`,
