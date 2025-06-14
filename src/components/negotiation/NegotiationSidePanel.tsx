@@ -1,12 +1,12 @@
 
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Activity, HelpCircle } from "lucide-react";
 import { NegotiationThread } from "@/types/outreach";
 import NegotiationOverviewTab from "./NegotiationOverviewTab";
 import NegotiationContactTab from "./NegotiationContactTab";
-import NegotiationAgentLogsTab from "./NegotiationAgentLogsTab";
+import NegotiationCallStatsTab from "./NegotiationCallStatsTab";
+import { useParams } from "react-router-dom";
 
 interface NegotiationSidePanelProps {
   selectedThread?: NegotiationThread;
@@ -14,6 +14,8 @@ interface NegotiationSidePanelProps {
 }
 
 const NegotiationSidePanel = ({ selectedThread, onCall }: NegotiationSidePanelProps) => {
+  const { id: campaignId } = useParams<{ id: string }>();
+
   if (!selectedThread) {
     return (
       <Card className="h-full bg-white shadow-apple rounded-2xl border-0 flex items-center justify-center">
@@ -51,10 +53,10 @@ const NegotiationSidePanel = ({ selectedThread, onCall }: NegotiationSidePanelPr
               Contact
             </TabsTrigger>
             <TabsTrigger 
-              value="logs" 
+              value="callstats" 
               className="text-sm data-[state=active]:bg-white data-[state=active]:text-[#1D1D1F] data-[state=active]:shadow-sm rounded-lg font-sans font-medium"
             >
-              Agent Logs
+              Call Stats
             </TabsTrigger>
           </TabsList>
 
@@ -67,8 +69,8 @@ const NegotiationSidePanel = ({ selectedThread, onCall }: NegotiationSidePanelPr
               <NegotiationContactTab selectedThread={selectedThread} onCall={onCall} />
             </TabsContent>
 
-            <TabsContent value="logs" className="h-full m-0 overflow-y-auto">
-              <NegotiationAgentLogsTab />
+            <TabsContent value="callstats" className="h-full m-0 overflow-y-auto">
+              <NegotiationCallStatsTab selectedThread={selectedThread} campaignId={campaignId} />
             </TabsContent>
           </div>
         </Tabs>
@@ -94,4 +96,3 @@ const NegotiationSidePanel = ({ selectedThread, onCall }: NegotiationSidePanelPr
 };
 
 export default NegotiationSidePanel;
-
