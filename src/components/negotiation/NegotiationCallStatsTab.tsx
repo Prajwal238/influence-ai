@@ -56,7 +56,17 @@ const NegotiationCallStatsTab = ({ selectedThread, campaignId }: NegotiationCall
       }
 
       const data: CallStatsData = await response.json();
-      setCallData(data);
+      
+      // Ensure transcript is always an array
+      const normalizedData = {
+        ...data,
+        transcript: Array.isArray(data.transcript) ? data.transcript : [],
+        callDurationSeconds: data.callDurationSeconds || 0,
+        status: data.status || 'unknown',
+        influencerInterest: data.influencerInterest || 'Unknown'
+      };
+      
+      setCallData(normalizedData);
       
       toast({
         title: "Call stats loaded",
@@ -68,6 +78,14 @@ const NegotiationCallStatsTab = ({ selectedThread, campaignId }: NegotiationCall
         title: "Failed to load call stats",
         description: "Could not fetch conversation data",
         variant: "destructive"
+      });
+      
+      // Set empty data structure to prevent further errors
+      setCallData({
+        transcript: [],
+        status: 'error',
+        influencerInterest: 'Unknown',
+        callDurationSeconds: 0
       });
     } finally {
       setLoading(false);
@@ -101,7 +119,7 @@ const NegotiationCallStatsTab = ({ selectedThread, campaignId }: NegotiationCall
     );
   }
 
-  if (!callData) {
+  if (!callData || !callData.transcript) {
     return (
       <div className="px-6 py-8 text-center">
         <Phone className="h-8 w-8 text-[#6E6E73] mx-auto mb-2" />
@@ -109,6 +127,8 @@ const NegotiationCallStatsTab = ({ selectedThread, campaignId }: NegotiationCall
       </div>
     );
   }
+
+  const transcript = callData.transcript || [];
 
   return (
     <div className="px-6 h-full overflow-y-auto">
@@ -134,7 +154,7 @@ const NegotiationCallStatsTab = ({ selectedThread, campaignId }: NegotiationCall
                 <span className="text-xs font-medium text-[#6E6E73] font-sans">Messages</span>
               </div>
               <p className="text-sm font-semibold text-[#1D1D1F] font-sans">
-                {callData.transcript.length}
+                {transcript.length}
               </p>
             </div>
           </div>
@@ -169,53 +189,60 @@ const NegotiationCallStatsTab = ({ selectedThread, campaignId }: NegotiationCall
           <h4 className="text-sm font-semibold text-[#1D1D1F] font-sans mb-3">
             Conversation Transcript
           </h4>
-          <ScrollArea className="h-64">
-            <div className="space-y-3">
-              {callData.transcript.map((message, index) => (
-                <div 
-                  key={index}
-                  className={`p-3 rounded-xl ${
-                    message.role === 'agent' 
-                      ? 'bg-[#E3F2FD] border-l-2 border-l-[#2196F3]' 
-                      : 'bg-[#F2F2F7] border-l-2 border-l-[#6E6E73]'
-                  }`}
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center space-x-2">
-                      {message.role === 'agent' ? (
-                        <Bot className="h-3 w-3 text-[#2196F3]" />
-                      ) : (
-                        <User className="h-3 w-3 text-[#6E6E73]" />
-                      )}
-                      <span className="text-xs font-medium text-[#1D1D1F] font-sans">
-                        {message.role === 'agent' ? 'AI Agent' : 'Influencer'}
+          {transcript.length > 0 ? (
+            <ScrollArea className="h-64">
+              <div className="space-y-3">
+                {transcript.map((message, index) => (
+                  <div 
+                    key={index}
+                    className={`p-3 rounded-xl ${
+                      message.role === 'agent' 
+                        ? 'bg-[#E3F2FD] border-l-2 border-l-[#2196F3]' 
+                        : 'bg-[#F2F2F7] border-l-2 border-l-[#6E6E73]'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center space-x-2">
+                        {message.role === 'agent' ? (
+                          <Bot className="h-3 w-3 text-[#2196F3]" />
+                        ) : (
+                          <User className="h-3 w-3 text-[#6E6E73]" />
+                        )}
+                        <span className="text-xs font-medium text-[#1D1D1F] font-sans">
+                          {message.role === 'agent' ? 'AI Agent' : 'Influencer'}
+                        </span>
+                        {message.interrupted && (
+                          <Badge variant="outline" className="text-xs h-4">
+                            Interrupted
+                          </Badge>
+                        )}
+                      </div>
+                      <span className="text-xs text-[#6E6E73] font-sans">
+                        {formatTime(message.time_in_call_secs || 0)}
                       </span>
-                      {message.interrupted && (
-                        <Badge variant="outline" className="text-xs h-4">
-                          Interrupted
-                        </Badge>
-                      )}
                     </div>
-                    <span className="text-xs text-[#6E6E73] font-sans">
-                      {formatTime(message.time_in_call_secs)}
-                    </span>
-                  </div>
-                  {message.message && (
-                    <p className="text-xs text-[#1D1D1F] font-sans leading-relaxed">
-                      {message.message}
-                    </p>
-                  )}
-                  {message.tool_calls && message.tool_calls.length > 0 && (
-                    <div className="mt-2 pt-2 border-t border-gray-200">
-                      <p className="text-xs text-[#6E6E73] font-sans italic">
-                        Tool called: {message.tool_calls[0]?.tool_name}
+                    {message.message && (
+                      <p className="text-xs text-[#1D1D1F] font-sans leading-relaxed">
+                        {message.message}
                       </p>
-                    </div>
-                  )}
-                </div>
-              ))}
+                    )}
+                    {message.tool_calls && message.tool_calls.length > 0 && (
+                      <div className="mt-2 pt-2 border-t border-gray-200">
+                        <p className="text-xs text-[#6E6E73] font-sans italic">
+                          Tool called: {message.tool_calls[0]?.tool_name || 'Unknown'}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </ScrollArea>
+          ) : (
+            <div className="text-center py-8">
+              <MessageSquare className="h-8 w-8 text-[#6E6E73] mx-auto mb-2" />
+              <p className="text-sm text-[#6E6E73] font-sans">No conversation transcript available</p>
             </div>
-          </ScrollArea>
+          )}
         </div>
       </div>
     </div>
