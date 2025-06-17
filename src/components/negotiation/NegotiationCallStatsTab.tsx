@@ -11,18 +11,27 @@ const NegotiationCallStatsTab = ({ selectedThread, campaignId }: CallStatsProps)
 
   if (loading) {
     return (
-      <div className="px-6 py-8 text-center">
-        <div className="animate-spin h-6 w-6 border-2 border-[#0071E3] border-t-transparent rounded-full mx-auto mb-2"></div>
-        <p className="text-sm text-[#6E6E73] font-sans">Loading call stats...</p>
+      <div className="flex items-center justify-center h-64">
+        <div className="flex flex-col items-center space-y-3">
+          <div className="w-8 h-8 border-2 border-blue-500/20 border-t-blue-500 rounded-full animate-spin"></div>
+          <p className="text-sm text-gray-500 font-medium">Loading call stats...</p>
+        </div>
       </div>
     );
   }
 
   if (!callData || !callData.transcript) {
     return (
-      <div className="px-6 py-8 text-center">
-        <Phone className="h-8 w-8 text-[#6E6E73] mx-auto mb-2" />
-        <p className="text-sm text-[#6E6E73] font-sans">No call data available</p>
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center space-y-4">
+          <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto">
+            <Phone className="h-7 w-7 text-gray-400" />
+          </div>
+          <div className="space-y-1">
+            <h3 className="text-sm font-medium text-gray-900">No call data available</h3>
+            <p className="text-xs text-gray-500">Call statistics will appear here once available</p>
+          </div>
+        </div>
       </div>
     );
   }
@@ -30,8 +39,8 @@ const NegotiationCallStatsTab = ({ selectedThread, campaignId }: CallStatsProps)
   const transcript = callData.transcript || [];
 
   return (
-    <div className="px-6 h-full overflow-y-auto">
-      <div className="space-y-6">
+    <div className="h-full overflow-y-auto">
+      <div className="p-6 space-y-8">
         <CallStatsOverview callData={callData} />
         <CallStatusSection callData={callData} />
         <ConversationTranscript transcript={transcript} />
