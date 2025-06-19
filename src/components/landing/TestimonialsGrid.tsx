@@ -6,7 +6,7 @@ const TestimonialsGrid = () => {
     {
       name: "Ravindra Naik",
       role: "Vice President, Kore.ai",
-      quote: "The product looks, Irrespective of the result keep building this.",
+      quote: "The product looks great, Irrespective of the result keep building this.",
       avatar: "/placeholder.svg",
       metrics: "I'd rate this 4 out 5"
     },
