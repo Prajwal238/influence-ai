@@ -15,7 +15,6 @@ const OutreachPageHeader = () => {
             <AgentPanel 
               agentName="Outreach Agent" 
               agentType="outreach"
-              onClose={() => setShowAgentPanel(false)}
             />
           </div>
         </div>
