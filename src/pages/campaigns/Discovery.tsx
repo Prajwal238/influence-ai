@@ -112,9 +112,9 @@ const Discovery = () => {
 
   return (
     <CampaignLayout>
-      <div className="w-full max-w-none h-[calc(100vh-140px)] flex flex-col">
+      <div className="w-full max-w-none h-[calc(100vh-140px)] flex flex-col relative">
         {/* Main content container with proper height calculation */}
-        <div className="w-full max-w-[1280px] mx-auto px-4 sm:px-6 md:px-8 py-2 flex-1 flex flex-col min-h-0">
+        <div className="w-full max-w-[1280px] mx-auto px-4 sm:px-6 md:px-8 py-2 flex-1 flex flex-col min-h-0 pb-20">
           
           {/* Search, Toggle, and Filters - fixed height */}
           <div className="mb-3 flex-shrink-0">
@@ -130,7 +130,7 @@ const Discovery = () => {
           </div>
 
           {/* Scrollable Influencer Results Container - takes remaining space */}
-          <div className="flex-1 min-h-0 mb-3">
+          <div className="flex-1 min-h-0">
             <ScrollArea className="h-full">
               <div className="pb-2">
                 {filteredInfluencers.length > 0 ? (
@@ -147,9 +147,11 @@ const Discovery = () => {
               </div>
             </ScrollArea>
           </div>
+        </div>
 
-          {/* Fixed AI Recommendations - always visible at bottom */}
-          <div className="flex-shrink-0">
+        {/* Fixed AI Recommendations - positioned absolutely at bottom */}
+        <div className="fixed bottom-0 left-0 right-0 z-10 bg-white border-t border-gray-200 p-4">
+          <div className="w-full max-w-[1280px] mx-auto">
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
