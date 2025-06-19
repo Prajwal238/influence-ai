@@ -104,12 +104,12 @@ const Discovery = () => {
 
   return (
     <CampaignLayout>
-      <div className="w-full max-w-none min-h-screen">
-        {/* Reduced padding container */}
-        <div className="w-full max-w-[1280px] mx-auto px-4 sm:px-6 md:px-8 py-2">
+      <div className="w-full max-w-none h-screen flex flex-col">
+        {/* Main content container with fixed height */}
+        <div className="w-full max-w-[1280px] mx-auto px-4 sm:px-6 md:px-8 py-2 flex-1 flex flex-col">
           
           {/* Compact Header - reduced margins */}
-          <div className="mb-2">
+          <div className="mb-2 flex-shrink-0">
             <h1 className="text-lg font-semibold text-gray-900">
               Influencer Discovery
             </h1>
@@ -119,7 +119,7 @@ const Discovery = () => {
           </div>
 
           {/* Compact Search, Toggle, and Filters */}
-          <div className="mb-3">
+          <div className="mb-3 flex-shrink-0">
             <DiscoveryFilters 
               searchQuery={searchQuery}
               onSearchChange={setSearchQuery}
@@ -131,8 +131,8 @@ const Discovery = () => {
             />
           </div>
 
-          {/* Full-height Influencer Results Container */}
-          <div className="flex-1" style={{ height: 'calc(100vh - 160px)' }}>
+          {/* Scrollable Influencer Results Container - takes remaining space */}
+          <div className="flex-1 min-h-0">
             <ScrollArea className="h-full">
               <div className="pb-2">
                 {filteredInfluencers.length > 0 ? (
@@ -149,22 +149,26 @@ const Discovery = () => {
               </div>
             </ScrollArea>
           </div>
+        </div>
 
-          {/* Compact AI Recommendations at bottom */}
-          <div className="mt-2 bg-blue-50 border border-blue-200 rounded-lg p-2">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <div className="w-4 h-4 bg-blue-600 rounded-full flex items-center justify-center">
-                  <span className="text-white text-xs font-bold">AI</span>
+        {/* Fixed AI Recommendations at bottom - always visible */}
+        <div className="w-full bg-white border-t border-gray-200 flex-shrink-0">
+          <div className="w-full max-w-[1280px] mx-auto px-4 sm:px-6 md:px-8 py-2">
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <div className="w-4 h-4 bg-blue-600 rounded-full flex items-center justify-center">
+                    <span className="text-white text-xs font-bold">AI</span>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-blue-900">AI-Powered Search</p>
+                    <p className="text-xs text-blue-700">Get recommendations based on your campaign.</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm font-medium text-blue-900">AI-Powered Search</p>
-                  <p className="text-xs text-blue-700">Get recommendations based on your campaign.</p>
-                </div>
+                <button className="bg-blue-600 text-white px-3 py-1 rounded text-xs font-medium hover:bg-blue-700 transition-colors whitespace-nowrap">
+                  Search Now
+                </button>
               </div>
-              <button className="bg-blue-600 text-white px-3 py-1 rounded text-xs font-medium hover:bg-blue-700 transition-colors whitespace-nowrap">
-                Search Now
-              </button>
             </div>
           </div>
         </div>
