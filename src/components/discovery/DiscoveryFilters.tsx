@@ -37,59 +37,59 @@ const DiscoveryFilters = ({
 
   return (
     <Card className="bg-white shadow-sm border-gray-200">
-      <CardContent className="p-2">
-        {/* Toggle Switch - Ultra compact */}
-        <div className="flex items-center space-x-2 mb-1">
-          <span className="text-xs font-medium">Show:</span>
-          <div className="flex items-center space-x-1">
-            <span className={`text-xs ${!showCampaignInfluencers ? 'font-medium' : 'text-gray-500'}`}>
+      <CardContent className="p-3">
+        {/* Single Row Layout: Toggle + Search + Filters */}
+        <div className="flex items-center space-x-4 mb-3">
+          {/* Left: Toggle Switch */}
+          <div className="flex items-center space-x-2 flex-shrink-0">
+            <span className={`text-sm ${!showCampaignInfluencers ? 'font-medium text-gray-900' : 'text-gray-500'}`}>
               All
             </span>
             <Switch
               checked={showCampaignInfluencers}
               onCheckedChange={onToggleChange}
+              className="h-5 w-9"
             />
-            <span className={`text-xs ${showCampaignInfluencers ? 'font-medium' : 'text-gray-500'}`}>
+            <span className={`text-sm ${showCampaignInfluencers ? 'font-medium text-gray-900' : 'text-gray-500'}`}>
               Campaign
             </span>
           </div>
-        </div>
 
-        {/* Search and Filter Row - Ultra compact */}
-        <div className="flex space-x-1 mb-1">
+          {/* Center: Search Input */}
           <div className="relative flex-1">
-            <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input 
               placeholder="Search influencers..." 
-              className="pl-7 h-7 text-xs"
+              className="pl-10 h-9 text-sm border-gray-300 focus:border-blue-500 focus:ring-blue-500"
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
             />
           </div>
-          <Button variant="outline" size="sm" className="h-7 px-2">
-            <Filter className="h-3 w-3 mr-1" />
-            <span className="text-xs">Filters</span>
+
+          {/* Right: Filters Button */}
+          <Button variant="outline" size="sm" className="h-9 px-3 flex-shrink-0">
+            <Filter className="h-4 w-4" />
           </Button>
         </div>
         
-        {/* Active Filters - Ultra compact */}
-        <div className="flex space-x-1">
+        {/* Filter Badges Row */}
+        <div className="flex flex-wrap gap-2">
           {suggestedFilters.map((filter) => {
             const isActive = activeFilters.includes(filter);
             return (
               <Badge 
                 key={filter}
                 variant={isActive ? "default" : "outline"} 
-                className={`text-xs cursor-pointer transition-colors py-0 px-1 ${
+                className={`text-xs cursor-pointer transition-colors py-1 px-2 ${
                   isActive 
-                    ? "bg-blue-600 text-white hover:bg-blue-700" 
-                    : "hover:bg-gray-100"
+                    ? "bg-blue-600 text-white hover:bg-blue-700 border-blue-600" 
+                    : "hover:bg-gray-100 border-gray-300"
                 }`}
                 onClick={() => handleFilterClick(filter)}
               >
                 {filter}
                 {isActive && (
-                  <X className="h-2 w-2 ml-1" />
+                  <X className="h-3 w-3 ml-1" />
                 )}
               </Badge>
             );
