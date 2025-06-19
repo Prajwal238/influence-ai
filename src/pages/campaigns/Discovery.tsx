@@ -83,13 +83,19 @@ const Discovery = () => {
   if (loading) {
     return (
       <CampaignLayout>
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
-          <div className="max-w-7xl mx-auto px-6 py-12">
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50/20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <DiscoveryHeader />
-            <div className="flex items-center justify-center py-24">
-              <div className="text-center space-y-4">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-                <p className="text-gray-600 font-medium">Discovering amazing influencers...</p>
+            <div className="flex items-center justify-center py-32">
+              <div className="text-center space-y-6">
+                <div className="relative mx-auto w-16 h-16">
+                  <div className="absolute inset-0 rounded-full border-4 border-blue-100"></div>
+                  <div className="absolute inset-0 rounded-full border-4 border-blue-600 border-t-transparent animate-spin"></div>
+                </div>
+                <div className="space-y-2">
+                  <p className="text-lg font-semibold text-gray-800">Discovering amazing creators...</p>
+                  <p className="text-sm text-gray-500">Finding the perfect match for your campaign</p>
+                </div>
               </div>
             </div>
           </div>
@@ -101,13 +107,18 @@ const Discovery = () => {
   if (error) {
     return (
       <CampaignLayout>
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
-          <div className="max-w-7xl mx-auto px-6 py-12">
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50/20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <DiscoveryHeader />
-            <div className="flex items-center justify-center py-24">
-              <div className="text-center space-y-4 bg-red-50 p-8 rounded-2xl border border-red-200">
-                <p className="text-red-600 font-semibold">Error loading influencers</p>
-                <p className="text-red-500 text-sm">{error}</p>
+            <div className="flex items-center justify-center py-32">
+              <div className="text-center space-y-6 bg-white/80 backdrop-blur-sm p-8 rounded-2xl border border-red-100 shadow-lg max-w-md">
+                <div className="w-12 h-12 mx-auto bg-red-50 rounded-full flex items-center justify-center">
+                  <div className="w-6 h-6 bg-red-500 rounded-full"></div>
+                </div>
+                <div className="space-y-2">
+                  <p className="text-lg font-semibold text-red-800">Unable to load creators</p>
+                  <p className="text-sm text-red-600">{error}</p>
+                </div>
               </div>
             </div>
           </div>
@@ -118,8 +129,8 @@ const Discovery = () => {
 
   return (
     <CampaignLayout>
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
-        <div className="max-w-7xl mx-auto px-6 py-8 space-y-8">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50/20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
           {/* Header */}
           <DiscoveryHeader />
 
@@ -137,15 +148,28 @@ const Discovery = () => {
           {/* Results Container */}
           <div className="space-y-6">
             {/* Results Header */}
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-gray-100/60">
               <div className="space-y-1">
                 <h2 className="text-lg font-semibold text-gray-900">
-                  {showCampaignInfluencers ? 'Your Campaign Influencers' : 'Discover Influencers'}
+                  {showCampaignInfluencers ? 'Your Campaign Creators' : 'Discover Creators'}
                 </h2>
                 <p className="text-sm text-gray-600">
-                  {filteredInfluencers.length} {filteredInfluencers.length === 1 ? 'influencer' : 'influencers'} found
+                  {filteredInfluencers.length} {filteredInfluencers.length === 1 ? 'creator' : 'creators'} found
+                  {searchQuery && (
+                    <span className="ml-1 text-blue-600 font-medium">
+                      for "{searchQuery}"
+                    </span>
+                  )}
                 </p>
               </div>
+              
+              {campaignInfluencers.length > 0 && (
+                <div className="bg-blue-50/80 backdrop-blur-sm px-3 py-1.5 rounded-full border border-blue-200/60">
+                  <span className="text-xs font-semibold text-blue-700">
+                    {campaignInfluencers.length} in campaign
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Results */}
@@ -163,11 +187,13 @@ const Discovery = () => {
           </div>
 
           {/* AI Recommendations */}
-          <AIRecommendations 
-            isInCampaign={isInCampaign}
-            onAddToCampaign={handleAddToCampaign}
-            onRemoveFromCampaign={handleRemoveFromCampaign}
-          />
+          {!showCampaignInfluencers && (
+            <AIRecommendations 
+              isInCampaign={isInCampaign}
+              onAddToCampaign={handleAddToCampaign}
+              onRemoveFromCampaign={handleRemoveFromCampaign}
+            />
+          )}
         </div>
       </div>
     </CampaignLayout>

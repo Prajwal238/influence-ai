@@ -24,15 +24,18 @@ const InfluencerCard = ({
   showCampaignInfluencers = false
 }: InfluencerCardProps) => {
   return (
-    <Card className="group bg-white/80 backdrop-blur-sm border-gray-200/60 hover:bg-white hover:shadow-xl hover:shadow-blue-100/50 hover:border-blue-200 hover:-translate-y-1 transition-all duration-300 cursor-pointer overflow-hidden relative">
+    <Card className="group relative bg-white/70 backdrop-blur-sm border border-gray-200/60 hover:bg-white hover:shadow-xl hover:shadow-blue-100/30 hover:border-blue-300/60 hover:-translate-y-2 transition-all duration-300 cursor-pointer overflow-hidden">
       <CardContent className="p-0">
         {/* Campaign Badge */}
         {isInCampaign && (
           <CampaignBadge campaignName="campaign" />
         )}
 
-        {/* Gradient Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50/30 via-transparent to-purple-50/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        {/* Subtle Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-50/20 via-transparent to-purple-50/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        
+        {/* Glow Effect */}
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-400/10 to-purple-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-xl -z-10"></div>
 
         {/* Content */}
         <div className="relative z-10">
@@ -41,12 +44,12 @@ const InfluencerCard = ({
 
           {/* Platform Overview */}
           <div className="px-6 pb-4">
-            <div className="space-y-3">
+            <div className="space-y-2">
               {influencer.platforms.slice(0, 2).map((platform) => (
                 <PlatformPill key={platform.name} platform={platform} />
               ))}
               {influencer.platforms.length > 2 && (
-                <div className="flex items-center justify-center p-3 text-xs text-gray-500 bg-gray-50/80 backdrop-blur-sm rounded-xl border border-gray-200/60">
+                <div className="flex items-center justify-center p-2.5 text-xs text-gray-500 bg-gradient-to-r from-gray-50/80 to-gray-100/80 backdrop-blur-sm rounded-lg border border-gray-200/40 group-hover:border-gray-300/60 transition-colors">
                   <span className="font-medium">+{influencer.platforms.length - 2} more platforms</span>
                 </div>
               )}
