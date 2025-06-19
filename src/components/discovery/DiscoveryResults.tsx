@@ -1,5 +1,6 @@
 
 import InfluencerCard from "./InfluencerCard";
+import InfluencerTableHeader from "./InfluencerTableHeader";
 import { Influencer } from "@/types/influencer";
 
 interface DiscoveryResultsProps {
@@ -7,7 +8,7 @@ interface DiscoveryResultsProps {
   isInCampaign: (influencer: Influencer) => boolean;
   onAddToCampaign: (influencer: Influencer) => Promise<boolean>;
   onRemoveFromCampaign: (influencer: Influencer) => Promise<boolean>;
-  showCampaignInfluencers?: boolean; // New prop to indicate tab context
+  showCampaignInfluencers?: boolean;
 }
 
 const DiscoveryResults = ({ 
@@ -35,17 +36,23 @@ const DiscoveryResults = ({
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-      {influencers.map((influencer) => (
-        <InfluencerCard 
-          key={`${influencer.apiId}-${influencer.id}`} 
-          influencer={influencer}
-          isInCampaign={isInCampaign(influencer)}
-          onAddToCampaign={onAddToCampaign}
-          onRemoveFromCampaign={onRemoveFromCampaign}
-          showCampaignInfluencers={showCampaignInfluencers}
-        />
-      ))}
+    <div className="space-y-4">
+      {/* Table Header */}
+      <InfluencerTableHeader />
+      
+      {/* Influencer Cards in Table Format */}
+      <div className="space-y-2">
+        {influencers.map((influencer) => (
+          <InfluencerCard 
+            key={`${influencer.apiId}-${influencer.id}`} 
+            influencer={influencer}
+            isInCampaign={isInCampaign(influencer)}
+            onAddToCampaign={onAddToCampaign}
+            onRemoveFromCampaign={onRemoveFromCampaign}
+            showCampaignInfluencers={showCampaignInfluencers}
+          />
+        ))}
+      </div>
     </div>
   );
 };
