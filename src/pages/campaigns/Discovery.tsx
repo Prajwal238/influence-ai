@@ -89,7 +89,7 @@ const Discovery = () => {
   if (loading) {
     return (
       <CampaignLayout>
-        <div className="w-full">
+        <div className="w-full max-w-none px-4 sm:px-6 md:px-8 py-2">
           <div className="flex items-center justify-center py-8">
             <p className="text-gray-500">Loading influencers...</p>
           </div>
@@ -101,7 +101,7 @@ const Discovery = () => {
   if (error) {
     return (
       <CampaignLayout>
-        <div className="w-full">
+        <div className="w-full max-w-none px-4 sm:px-6 md:px-8 py-2">
           <div className="flex items-center justify-center py-8">
             <p className="text-red-500">Error loading influencers: {error}</p>
           </div>
@@ -112,12 +112,12 @@ const Discovery = () => {
 
   return (
     <CampaignLayout>
-      <div className="w-full h-[calc(100vh-140px)] flex flex-col">
-        {/* Main content container - no padding, full width */}
-        <div className="w-full flex-1 flex flex-col min-h-0">
+      <div className="w-full max-w-none h-[calc(100vh-140px)] flex flex-col">
+        {/* Main content container with proper height calculation */}
+        <div className="w-full max-w-[1280px] mx-auto px-4 sm:px-6 md:px-8 py-2 flex-1 flex flex-col min-h-0">
           
-          {/* Search, Toggle, and Filters - minimal padding */}
-          <div className="mb-3 px-2">
+          {/* Search, Toggle, and Filters - fixed height */}
+          <div className="mb-3 flex-shrink-0">
             <DiscoveryFilters 
               searchQuery={searchQuery}
               onSearchChange={setSearchQuery}
@@ -129,8 +129,8 @@ const Discovery = () => {
             />
           </div>
 
-          {/* Scrollable Influencer Results Container - full width */}
-          <div className="flex-1 min-h-0 mb-16 px-2">
+          {/* Scrollable Influencer Results Container - takes remaining space */}
+          <div className="flex-1 min-h-0 mb-3">
             <ScrollArea className="h-full">
               <div className="pb-2">
                 {filteredInfluencers.length > 0 ? (
@@ -148,12 +148,12 @@ const Discovery = () => {
             </ScrollArea>
           </div>
 
-          {/* Fixed AI Recommendations - always visible at bottom with fixed positioning */}
-          <div className="fixed bottom-4 left-2 right-2 z-10">
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 shadow-lg">
+          {/* Fixed AI Recommendations - always visible at bottom */}
+          <div className="flex-shrink-0">
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-2">
               <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center">
+                <div className="flex items-center space-x-2">
+                  <div className="w-4 h-4 bg-blue-600 rounded-full flex items-center justify-center">
                     <span className="text-white text-xs font-bold">AI</span>
                   </div>
                   <div>
@@ -161,7 +161,7 @@ const Discovery = () => {
                     <p className="text-xs text-blue-700">Get recommendations based on your campaign.</p>
                   </div>
                 </div>
-                <button className="bg-blue-600 text-white px-4 py-2 rounded text-sm font-medium hover:bg-blue-700 transition-colors whitespace-nowrap">
+                <button className="bg-blue-600 text-white px-3 py-1 rounded text-xs font-medium hover:bg-blue-700 transition-colors whitespace-nowrap">
                   Search Now
                 </button>
               </div>
