@@ -36,6 +36,14 @@ const Discovery = () => {
     activeFilters
   });
 
+  // Add debugging for ID issues
+  console.log("Discovery - Filtered influencers IDs:", filteredInfluencers.map(inf => ({ 
+    id: inf.id, 
+    name: inf.name,
+    idType: typeof inf.id,
+    isNaN: Number.isNaN(inf.id)
+  })));
+
   const handleAddToCampaign = async (influencer: any) => {
     const success = await addToCampaign(influencer);
     if (success) {
