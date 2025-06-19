@@ -3,7 +3,7 @@ import { ArrowUpDown } from "lucide-react";
 
 const InfluencerTableHeader = () => {
   return (
-    <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 mb-2 shadow-sm">
+    <div className="bg-gray-50 border border-gray-200 rounded-lg p-2 mb-1 shadow-sm">
       <div className="grid grid-cols-12 gap-4 items-center text-sm font-medium text-gray-600">
         {/* Creator */}
         <div className="col-span-3 flex items-center space-x-1">

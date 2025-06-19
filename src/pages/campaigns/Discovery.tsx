@@ -81,8 +81,8 @@ const Discovery = () => {
   if (loading) {
     return (
       <CampaignLayout>
-        <div className="w-full max-w-none px-4 sm:px-6 md:px-10 py-4">
-          <div className="flex items-center justify-center py-12">
+        <div className="w-full max-w-none px-4 sm:px-6 md:px-8 py-2">
+          <div className="flex items-center justify-center py-8">
             <p className="text-gray-500">Loading influencers...</p>
           </div>
         </div>
@@ -93,8 +93,8 @@ const Discovery = () => {
   if (error) {
     return (
       <CampaignLayout>
-        <div className="w-full max-w-none px-4 sm:px-6 md:px-10 py-4">
-          <div className="flex items-center justify-center py-12">
+        <div className="w-full max-w-none px-4 sm:px-6 md:px-8 py-2">
+          <div className="flex items-center justify-center py-8">
             <p className="text-red-500">Error loading influencers: {error}</p>
           </div>
         </div>
@@ -105,21 +105,21 @@ const Discovery = () => {
   return (
     <CampaignLayout>
       <div className="w-full max-w-none min-h-screen">
-        {/* Full-width container with responsive padding */}
-        <div className="w-full max-w-[1280px] mx-auto px-4 sm:px-6 md:px-10 py-4">
+        {/* Reduced padding container */}
+        <div className="w-full max-w-[1280px] mx-auto px-4 sm:px-6 md:px-8 py-2">
           
-          {/* Compact Header */}
-          <div className="mb-3">
-            <h1 className="text-xl font-semibold text-gray-900">
+          {/* Compact Header - reduced margins */}
+          <div className="mb-2">
+            <h1 className="text-lg font-semibold text-gray-900">
               Influencer Discovery
             </h1>
-            <p className="text-sm text-gray-600 mt-1">
+            <p className="text-sm text-gray-600">
               Find and add influencers to your campaign
             </p>
           </div>
 
-          {/* Compact Search, Toggle, and Filters in Single Row */}
-          <div className="mb-4">
+          {/* Compact Search, Toggle, and Filters */}
+          <div className="mb-3">
             <DiscoveryFilters 
               searchQuery={searchQuery}
               onSearchChange={setSearchQuery}
@@ -132,9 +132,9 @@ const Discovery = () => {
           </div>
 
           {/* Full-height Influencer Results Container */}
-          <div className="flex-1" style={{ height: 'calc(100vh - 200px)' }}>
+          <div className="flex-1" style={{ height: 'calc(100vh - 160px)' }}>
             <ScrollArea className="h-full">
-              <div className="pb-4">
+              <div className="pb-2">
                 {filteredInfluencers.length > 0 ? (
                   <DiscoveryResults 
                     influencers={filteredInfluencers}
@@ -151,10 +151,10 @@ const Discovery = () => {
           </div>
 
           {/* Compact AI Recommendations at bottom */}
-          <div className="mt-4 bg-blue-50 border border-blue-200 rounded-lg p-3">
+          <div className="mt-2 bg-blue-50 border border-blue-200 rounded-lg p-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                <div className="w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center">
+                <div className="w-4 h-4 bg-blue-600 rounded-full flex items-center justify-center">
                   <span className="text-white text-xs font-bold">AI</span>
                 </div>
                 <div>

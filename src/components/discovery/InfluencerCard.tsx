@@ -50,8 +50,8 @@ const InfluencerCard = ({
       <CardContent className="p-0">
         {/* Added to Campaign Badge - Right side, minimalistic */}
         {isInCampaign && (
-          <div className="absolute top-2 right-2 z-10">
-            <div className="flex items-center space-x-1 bg-green-50 border border-green-200 rounded-full px-2 py-1">
+          <div className="absolute top-1 right-1 z-10">
+            <div className="flex items-center space-x-1 bg-green-50 border border-green-200 rounded-full px-1.5 py-0.5">
               <Check className="h-3 w-3 text-green-600" />
               <span className="text-xs text-green-700 font-medium">Added</span>
             </div>
@@ -60,12 +60,12 @@ const InfluencerCard = ({
 
         <Dialog>
           <DialogTrigger asChild>
-            <div className="p-3 hover:bg-gray-50 transition-colors">
+            <div className="p-2 hover:bg-gray-50 transition-colors">
               {/* Table-style layout */}
               <div className="grid grid-cols-12 gap-4 items-center">
                 {/* Creator Column */}
-                <div className="col-span-3 flex items-center space-x-3">
-                  <Avatar className="h-8 w-8">
+                <div className="col-span-3 flex items-center space-x-2">
+                  <Avatar className="h-7 w-7">
                     <AvatarImage src={influencer.image} alt={influencer.name} />
                     <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white font-semibold text-xs">
                       {influencer.name.split(' ').map(n => n[0]).join('')}
@@ -89,7 +89,7 @@ const InfluencerCard = ({
 
                 {/* Match Column */}
                 <div className="col-span-1 text-center">
-                  <div className="inline-flex items-center px-2 py-1 rounded-full bg-green-50 border border-green-200">
+                  <div className="inline-flex items-center px-1.5 py-0.5 rounded-full bg-green-50 border border-green-200">
                     <span className="text-xs font-medium text-green-700">{matchPercentage}%</span>
                   </div>
                 </div>
@@ -119,7 +119,7 @@ const InfluencerCard = ({
                       <Badge 
                         key={niche} 
                         variant="secondary" 
-                        className="text-xs px-2 py-0 bg-blue-50 text-blue-700 border-blue-200"
+                        className="text-xs px-1.5 py-0 bg-blue-50 text-blue-700 border-blue-200"
                       >
                         {niche}
                       </Badge>
@@ -139,11 +139,11 @@ const InfluencerCard = ({
               </div>
 
               {/* Compact Action Buttons - Only show on hover */}
-              <div className="flex items-center justify-end space-x-2 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="flex items-center justify-end space-x-2 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="h-7 px-2 text-xs"
+                  className="h-6 px-2 text-xs"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <Eye className="h-3 w-3 mr-1" />
@@ -154,7 +154,7 @@ const InfluencerCard = ({
                   <Button 
                     size="sm" 
                     variant="destructive"
-                    className="h-7 px-2 text-xs"
+                    className="h-6 px-2 text-xs"
                     onClick={handleCampaignAction}
                     disabled={isLoading}
                   >
@@ -164,7 +164,7 @@ const InfluencerCard = ({
                   !isInCampaign && (
                     <Button 
                       size="sm" 
-                      className="h-7 px-2 text-xs bg-blue-600 hover:bg-blue-700"
+                      className="h-6 px-2 text-xs bg-blue-600 hover:bg-blue-700"
                       onClick={handleCampaignAction}
                       disabled={isLoading}
                     >
