@@ -26,9 +26,6 @@ const InfluencerCard = ({
   showCampaignInfluencers = false
 }: InfluencerCardProps) => {
   const [isLoading, setIsLoading] = useState(false);
-  
-  // Calculate match percentage (mock calculation based on rating)
-  const matchPercentage = Math.round((influencer.rating / 5) * 100);
 
   const handleCampaignAction = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -61,8 +58,8 @@ const InfluencerCard = ({
         <Dialog>
           <DialogTrigger asChild>
             <div className="p-2 hover:bg-gray-50 transition-colors">
-              {/* Table-style layout */}
-              <div className="grid grid-cols-12 gap-4 items-center">
+              {/* Table-style layout - Updated to 11 columns */}
+              <div className="grid grid-cols-11 gap-4 items-center">
                 {/* Creator Column */}
                 <div className="col-span-3 flex items-center space-x-2">
                   <Avatar className="h-7 w-7">
@@ -84,13 +81,6 @@ const InfluencerCard = ({
                         <span className="text-xs text-gray-400">+{influencer.platforms.length - 2}</span>
                       )}
                     </div>
-                  </div>
-                </div>
-
-                {/* Match Column */}
-                <div className="col-span-1 text-center">
-                  <div className="inline-flex items-center px-1.5 py-0.5 rounded-full bg-green-50 border border-green-200">
-                    <span className="text-xs font-medium text-green-700">{matchPercentage}%</span>
                   </div>
                 </div>
 
