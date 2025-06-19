@@ -37,9 +37,9 @@ const DiscoveryFilters = ({
 
   return (
     <Card className="bg-white shadow-sm border-gray-200">
-      <CardContent className="p-4">
-        {/* Toggle Switch */}
-        <div className="flex items-center space-x-3 mb-3">
+      <CardContent className="p-3">
+        {/* Toggle Switch - Compact */}
+        <div className="flex items-center space-x-3 mb-2">
           <span className="text-sm font-medium">Show:</span>
           <div className="flex items-center space-x-2">
             <span className={`text-sm ${!showCampaignInfluencers ? 'font-medium' : 'text-gray-500'}`}>
@@ -55,24 +55,24 @@ const DiscoveryFilters = ({
           </div>
         </div>
 
-        {/* Search and Filter Row */}
-        <div className="flex space-x-3 mb-3">
+        {/* Search and Filter Row - Compact */}
+        <div className="flex space-x-2 mb-2">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input 
               placeholder="Search influencers by name, handle, or niche..." 
-              className="pl-10 h-9"
+              className="pl-10 h-8 text-sm"
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
             />
           </div>
-          <Button variant="outline" size="sm">
-            <Filter className="h-4 w-4 mr-2" />
-            Filters
+          <Button variant="outline" size="sm" className="h-8 px-3">
+            <Filter className="h-4 w-4 mr-1" />
+            <span className="text-sm">Filters</span>
           </Button>
         </div>
         
-        {/* Active Filters */}
+        {/* Active Filters - Compact */}
         <div className="flex space-x-2">
           {suggestedFilters.map((filter) => {
             const isActive = activeFilters.includes(filter);
@@ -80,7 +80,7 @@ const DiscoveryFilters = ({
               <Badge 
                 key={filter}
                 variant={isActive ? "default" : "outline"} 
-                className={`text-xs cursor-pointer transition-colors ${
+                className={`text-xs cursor-pointer transition-colors py-1 px-2 ${
                   isActive 
                     ? "bg-blue-600 text-white hover:bg-blue-700" 
                     : "hover:bg-gray-100"

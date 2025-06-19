@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import CampaignLayout from "@/components/layout/CampaignLayout";
 import DiscoveryFilters from "@/components/discovery/DiscoveryFilters";
@@ -82,7 +83,7 @@ const Discovery = () => {
   if (loading) {
     return (
       <CampaignLayout>
-        <div className="space-y-6">
+        <div className="space-y-4">
           <DiscoveryHeader />
           <div className="flex items-center justify-center py-12">
             <p className="text-gray-500">Loading influencers...</p>
@@ -95,7 +96,7 @@ const Discovery = () => {
   if (error) {
     return (
       <CampaignLayout>
-        <div className="space-y-6">
+        <div className="space-y-4">
           <DiscoveryHeader />
           <div className="flex items-center justify-center py-12">
             <p className="text-red-500">Error loading influencers: {error}</p>
@@ -107,13 +108,22 @@ const Discovery = () => {
 
   return (
     <CampaignLayout>
-      <div className="flex flex-col h-[calc(100vh-240px)] space-y-4">
-        {/* Header */}
+      <div className="flex flex-col h-[calc(100vh-180px)] space-y-3">
+        {/* Header - Compact */}
         <div className="flex-shrink-0">
-          <DiscoveryHeader />
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-xl font-semibold text-gray-900 mb-1">
+                Influencer Discovery
+              </h1>
+              <p className="text-sm text-gray-600">
+                Find and add influencers to your campaign
+              </p>
+            </div>
+          </div>
         </div>
 
-        {/* Search, Filters, and Toggle */}
+        {/* Search, Filters, and Toggle - Compact */}
         <div className="flex-shrink-0">
           <DiscoveryFilters 
             searchQuery={searchQuery}
@@ -126,10 +136,10 @@ const Discovery = () => {
           />
         </div>
 
-        {/* Scrollable Results Container */}
+        {/* Scrollable Results Container - More space allocated */}
         <div className="flex-1 min-h-0">
           <ScrollArea className="h-full">
-            <div className="pr-4 pb-4">
+            <div className="pr-4 pb-2">
               {/* Results */}
               {filteredInfluencers.length > 0 ? (
                 <DiscoveryResults 
@@ -146,13 +156,24 @@ const Discovery = () => {
           </ScrollArea>
         </div>
 
-        {/* AI Recommendations - Fixed at bottom */}
+        {/* AI Recommendations - Compact at bottom */}
         <div className="flex-shrink-0">
-          <AIRecommendations 
-            isInCampaign={isInCampaign}
-            onAddToCampaign={handleAddToCampaign}
-            onRemoveFromCampaign={handleRemoveFromCampaign}
-          />
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center">
+                  <span className="text-white text-xs font-bold">AI</span>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-blue-900">AI-Powered Search</p>
+                  <p className="text-xs text-blue-700">Get AI recommendations based on your campaign details.</p>
+                </div>
+              </div>
+              <button className="bg-blue-600 text-white px-3 py-1 rounded text-xs font-medium hover:bg-blue-700 transition-colors">
+                Search Now
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </CampaignLayout>

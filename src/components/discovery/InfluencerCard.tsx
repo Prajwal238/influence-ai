@@ -3,12 +3,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import { Star, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Star, Eye, Heart, Check } from "lucide-react";
 import { getPlatformIcon } from "./platformUtils";
 import InfluencerDialog from "./InfluencerDialog";
-import InfluencerActions from "./InfluencerActions";
-import CampaignBadge from "./CampaignBadge";
 import { Influencer } from "@/types/influencer";
+import { useState } from "react";
 
 interface InfluencerCardProps {
   influencer: Influencer;
@@ -25,33 +25,55 @@ const InfluencerCard = ({
   onRemoveFromCampaign,
   showCampaignInfluencers = false
 }: InfluencerCardProps) => {
+  const [isLoading, setIsLoading] = useState(false);
+  
   // Calculate match percentage (mock calculation based on rating)
   const matchPercentage = Math.round((influencer.rating / 5) * 100);
+
+  const handleCampaignAction = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsLoading(true);
+    
+    try {
+      if (isInCampaign) {
+        await onRemoveFromCampaign(influencer);
+      } else {
+        await onAddToCampaign(influencer);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <Card className="group bg-white shadow-sm border-gray-200 hover:shadow-md hover:border-gray-300 transition-all duration-200 cursor-pointer overflow-hidden relative">
       <CardContent className="p-0">
-        {/* Campaign Badge */}
+        {/* Added to Campaign Badge - Right side, minimalistic */}
         {isInCampaign && (
-          <CampaignBadge campaignName="campaign" />
+          <div className="absolute top-2 right-2 z-10">
+            <div className="flex items-center space-x-1 bg-green-50 border border-green-200 rounded-full px-2 py-1">
+              <Check className="h-3 w-3 text-green-600" />
+              <span className="text-xs text-green-700 font-medium">Added</span>
+            </div>
+          </div>
         )}
 
         <Dialog>
           <DialogTrigger asChild>
-            <div className="p-4 hover:bg-gray-50 transition-colors">
+            <div className="p-3 hover:bg-gray-50 transition-colors">
               {/* Table-style layout */}
               <div className="grid grid-cols-12 gap-4 items-center">
                 {/* Creator Column */}
                 <div className="col-span-3 flex items-center space-x-3">
-                  <Avatar className="h-10 w-10">
+                  <Avatar className="h-8 w-8">
                     <AvatarImage src={influencer.image} alt={influencer.name} />
-                    <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white font-semibold text-sm">
+                    <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white font-semibold text-xs">
                       {influencer.name.split(' ').map(n => n[0]).join('')}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="min-w-0">
+                  <div className="min-w-0 flex-1">
                     <p className="font-medium text-sm text-gray-900 truncate">{influencer.name}</p>
-                    <div className="flex items-center space-x-1 mt-1">
+                    <div className="flex items-center space-x-1 mt-0.5">
                       {influencer.platforms.slice(0, 2).map((platform) => {
                         const IconComponent = getPlatformIcon(platform.name);
                         return (
@@ -115,21 +137,47 @@ const InfluencerCard = ({
                   </p>
                 </div>
               </div>
+
+              {/* Compact Action Buttons - Only show on hover */}
+              <div className="flex items-center justify-end space-x-2 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="h-7 px-2 text-xs"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <Eye className="h-3 w-3 mr-1" />
+                  View
+                </Button>
+                
+                {showCampaignInfluencers ? (
+                  <Button 
+                    size="sm" 
+                    variant="destructive"
+                    className="h-7 px-2 text-xs"
+                    onClick={handleCampaignAction}
+                    disabled={isLoading}
+                  >
+                    Remove
+                  </Button>
+                ) : (
+                  !isInCampaign && (
+                    <Button 
+                      size="sm" 
+                      className="h-7 px-2 text-xs bg-blue-600 hover:bg-blue-700"
+                      onClick={handleCampaignAction}
+                      disabled={isLoading}
+                    >
+                      <Heart className="h-3 w-3 mr-1" />
+                      {isLoading ? 'Adding...' : 'Add'}
+                    </Button>
+                  )
+                )}
+              </div>
             </div>
           </DialogTrigger>
           <InfluencerDialog influencer={influencer} />
         </Dialog>
-
-        {/* Actions - Only show on hover */}
-        <div className="border-t border-gray-100 opacity-0 group-hover:opacity-100 transition-opacity">
-          <InfluencerActions 
-            influencer={influencer}
-            isInCampaign={isInCampaign}
-            onAddToCampaign={onAddToCampaign}
-            onRemoveFromCampaign={onRemoveFromCampaign}
-            showCampaignInfluencers={showCampaignInfluencers}
-          />
-        </div>
       </CardContent>
     </Card>
   );

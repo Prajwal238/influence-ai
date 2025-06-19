@@ -36,12 +36,12 @@ const DiscoveryResults = ({
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-2">
       {/* Table Header */}
       <InfluencerTableHeader />
       
-      {/* Influencer Cards in Table Format */}
-      <div className="space-y-2">
+      {/* Influencer Cards in Table Format - Compact spacing */}
+      <div className="space-y-1">
         {influencers.map((influencer) => (
           <InfluencerCard 
             key={`${influencer.apiId}-${influencer.id}`} 
