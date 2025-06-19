@@ -3,11 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Play, Users, TrendingUp, Zap } from "lucide-react";
 
 const LandingDemoVideo = () => {
-  const stats = [
-    { icon: <Users className="h-5 w-5" />, value: "500+", label: "Active Brands" },
-    { icon: <TrendingUp className="h-5 w-5" />, value: "250%", label: "Avg ROI Increase" },
-    { icon: <Zap className="h-5 w-5" />, value: "87%", label: "Time Saved" }
-  ];
 
   return (
     <section id="demo" className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-900 to-gray-800">
@@ -42,19 +37,6 @@ const LandingDemoVideo = () => {
               </p>
             </div>
           </div>
-        </div>
-
-        {/* Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-          {stats.map((stat, index) => (
-            <div key={index} className="text-center p-6 bg-gray-800 rounded-xl border border-gray-700">
-              <div className="flex justify-center mb-3 text-blue-400">
-                {stat.icon}
-              </div>
-              <div className="text-2xl font-bold text-white mb-1">{stat.value}</div>
-              <div className="text-sm text-gray-400">{stat.label}</div>
-            </div>
-          ))}
         </div>
       </div>
     </section>

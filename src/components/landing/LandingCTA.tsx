@@ -24,7 +24,7 @@ const LandingCTA = () => {
           Ready to scale your influencer marketing?
         </h2>
         <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-          Join 500+ businesses using AI to automate their influencer campaigns and drive measurable growth.
+          Join other businesses using AI to automate their influencer campaigns and drive measurable growth.
         </p>
         
         {/* Benefits list */}
