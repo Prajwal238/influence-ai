@@ -89,7 +89,7 @@ const Discovery = () => {
   if (loading) {
     return (
       <CampaignLayout>
-        <div className="w-full px-4 py-2">
+        <div className="w-full">
           <div className="flex items-center justify-center py-8">
             <p className="text-gray-500">Loading influencers...</p>
           </div>
@@ -101,7 +101,7 @@ const Discovery = () => {
   if (error) {
     return (
       <CampaignLayout>
-        <div className="w-full px-4 py-2">
+        <div className="w-full">
           <div className="flex items-center justify-center py-8">
             <p className="text-red-500">Error loading influencers: {error}</p>
           </div>
@@ -113,11 +113,11 @@ const Discovery = () => {
   return (
     <CampaignLayout>
       <div className="w-full h-[calc(100vh-140px)] flex flex-col">
-        {/* Main content container with full width */}
-        <div className="w-full px-4 py-2 flex-1 flex flex-col min-h-0">
+        {/* Main content container - no padding, full width */}
+        <div className="w-full flex-1 flex flex-col min-h-0">
           
-          {/* Search, Toggle, and Filters - fixed height */}
-          <div className="mb-3 flex-shrink-0">
+          {/* Search, Toggle, and Filters - minimal padding */}
+          <div className="mb-3 px-2">
             <DiscoveryFilters 
               searchQuery={searchQuery}
               onSearchChange={setSearchQuery}
@@ -129,8 +129,8 @@ const Discovery = () => {
             />
           </div>
 
-          {/* Scrollable Influencer Results Container - takes remaining space minus AI search */}
-          <div className="flex-1 min-h-0 mb-16">
+          {/* Scrollable Influencer Results Container - full width */}
+          <div className="flex-1 min-h-0 mb-16 px-2">
             <ScrollArea className="h-full">
               <div className="pb-2">
                 {filteredInfluencers.length > 0 ? (
@@ -149,7 +149,7 @@ const Discovery = () => {
           </div>
 
           {/* Fixed AI Recommendations - always visible at bottom with fixed positioning */}
-          <div className="fixed bottom-4 left-4 right-4 z-10">
+          <div className="fixed bottom-4 left-2 right-2 z-10">
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 shadow-lg">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
