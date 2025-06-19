@@ -2,7 +2,6 @@
 import { useState } from "react";
 import CampaignLayout from "@/components/layout/CampaignLayout";
 import DiscoveryFilters from "@/components/discovery/DiscoveryFilters";
-import DiscoveryHeader from "@/components/discovery/DiscoveryHeader";
 import DiscoveryResults from "@/components/discovery/DiscoveryResults";
 import NoResults from "@/components/discovery/NoResults";
 import AIRecommendations from "@/components/discovery/AIRecommendations";
@@ -83,9 +82,8 @@ const Discovery = () => {
   if (loading) {
     return (
       <CampaignLayout>
-        <div className="space-y-4">
-          <DiscoveryHeader />
-          <div className="flex items-center justify-center py-12">
+        <div className="space-y-2">
+          <div className="flex items-center justify-center py-8">
             <p className="text-gray-500">Loading influencers...</p>
           </div>
         </div>
@@ -96,9 +94,8 @@ const Discovery = () => {
   if (error) {
     return (
       <CampaignLayout>
-        <div className="space-y-4">
-          <DiscoveryHeader />
-          <div className="flex items-center justify-center py-12">
+        <div className="space-y-2">
+          <div className="flex items-center justify-center py-8">
             <p className="text-red-500">Error loading influencers: {error}</p>
           </div>
         </div>
@@ -108,22 +105,22 @@ const Discovery = () => {
 
   return (
     <CampaignLayout>
-      <div className="flex flex-col h-[calc(100vh-180px)] space-y-3">
-        {/* Header - Compact */}
+      <div className="flex flex-col h-[calc(100vh-160px)] space-y-2">
+        {/* Compact Header */}
         <div className="flex-shrink-0">
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center mb-2">
             <div>
-              <h1 className="text-xl font-semibold text-gray-900 mb-1">
+              <h1 className="text-lg font-semibold text-gray-900">
                 Influencer Discovery
               </h1>
-              <p className="text-sm text-gray-600">
+              <p className="text-xs text-gray-600">
                 Find and add influencers to your campaign
               </p>
             </div>
           </div>
         </div>
 
-        {/* Search, Filters, and Toggle - Compact */}
+        {/* Compact Filters */}
         <div className="flex-shrink-0">
           <DiscoveryFilters 
             searchQuery={searchQuery}
@@ -136,11 +133,10 @@ const Discovery = () => {
           />
         </div>
 
-        {/* Scrollable Results Container - More space allocated */}
+        {/* Main Content Area - Maximized for table */}
         <div className="flex-1 min-h-0">
           <ScrollArea className="h-full">
-            <div className="pr-4 pb-2">
-              {/* Results */}
+            <div className="pr-2">
               {filteredInfluencers.length > 0 ? (
                 <DiscoveryResults 
                   influencers={filteredInfluencers}
@@ -156,24 +152,13 @@ const Discovery = () => {
           </ScrollArea>
         </div>
 
-        {/* AI Recommendations - Compact at bottom */}
+        {/* Compact AI Recommendations - Always visible at bottom */}
         <div className="flex-shrink-0">
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center">
-                  <span className="text-white text-xs font-bold">AI</span>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-blue-900">AI-Powered Search</p>
-                  <p className="text-xs text-blue-700">Get AI recommendations based on your campaign details.</p>
-                </div>
-              </div>
-              <button className="bg-blue-600 text-white px-3 py-1 rounded text-xs font-medium hover:bg-blue-700 transition-colors">
-                Search Now
-              </button>
-            </div>
-          </div>
+          <AIRecommendations
+            isInCampaign={isInCampaign}
+            onAddToCampaign={handleAddToCampaign}
+            onRemoveFromCampaign={handleRemoveFromCampaign}
+          />
         </div>
       </div>
     </CampaignLayout>
