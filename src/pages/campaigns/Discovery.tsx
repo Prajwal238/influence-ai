@@ -4,6 +4,7 @@ import CampaignLayout from "@/components/layout/CampaignLayout";
 import DiscoveryFilters from "@/components/discovery/DiscoveryFilters";
 import DiscoveryResults from "@/components/discovery/DiscoveryResults";
 import NoResults from "@/components/discovery/NoResults";
+import AIRecommendations from "@/components/discovery/AIRecommendations";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useInfluencerFiltering } from "@/hooks/useInfluencerFiltering";
 import { useInfluencerTabs } from "@/hooks/useInfluencerTabs";
@@ -152,22 +153,11 @@ const Discovery = () => {
         {/* Fixed AI Recommendations - positioned absolutely at bottom */}
         <div className="fixed bottom-0 left-0 right-0 z-10 bg-white border-t border-gray-200 p-4">
           <div className="w-full max-w-[1280px] mx-auto">
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-2">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <div className="w-4 h-4 bg-blue-600 rounded-full flex items-center justify-center">
-                    <span className="text-white text-xs font-bold">AI</span>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-blue-900">AI-Powered Search</p>
-                    <p className="text-xs text-blue-700">Get recommendations based on your campaign.</p>
-                  </div>
-                </div>
-                <button className="bg-blue-600 text-white px-3 py-1 rounded text-xs font-medium hover:bg-blue-700 transition-colors whitespace-nowrap">
-                  Search Now
-                </button>
-              </div>
-            </div>
+            <AIRecommendations
+              isInCampaign={isInCampaign}
+              onAddToCampaign={handleAddToCampaign}
+              onRemoveFromCampaign={handleRemoveFromCampaign}
+            />
           </div>
         </div>
       </div>
