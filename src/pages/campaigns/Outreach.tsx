@@ -25,7 +25,7 @@ const Outreach = () => {
   if (loading) {
     return (
       <CampaignLayout>
-        <div className="flex items-center justify-center py-12">
+        <div className="flex items-center justify-center py-8">
           <p className="text-gray-500">Loading influencers...</p>
         </div>
       </CampaignLayout>
@@ -35,7 +35,7 @@ const Outreach = () => {
   if (error) {
     return (
       <CampaignLayout>
-        <div className="flex items-center justify-center py-12">
+        <div className="flex items-center justify-center py-8">
           <p className="text-red-500">Error loading influencers: {error}</p>
         </div>
       </CampaignLayout>
@@ -44,21 +44,23 @@ const Outreach = () => {
 
   return (
     <CampaignLayout>
-      <OutreachPageHeader />
-      
-      <div className="flex gap-8">
-        <OutreachPageContent
-          transformedInfluencers={transformedInfluencers}
-          selectedInfluencers={selectedInfluencers}
-          onUpdateSelection={updateInfluencerSelection}
-          onRemoveSelection={removeInfluencerSelection}
-          onClearSelectedInfluencers={clearSelectedInfluencers}
-        />
+      <div className="space-y-4">
+        <OutreachPageHeader />
+        
+        <div className="flex gap-6">
+          <OutreachPageContent
+            transformedInfluencers={transformedInfluencers}
+            selectedInfluencers={selectedInfluencers}
+            onUpdateSelection={updateInfluencerSelection}
+            onRemoveSelection={removeInfluencerSelection}
+            onClearSelectedInfluencers={clearSelectedInfluencers}
+          />
 
-        <OutreachPageSidebar outreachLog={outreachLog} />
+          <OutreachPageSidebar outreachLog={outreachLog} />
+        </div>
+
+        <AgentPanel agentName="Outreach Agent" agentType="outreach" />
       </div>
-
-      <AgentPanel agentName="Outreach Agent" agentType="outreach" />
     </CampaignLayout>
   );
 };

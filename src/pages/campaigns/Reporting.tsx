@@ -46,7 +46,7 @@ const Reporting = () => {
 
   return (
     <CampaignLayout>
-      <div className="space-y-6">
+      <div className="space-y-4">
         <ReportingHeader 
           isCampaignComplete={isCampaignComplete}
           onMarkComplete={handleMarkComplete}

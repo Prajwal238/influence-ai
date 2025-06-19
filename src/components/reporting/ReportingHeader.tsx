@@ -1,8 +1,6 @@
 
 import { Button } from "@/components/ui/button";
 import { CheckCircle } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import { useNavigate } from "react-router-dom";
 
 interface ReportingHeaderProps {
   isCampaignComplete: boolean;
@@ -11,17 +9,8 @@ interface ReportingHeaderProps {
 
 const ReportingHeader = ({ isCampaignComplete, onMarkComplete }: ReportingHeaderProps) => {
   return (
-    <div className="flex justify-between items-start">
-      <div>
-        <h1 className="text-2xl font-semibold text-gray-900 mb-1">
-          Campaign Performance
-        </h1>
-        <p className="text-gray-600">
-          Track and analyze your campaign metrics across all channels
-        </p>
-      </div>
-      
-      {/* Campaign Completion Button */}
+    <div className="flex justify-end items-center mb-4">
+      {/* Campaign Completion Button - moved to top right only */}
       {!isCampaignComplete && (
         <Button 
           onClick={onMarkComplete}

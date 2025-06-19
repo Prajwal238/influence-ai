@@ -13,7 +13,7 @@ const Contracts = () => {
   if (loading) {
     return (
       <CampaignLayout>
-        <div className="flex items-center justify-center py-12">
+        <div className="flex items-center justify-center py-8">
           <p className="text-gray-500">Loading contracts...</p>
         </div>
       </CampaignLayout>
@@ -23,7 +23,7 @@ const Contracts = () => {
   if (error) {
     return (
       <CampaignLayout>
-        <div className="flex items-center justify-center py-12">
+        <div className="flex items-center justify-center py-8">
           <div className="text-center">
             <p className="text-red-500 mb-4">Error loading contracts: {error}</p>
             <p className="text-sm text-gray-400">Please try refreshing the page</p>
@@ -36,7 +36,7 @@ const Contracts = () => {
   if (contracts.length === 0) {
     return (
       <CampaignLayout>
-        <div className="flex items-center justify-center py-12">
+        <div className="flex items-center justify-center py-8">
           <div className="text-center">
             <p className="text-gray-500 mb-4">No contracts found for this campaign</p>
             <p className="text-sm text-gray-400">Contracts will appear here once negotiations are completed</p>
@@ -48,9 +48,9 @@ const Contracts = () => {
 
   return (
     <CampaignLayout>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Main Content */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-4">
           {/* Contract List */}
           <ContractList 
             contracts={contracts}
@@ -65,7 +65,7 @@ const Contracts = () => {
         </div>
 
         {/* Sidebar - Quick Actions & Stats */}
-        <div className="space-y-6">
+        <div className="space-y-4">
           {/* Quick Actions */}
           <ContractQuickActions />
 

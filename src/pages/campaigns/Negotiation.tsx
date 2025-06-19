@@ -34,18 +34,20 @@ const Negotiation = () => {
 
   return (
     <CampaignLayout>
-      <NegotiationContent
-        selectedThread={selectedThread}
-        negotiationThreads={negotiationThreads}
-        onSelectThread={handleSelectThread}
-        onSendMessage={handleSendMessage}
-        onStatusChange={handleStatusChange}
-        onAIResponse={handleAIResponse}
-        onPoll={handlePoll}
-        onCall={handleCall}
-        aiResponseInput={aiResponseInput}
-        onAiResponseInputChange={setAiResponseInput}
-      />
+      <div className="h-[calc(100vh-200px)]">
+        <NegotiationContent
+          selectedThread={selectedThread}
+          negotiationThreads={negotiationThreads}
+          onSelectThread={handleSelectThread}
+          onSendMessage={handleSendMessage}
+          onStatusChange={handleStatusChange}
+          onAIResponse={handleAIResponse}
+          onPoll={handlePoll}
+          onCall={handleCall}
+          aiResponseInput={aiResponseInput}
+          onAiResponseInputChange={setAiResponseInput}
+        />
+      </div>
     </CampaignLayout>
   );
 };

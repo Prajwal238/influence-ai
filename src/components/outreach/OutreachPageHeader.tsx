@@ -1,12 +1,26 @@
 
+import { useState } from "react";
+import AgentPanel from "@/components/agents/AgentPanel";
+
 const OutreachPageHeader = () => {
+  const [showAgentPanel, setShowAgentPanel] = useState(false);
+
   return (
-    <div className="text-center space-y-2 mb-8">
-      <h1 className="text-3xl font-bold text-gray-900">Outreach</h1>
-      <p className="text-gray-600 max-w-2xl mx-auto">
-        Send personalized messages to selected influencers for this campaign.
-      </p>
-    </div>
+    <>
+      {/* Removed the header section entirely - no title or description */}
+      
+      {showAgentPanel && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden">
+            <AgentPanel 
+              agentName="Outreach Agent" 
+              agentType="outreach"
+              onClose={() => setShowAgentPanel(false)}
+            />
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

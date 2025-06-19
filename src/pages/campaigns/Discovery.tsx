@@ -108,17 +108,7 @@ const Discovery = () => {
         {/* Main content container with fixed height */}
         <div className="w-full max-w-[1280px] mx-auto px-4 sm:px-6 md:px-8 py-2 flex-1 flex flex-col">
           
-          {/* Compact Header - reduced margins */}
-          <div className="mb-2 flex-shrink-0">
-            <h1 className="text-lg font-semibold text-gray-900">
-              Influencer Discovery
-            </h1>
-            <p className="text-sm text-gray-600">
-              Find and add influencers to your campaign
-            </p>
-          </div>
-
-          {/* Compact Search, Toggle, and Filters */}
+          {/* Search, Toggle, and Filters - no header */}
           <div className="mb-3 flex-shrink-0">
             <DiscoveryFilters 
               searchQuery={searchQuery}
