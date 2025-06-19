@@ -7,7 +7,7 @@ interface DiscoveryResultsProps {
   isInCampaign: (influencer: Influencer) => boolean;
   onAddToCampaign: (influencer: Influencer) => Promise<boolean>;
   onRemoveFromCampaign: (influencer: Influencer) => Promise<boolean>;
-  showCampaignInfluencers?: boolean;
+  showCampaignInfluencers?: boolean; // New prop to indicate tab context
 }
 
 const DiscoveryResults = ({ 
@@ -35,21 +35,16 @@ const DiscoveryResults = ({
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5">
-      {influencers.map((influencer, index) => (
-        <div 
-          key={`${influencer.apiId}-${influencer.id}`}
-          className="animate-fade-in"
-          style={{ animationDelay: `${index * 30}ms` }}
-        >
-          <InfluencerCard 
-            influencer={influencer}
-            isInCampaign={isInCampaign(influencer)}
-            onAddToCampaign={onAddToCampaign}
-            onRemoveFromCampaign={onRemoveFromCampaign}
-            showCampaignInfluencers={showCampaignInfluencers}
-          />
-        </div>
+    <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+      {influencers.map((influencer) => (
+        <InfluencerCard 
+          key={`${influencer.apiId}-${influencer.id}`} 
+          influencer={influencer}
+          isInCampaign={isInCampaign(influencer)}
+          onAddToCampaign={onAddToCampaign}
+          onRemoveFromCampaign={onRemoveFromCampaign}
+          showCampaignInfluencers={showCampaignInfluencers}
+        />
       ))}
     </div>
   );

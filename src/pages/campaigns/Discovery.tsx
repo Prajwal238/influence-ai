@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import CampaignLayout from "@/components/layout/CampaignLayout";
 import DiscoveryFilters from "@/components/discovery/DiscoveryFilters";
@@ -83,21 +82,10 @@ const Discovery = () => {
   if (loading) {
     return (
       <CampaignLayout>
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50/20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <DiscoveryHeader />
-            <div className="flex items-center justify-center py-32">
-              <div className="text-center space-y-6">
-                <div className="relative mx-auto w-16 h-16">
-                  <div className="absolute inset-0 rounded-full border-4 border-blue-100"></div>
-                  <div className="absolute inset-0 rounded-full border-4 border-blue-600 border-t-transparent animate-spin"></div>
-                </div>
-                <div className="space-y-2">
-                  <p className="text-lg font-semibold text-gray-800">Discovering amazing creators...</p>
-                  <p className="text-sm text-gray-500">Finding the perfect match for your campaign</p>
-                </div>
-              </div>
-            </div>
+        <div className="space-y-6">
+          <DiscoveryHeader />
+          <div className="flex items-center justify-center py-12">
+            <p className="text-gray-500">Loading influencers...</p>
           </div>
         </div>
       </CampaignLayout>
@@ -107,20 +95,10 @@ const Discovery = () => {
   if (error) {
     return (
       <CampaignLayout>
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50/20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <DiscoveryHeader />
-            <div className="flex items-center justify-center py-32">
-              <div className="text-center space-y-6 bg-white/80 backdrop-blur-sm p-8 rounded-2xl border border-red-100 shadow-lg max-w-md">
-                <div className="w-12 h-12 mx-auto bg-red-50 rounded-full flex items-center justify-center">
-                  <div className="w-6 h-6 bg-red-500 rounded-full"></div>
-                </div>
-                <div className="space-y-2">
-                  <p className="text-lg font-semibold text-red-800">Unable to load creators</p>
-                  <p className="text-sm text-red-600">{error}</p>
-                </div>
-              </div>
-            </div>
+        <div className="space-y-6">
+          <DiscoveryHeader />
+          <div className="flex items-center justify-center py-12">
+            <p className="text-red-500">Error loading influencers: {error}</p>
           </div>
         </div>
       </CampaignLayout>
@@ -129,12 +107,14 @@ const Discovery = () => {
 
   return (
     <CampaignLayout>
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50/20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
-          {/* Header */}
+      <div className="flex flex-col h-[calc(100vh-240px)] space-y-4">
+        {/* Header */}
+        <div className="flex-shrink-0">
           <DiscoveryHeader />
+        </div>
 
-          {/* Search and Filters */}
+        {/* Search, Filters, and Toggle */}
+        <div className="flex-shrink-0">
           <DiscoveryFilters 
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
@@ -144,56 +124,35 @@ const Discovery = () => {
             onFilterAdd={handleFilterAdd}
             onFilterRemove={handleFilterRemove}
           />
+        </div>
 
-          {/* Results Container */}
-          <div className="space-y-6">
-            {/* Results Header */}
-            <div className="flex items-center justify-between bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-gray-100/60">
-              <div className="space-y-1">
-                <h2 className="text-lg font-semibold text-gray-900">
-                  {showCampaignInfluencers ? 'Your Campaign Creators' : 'Discover Creators'}
-                </h2>
-                <p className="text-sm text-gray-600">
-                  {filteredInfluencers.length} {filteredInfluencers.length === 1 ? 'creator' : 'creators'} found
-                  {searchQuery && (
-                    <span className="ml-1 text-blue-600 font-medium">
-                      for "{searchQuery}"
-                    </span>
-                  )}
-                </p>
-              </div>
-              
-              {campaignInfluencers.length > 0 && (
-                <div className="bg-blue-50/80 backdrop-blur-sm px-3 py-1.5 rounded-full border border-blue-200/60">
-                  <span className="text-xs font-semibold text-blue-700">
-                    {campaignInfluencers.length} in campaign
-                  </span>
-                </div>
+        {/* Scrollable Results Container */}
+        <div className="flex-1 min-h-0">
+          <ScrollArea className="h-full">
+            <div className="pr-4 pb-4">
+              {/* Results */}
+              {filteredInfluencers.length > 0 ? (
+                <DiscoveryResults 
+                  influencers={filteredInfluencers}
+                  isInCampaign={isInCampaign}
+                  onAddToCampaign={handleAddToCampaign}
+                  onRemoveFromCampaign={handleRemoveFromCampaign}
+                  showCampaignInfluencers={showCampaignInfluencers}
+                />
+              ) : (
+                <NoResults />
               )}
             </div>
+          </ScrollArea>
+        </div>
 
-            {/* Results */}
-            {filteredInfluencers.length > 0 ? (
-              <DiscoveryResults 
-                influencers={filteredInfluencers}
-                isInCampaign={isInCampaign}
-                onAddToCampaign={handleAddToCampaign}
-                onRemoveFromCampaign={handleRemoveFromCampaign}
-                showCampaignInfluencers={showCampaignInfluencers}
-              />
-            ) : (
-              <NoResults />
-            )}
-          </div>
-
-          {/* AI Recommendations */}
-          {!showCampaignInfluencers && (
-            <AIRecommendations 
-              isInCampaign={isInCampaign}
-              onAddToCampaign={handleAddToCampaign}
-              onRemoveFromCampaign={handleRemoveFromCampaign}
-            />
-          )}
+        {/* AI Recommendations - Fixed at bottom */}
+        <div className="flex-shrink-0">
+          <AIRecommendations 
+            isInCampaign={isInCampaign}
+            onAddToCampaign={handleAddToCampaign}
+            onRemoveFromCampaign={handleRemoveFromCampaign}
+          />
         </div>
       </div>
     </CampaignLayout>
