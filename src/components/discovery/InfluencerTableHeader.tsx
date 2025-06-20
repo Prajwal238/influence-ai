@@ -18,7 +18,7 @@ const InfluencerTableHeader = () => {
 
         {/* Views */}
         <div className="col-span-1 text-center flex items-center justify-center space-x-1">
-          <span>Views</span>
+          <span>Enagagement rate</span>
           <ArrowUpDown className="h-3 w-3 cursor-pointer hover:text-gray-900" />
         </div>
 
