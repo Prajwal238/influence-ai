@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { ContractData } from "@/types/contract";
 import { useInfluencerData } from "@/hooks/useInfluencerData";
@@ -6,20 +5,24 @@ import { useContractAPI, APIContractData } from "@/hooks/useContractAPI";
 
 // Create a default influencer structure for contracts without matching influencer data
 const createDefaultInfluencer = (name: string) => ({
+  id: Math.floor(Math.random() * 1000000), // Generate a random ID
   apiId: name.toLowerCase().replace(/\s+/g, '_'),
   name: name,
   location: "Unknown",
   bio: `${name} - Contract participant`,
+  image: "/placeholder.svg", // Use placeholder image
   totalFollowers: "N/A",
   avgEngagement: "N/A",
+  languages: ["English"], // Default language
   rating: 0,
   niches: [] as string[],
   platforms: [{
     name: "instagram",
     handle: `@${name.toLowerCase().replace(/\s+/g, '')}`,
-    followers: 0,
-    engagementRate: 0,
-    pastCollaborations: []
+    followers: "0",
+    engagement: "0%",
+    verified: false,
+    topBrand: null
   }]
 });
 
